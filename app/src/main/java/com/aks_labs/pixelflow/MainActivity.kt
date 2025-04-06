@@ -5,7 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -39,6 +43,10 @@ import com.aks_labs.pixelflow.ui.theme.PixelFlowTheme
 import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
 
 class MainActivity : ComponentActivity() {
+
+    companion object {
+        private const val TAG = "MainActivity"
+    }
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -80,6 +88,12 @@ class MainActivity : ComponentActivity() {
         // Storage permissions
         if (Build.VERSION.SDK_INT >= 33) { // TIRAMISU is API 33
             permissions.add(Manifest.permission.READ_MEDIA_IMAGES)
+        } else if (Build.VERSION.SDK_INT >= 30) { // Android 11+ (R)
+            // For Android 11+, we need to use the Storage Access Framework
+            // or request MANAGE_EXTERNAL_STORAGE permission
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            intent.data = Uri.parse("package:$packageName")
+            startActivity(intent)
         } else {
             permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
             permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -107,13 +121,59 @@ class MainActivity : ComponentActivity() {
             )
             startActivity(intent)
         } else {
-            startFloatingBubbleService()
+            // Check for MANAGE_EXTERNAL_STORAGE permission on Android 11+
+            if (Build.VERSION.SDK_INT >= 30 && !Environment.isExternalStorageManager()) {
+                Toast.makeText(
+                    this,
+                    "Please grant all files access permission to save screenshots in folders",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                intent.data = Uri.parse("package:$packageName")
+                startActivity(intent)
+            } else {
+                // All permissions granted, start the service
+                startFloatingBubbleService()
+            }
         }
     }
 
     private fun startFloatingBubbleService() {
-        val intent = Intent(this, FloatingBubbleService::class.java)
-        startService(intent)
+        try {
+            Log.d(TAG, "Starting FloatingBubbleService")
+            val intent = Intent(this, FloatingBubbleService::class.java)
+
+            // Add a specific action to indicate this is a normal start
+            intent.action = "START_FROM_APP"
+
+            // For Android 8.0 (Oreo) and above, we need to start as a foreground service
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Log.d(TAG, "Starting foreground service on Android O+")
+                startForegroundService(intent)
+            } else {
+                Log.d(TAG, "Starting normal service on Android pre-O")
+                startService(intent)
+            }
+
+            Log.d(TAG, "Service start requested successfully")
+            Toast.makeText(this, "Screenshot detection service started", Toast.LENGTH_SHORT).show()
+
+            // Schedule a check to verify the service is running
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (!FloatingBubbleService.isRunning()) {
+                    Log.w(TAG, "Service not running after start request, trying again")
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForegroundService(intent)
+                    } else {
+                        startService(intent)
+                    }
+                }
+            }, 5000) // Check after 5 seconds
+        } catch (e: Exception) {
+            Log.e(TAG, "Error starting FloatingBubbleService", e)
+            Toast.makeText(this, "Error starting service: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onDestroy() {

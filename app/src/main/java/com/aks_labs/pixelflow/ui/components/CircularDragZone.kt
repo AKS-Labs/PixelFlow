@@ -47,8 +47,8 @@ class CircularDragZone @JvmOverloads constructor(
     private var highlightedZoneIndex = -1
 
     // Zone dimensions
-    private val zoneRadius = 120f
-    private val centerDistance = 500f // Distance from center to zone centers
+    private var zoneRadius = 120f
+    private var centerDistance = 500f // Distance from center to zone centers
 
     /**
      * Set the folders to display
@@ -72,12 +72,24 @@ class CircularDragZone @JvmOverloads constructor(
 
         // Calculate angle step based on number of folders
         val folderCount = folders.size
-        val angleRange = 180f // Semi-circle (180 degrees)
-        val angleStep = angleRange / (folderCount - 1)
+
+        // Adjust the angle range based on folder count
+        // For fewer folders, use a semi-circle at the bottom
+        // For more folders, expand to a full circle
+        val angleRange = if (folderCount <= 5) 180f else 270f
+        val startAngle = if (folderCount <= 5) 180f else 135f
+        val angleStep = angleRange / folderCount
+
+        // Calculate radius based on screen size
+        val screenRadius = Math.min(width, height) * 0.4f
+
+        // Update zone dimensions based on screen size
+        zoneRadius = Math.min(width, height) * 0.08f
+        centerDistance = screenRadius
 
         folders.forEachIndexed { index, folder ->
             // Calculate angle in radians (starting from bottom and going around)
-            val angleInDegrees = 180f + index * angleStep
+            val angleInDegrees = startAngle + index * angleStep
             val angleInRadians = Math.toRadians(angleInDegrees.toDouble())
 
             // Calculate position

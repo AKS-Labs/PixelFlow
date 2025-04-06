@@ -9,5 +9,7 @@ data class SimpleFolder(
     val iconName: String,
     val position: Int,
     val isDefault: Boolean = false,
+    val isEditable: Boolean = true,  // All folders are editable by default
+    val isRemovable: Boolean = true, // All folders are removable by default
     val createdAt: Long = System.currentTimeMillis()
 )

@@ -110,6 +110,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             isDefault = false
         )
         sharedPrefsManager.addFolder(folder)
+
+        // Create the physical folder in external storage
+        sharedPrefsManager.getFolderDirectory(name)
     }
 
     /**

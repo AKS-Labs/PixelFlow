@@ -9,15 +9,33 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.Rect
 import android.graphics.PixelFormat
+import android.util.Log
+import java.io.File as JavaFile
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
+import android.provider.MediaStore
+import android.util.DisplayMetrics
 import android.os.Build
+import android.os.Environment
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.provider.Settings
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.OvershootInterpolator
+import android.animation.ValueAnimator
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -31,17 +49,37 @@ import com.aks_labs.pixelflow.ui.components.CircularDragZone
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
+import java.io.FileOutputStream as JavaFileOutputStream
 import kotlin.math.abs
 
 /**
  * Service to display and manage the floating bubble
  */
 class FloatingBubbleService : Service() {
+
+    companion object {
+        private const val TAG = "FloatingBubbleService"
+        private const val NOTIFICATION_ID = 1001
+        private const val CHANNEL_ID = "PixelFlowServiceChannel"
+
+        // Action to restart the service
+        const val ACTION_RESTART_SERVICE = "com.aks_labs.pixelflow.RESTART_SERVICE"
+
+        // Flag to track if the service is running
+        @Volatile
+        private var isServiceRunning = false
+
+        // Check if the service is running
+        fun isRunning(): Boolean {
+            return isServiceRunning
+        }
+    }
 
     private lateinit var windowManager: WindowManager
     private lateinit var bubbleView: View
@@ -52,13 +90,26 @@ class FloatingBubbleService : Service() {
 
     private var currentScreenshotPath: String? = null
     private var folders: List<SimpleFolder> = emptyList()
-    private var serviceJob: Job? = null
 
-    private val NOTIFICATION_ID = 1001
-    private val CHANNEL_ID = "floating_bubble_channel"
+    // Screen dimensions
+    private val displayMetrics: DisplayMetrics by lazy {
+        val metrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(metrics)
+        metrics
+    }
+    private val width: Int by lazy { displayMetrics.widthPixels }
+    private val height: Int by lazy { displayMetrics.heightPixels }
+
+    // Service lifecycle variables
+    private var serviceJob: Job? = null
+    private var restartHandler: Handler? = null
+    private var restartRunnable: Runnable? = null
+    private val restartInterval = 60 * 1000L // 1 minute
+    private var isBeingDestroyed = false
 
     override fun onCreate() {
         super.onCreate()
+        Log.d(TAG, "Service onCreate called")
 
         // Initialize window manager
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -73,17 +124,99 @@ class FloatingBubbleService : Service() {
 
         // Load folders
         folders = sharedPrefsManager.foldersValue
+
+        // Initialize restart handler
+        restartHandler = Handler(Looper.getMainLooper())
+        restartRunnable = Runnable {
+            Log.d(TAG, "Periodic service check running")
+            if (!screenshotDetector.isObserving()) {
+                Log.d(TAG, "Screenshot detector not observing, restarting")
+                screenshotDetector.startObserving()
+            }
+            // Schedule the next check
+            restartHandler?.postDelayed(restartRunnable!!, restartInterval)
+        }
+
+        // Set the service as running
+        isServiceRunning = true
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG, "Service onStartCommand called with action: ${intent?.action}")
+
         // Create notification channel for foreground service
         createNotificationChannel()
 
         // Start as foreground service with notification
         startForeground(NOTIFICATION_ID, createNotification())
+        Log.d(TAG, "Service started in foreground")
 
-        // Start observing for screenshots
-        screenshotDetector.startObserving()
+        // Cancel any existing jobs
+        serviceJob?.cancel()
+
+        // Start a new job for this service instance
+        serviceJob = CoroutineScope(Dispatchers.Default).launch {
+            // This keeps the coroutine alive as long as the service is running
+            try {
+                while (isActive) {
+                    delay(5000) // Check every 5 seconds
+                    if (!screenshotDetector.isObserving()) {
+                        Log.d(TAG, "Screenshot detector stopped, restarting it")
+                        screenshotDetector.startObserving()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error in service job", e)
+            }
+        }
+
+        // Start the periodic check
+        restartHandler?.removeCallbacks(restartRunnable!!)
+        restartHandler?.postDelayed(restartRunnable!!, restartInterval)
+
+        // Handle different intents
+        when (intent?.action) {
+            ACTION_RESTART_SERVICE -> {
+                Log.d(TAG, "Service restart requested")
+                // Make sure we're observing
+                screenshotDetector.startObserving()
+            }
+            "START_ON_BOOT" -> {
+                Log.d(TAG, "Service starting after boot")
+                screenshotDetector.startObserving()
+            }
+            "MANUAL_TEST" -> {
+                Log.d(TAG, "Manual test requested")
+                // Find a recent image to test with
+                findRecentImageForTest()
+            }
+            "STOP_SERVICE" -> {
+                Log.d(TAG, "Service stop requested by user")
+                // Set the flag to indicate we're being explicitly stopped
+                isBeingDestroyed = true
+                // Don't do anything else - the service will be stopped by the system
+            }
+            "SERVICE_RESTARTING" -> {
+                Log.d(TAG, "Service restarting after being killed")
+                // Reset the flag
+                isBeingDestroyed = false
+                // Start observing for screenshots
+                screenshotDetector.startObserving()
+            }
+            else -> {
+                // Check if we have a test screenshot path
+                val testScreenshotPath = intent?.getStringExtra("test_screenshot_path")
+                if (testScreenshotPath != null) {
+                    Log.d(TAG, "Received test screenshot path: $testScreenshotPath")
+                    // Handle the test screenshot directly
+                    handleNewScreenshot(testScreenshotPath)
+                } else {
+                    // Start observing for screenshots
+                    screenshotDetector.startObserving()
+                    Log.d(TAG, "Screenshot detector started")
+                }
+            }
+        }
 
         return START_STICKY
     }
@@ -93,7 +226,19 @@ class FloatingBubbleService : Service() {
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "Service onDestroy called")
         super.onDestroy()
+
+        // Set the service as not running
+        isServiceRunning = false
+
+        // Cancel the restart handler
+        restartHandler?.removeCallbacks(restartRunnable!!)
+        restartHandler = null
+
+        // Cancel the service job
+        serviceJob?.cancel()
+        serviceJob = null
 
         // Stop observing for screenshots
         screenshotDetector.stopObserving()
@@ -107,7 +252,24 @@ class FloatingBubbleService : Service() {
                 windowManager.removeView(dragZonesView)
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "Error removing views", e)
+        }
+
+        // Restart the service if it was killed unexpectedly
+        try {
+            // Only restart if we're not being explicitly stopped by the user
+            if (!isBeingDestroyed) {
+                Log.d(TAG, "Service was killed unexpectedly, restarting")
+                val intent = Intent(this, FloatingBubbleService::class.java)
+                intent.action = "SERVICE_RESTARTING"
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(intent)
+                } else {
+                    startService(intent)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to restart service", e)
         }
 
         // Cancel coroutines
@@ -118,11 +280,56 @@ class FloatingBubbleService : Service() {
      * Handle a new screenshot being taken
      */
     private fun handleNewScreenshot(screenshotPath: String) {
-        currentScreenshotPath = screenshotPath
+        try {
+            Log.d(TAG, "New screenshot detected: $screenshotPath")
 
-        // Create and show the floating bubble with the screenshot
-        CoroutineScope(Dispatchers.Main).launch {
-            showFloatingBubble(screenshotPath)
+            // Check if the screenshot file exists
+            val screenshotFile = JavaFile(screenshotPath)
+            if (!screenshotFile.exists()) {
+                Log.e(TAG, "Screenshot file does not exist: $screenshotPath")
+                return
+            }
+
+            Log.d(TAG, "Screenshot file exists, size: ${screenshotFile.length()} bytes")
+
+            // If the file size is 0 or the path contains '.pending', wait for it to be ready
+            if (screenshotFile.length() == 0L || screenshotPath.contains(".pending")) {
+                Log.d(TAG, "Screenshot file is still pending, waiting for it to be ready")
+                waitForScreenshotAndShow(screenshotPath)
+                return
+            }
+
+            currentScreenshotPath = screenshotPath
+
+            // Create and show the floating bubble with the screenshot
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    Log.d(TAG, "Showing floating bubble for screenshot")
+
+                    // Check if we can draw overlays
+                    if (!Settings.canDrawOverlays(this@FloatingBubbleService)) {
+                        Log.e(TAG, "Cannot draw overlays, permission not granted")
+                        Toast.makeText(
+                            this@FloatingBubbleService,
+                            "Permission to draw over other apps is required",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        return@launch
+                    }
+
+                    showFloatingBubble(screenshotPath)
+                    Log.d(TAG, "Floating bubble shown successfully")
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error showing floating bubble", e)
+                    Toast.makeText(
+                        this@FloatingBubbleService,
+                        "Error displaying screenshot: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error handling new screenshot", e)
         }
     }
 
@@ -146,10 +353,38 @@ class FloatingBubbleService : Service() {
         // Inflate the bubble layout
         bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
 
-        // Set the screenshot as the bubble image
-        val bubbleImageView = bubbleView.findViewById<ImageView>(R.id.bubble_image)
-        val bitmap = BitmapFactory.decodeFile(screenshotPath)
-        bubbleImageView.setImageBitmap(bitmap)
+        try {
+            // Set the screenshot as the bubble image
+            val bubbleImageView = bubbleView.findViewById<ImageView>(R.id.bubble_image)
+
+            // Check if the screenshot file exists
+            val screenshotFile = File(screenshotPath)
+            if (!screenshotFile.exists()) {
+                Log.e(TAG, "Screenshot file does not exist: $screenshotPath")
+                stopSelf()
+                return
+            }
+
+            // Decode the bitmap with options to prevent OutOfMemoryError
+            val options = BitmapFactory.Options().apply {
+                inSampleSize = 2  // Scale down by factor of 2
+            }
+            val bitmap = BitmapFactory.decodeFile(screenshotPath, options)
+
+            if (bitmap == null) {
+                Log.e(TAG, "Failed to decode bitmap from: $screenshotPath")
+                stopSelf()
+                return
+            }
+
+            // Create a circular bitmap
+            val circularBitmap = getCircularBitmap(bitmap)
+            bubbleImageView.setImageBitmap(circularBitmap)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error setting bubble image", e)
+            stopSelf()
+            return
+        }
 
         // Set up window parameters for the bubble
         val params = WindowManager.LayoutParams(
@@ -163,9 +398,10 @@ class FloatingBubbleService : Service() {
             PixelFormat.TRANSLUCENT
         )
 
+        // Position the bubble on the right side near volume keys
         params.gravity = Gravity.TOP or Gravity.START
-        params.x = 100
-        params.y = 100
+        params.x = width - 100  // Near right edge
+        params.y = 300 // Position near volume keys
 
         // Add the bubble to the window
         windowManager.addView(bubbleView, params)
@@ -214,8 +450,16 @@ class FloatingBubbleService : Service() {
                     }
 
                     if (isDragging) {
-                        params.x = initialX + dx.toInt()
-                        params.y = initialY + dy.toInt()
+                        // Calculate new position with bounds checking
+                        params.x = (initialX + dx.toInt()).coerceIn(0, width - view.width)
+                        params.y = (initialY + dy.toInt()).coerceIn(0, height - view.height)
+
+                        // Add a bigger scale effect while dragging
+                        view.animate()
+                            .scaleX(1.3f)
+                            .scaleY(1.3f)
+                            .setDuration(100)
+                            .start()
 
                         // Update the bubble position
                         windowManager.updateViewLayout(view, params)
@@ -223,6 +467,17 @@ class FloatingBubbleService : Service() {
                         // Check if bubble is over any drag zone
                         if (::dragZonesView.isInitialized) {
                             val dragZone = dragZonesView.findViewById<CircularDragZone>(R.id.circular_drag_zone)
+                            val folderId = dragZone?.getFolderIdAt(event.rawX, event.rawY)
+
+                            if (folderId != null) {
+                                // Shrink when over a drop zone
+                                view.animate()
+                                    .scaleX(0.9f)
+                                    .scaleY(0.9f)
+                                    .setDuration(100)
+                                    .start()
+                            }
+
                             dragZone?.highlightZoneAt(event.rawX, event.rawY)
                         }
                     }
@@ -230,6 +485,14 @@ class FloatingBubbleService : Service() {
                 }
 
                 MotionEvent.ACTION_UP -> {
+                    // Return bubble to normal size with bounce effect
+                    view.animate()
+                        .scaleX(1.0f)
+                        .scaleY(1.0f)
+                        .setDuration(200)
+                        .setInterpolator(OvershootInterpolator(1.2f))
+                        .start()
+
                     if (!isDragging) {
                         // It was a click, not a drag
                         // Handle preview functionality here
@@ -241,14 +504,32 @@ class FloatingBubbleService : Service() {
                             val folderId = dragZone?.getFolderIdAt(event.rawX, event.rawY)
 
                             if (folderId != null) {
-                                // Screenshot was dropped on a folder
-                                handleScreenshotDrop(folderId)
-                            }
-                        }
+                                // Vibrate to provide feedback
+                                vibrateDevice()
 
-                        // Hide drag zones
-                        hideDragZones()
-                        showingDragZones = false
+                                // Handle screenshot drop on folder with success animation
+                                view.animate()
+                                    .alpha(0.0f)
+                                    .scaleX(0.0f)
+                                    .scaleY(0.0f)
+                                    .setDuration(300)
+                                    .withEndAction {
+                                        handleScreenshotDrop(folderId)
+                                        removeBubble()
+                                    }
+                                    .start()
+                            } else {
+                                // Snap to edge if not dropped on a folder
+                                snapToEdge(view, params)
+                            }
+
+                            // Hide drag zones
+                            hideDragZones()
+                            showingDragZones = false
+                        } else {
+                            // Snap to edge if drag zones aren't initialized
+                            snapToEdge(view, params)
+                        }
                     }
                     true
                 }
@@ -256,6 +537,31 @@ class FloatingBubbleService : Service() {
                 else -> false
             }
         }
+    }
+
+    /**
+     * Snap the bubble to the nearest edge of the screen
+     */
+    private fun snapToEdge(view: View, params: WindowManager.LayoutParams) {
+        // Determine which edge is closer
+        val toRight = params.x > width / 2
+
+        // Calculate target X position
+        val targetX = if (toRight) width - view.width else 0
+
+        // Animate to edge
+        val animator = ValueAnimator.ofInt(params.x, targetX)
+        animator.duration = 200
+        animator.interpolator = OvershootInterpolator(1.1f)
+        animator.addUpdateListener { animation ->
+            params.x = animation.animatedValue as Int
+            try {
+                windowManager.updateViewLayout(view, params)
+            } catch (e: Exception) {
+                // View might have been removed
+            }
+        }
+        animator.start()
     }
 
     /**
@@ -321,40 +627,80 @@ class FloatingBubbleService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 // Get the folder
-                val folder = sharedPrefsManager.getFolder(folderId) ?: return@launch
-
-                // Create a copy of the screenshot in our app's files directory
-                val screenshotFile = File(screenshotPath)
-                val timestamp = System.currentTimeMillis()
-                val newFileName = "screenshot_${timestamp}.jpg"
-                val internalDir = File(filesDir, "screenshots/${folder.name}")
-                internalDir.mkdirs()
-
-                val newFile = File(internalDir, newFileName)
-
-                // Copy the file
-                screenshotFile.inputStream().use { input ->
-                    FileOutputStream(newFile).use { output ->
-                        input.copyTo(output)
-                    }
+                val folder = sharedPrefsManager.getFolder(folderId)
+                if (folder == null) {
+                    Log.e(TAG, "Folder not found with ID: $folderId")
+                    return@launch
                 }
 
-                // Create a thumbnail
-                val thumbnailDir = File(filesDir, "thumbnails/${folder.name}")
-                thumbnailDir.mkdirs()
-                val thumbnailFile = File(thumbnailDir, "thumb_$newFileName")
-                createThumbnail(screenshotPath, thumbnailFile.absolutePath)
+                // Check if the screenshot file exists
+                val screenshotFile = JavaFile(screenshotPath)
+                if (!screenshotFile.exists()) {
+                    Log.e(TAG, "Screenshot file does not exist: $screenshotPath")
+                    return@launch
+                }
 
-                // Save to database
-                val screenshot = SimpleScreenshot(
-                    id = sharedPrefsManager.generateScreenshotId(),
-                    filePath = newFile.absolutePath,
-                    thumbnailPath = thumbnailFile.absolutePath,
-                    folderId = folderId,
-                    originalTimestamp = screenshotFile.lastModified()
-                )
+                val timestamp = System.currentTimeMillis()
+                val newFileName = "screenshot_${timestamp}.jpg"
 
-                sharedPrefsManager.addScreenshot(screenshot)
+                // Get the folder directory in external storage
+                val folderDir = sharedPrefsManager.getFolderDirectory(folder.name)
+                if (!folderDir.exists() && !folderDir.mkdirs()) {
+                    Log.e(TAG, "Failed to create folder directory: ${folderDir.absolutePath}")
+                    return@launch
+                }
+
+                val newFile = JavaFile(folderDir, newFileName)
+
+                try {
+                    // Move the file (copy then delete original)
+                    screenshotFile.inputStream().use { input ->
+                        JavaFileOutputStream(newFile).use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+
+                    // Verify the copy was successful
+                    if (newFile.exists() && newFile.length() > 0) {
+                        // Delete the original file
+                        if (!screenshotFile.delete()) {
+                            Log.w(TAG, "Failed to delete original screenshot: $screenshotPath")
+                        }
+                    } else {
+                        Log.e(TAG, "Failed to copy screenshot to: ${newFile.absolutePath}")
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error copying screenshot", e)
+                }
+
+                try {
+                    // Create a thumbnail
+                    val thumbnailDir = JavaFile(filesDir, "thumbnails")
+                    if (!thumbnailDir.exists() && !thumbnailDir.mkdirs()) {
+                        Log.e(TAG, "Failed to create thumbnail directory: ${thumbnailDir.absolutePath}")
+                    }
+
+                    val thumbnailFile = JavaFile(thumbnailDir, "thumb_$newFileName")
+                    val thumbnailCreated = createThumbnail(newFile.absolutePath, thumbnailFile.absolutePath)
+
+                    if (thumbnailCreated) {
+                        // Save to database
+                        val screenshot = SimpleScreenshot(
+                            id = sharedPrefsManager.generateScreenshotId(),
+                            filePath = newFile.absolutePath,
+                            thumbnailPath = thumbnailFile.absolutePath,
+                            folderId = folderId,
+                            originalTimestamp = screenshotFile.lastModified()
+                        )
+
+                        sharedPrefsManager.addScreenshot(screenshot)
+                        Log.d(TAG, "Screenshot saved successfully to ${folder.name} folder")
+                    } else {
+                        Log.e(TAG, "Failed to create thumbnail for: ${newFile.absolutePath}")
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error creating thumbnail or saving screenshot data", e)
+                }
 
                 // Show success message
                 withContext(Dispatchers.Main) {
@@ -374,66 +720,22 @@ class FloatingBubbleService : Service() {
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "Error handling screenshot drop", e)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
                         this@FloatingBubbleService,
                         "Failed to save screenshot: ${e.message}",
                         Toast.LENGTH_SHORT
                     ).show()
+
+                    // Make sure to remove the bubble even if there's an error
+                    removeBubble()
                 }
             }
         }
     }
 
-    /**
-     * Create a thumbnail from the original screenshot
-     */
-    private fun createThumbnail(sourcePath: String, destPath: String) {
-        try {
-            // Load the original bitmap
-            val options = BitmapFactory.Options().apply {
-                inJustDecodeBounds = true
-            }
-            BitmapFactory.decodeFile(sourcePath, options)
 
-            // Calculate sample size
-            options.inSampleSize = calculateInSampleSize(options, 200, 200)
-
-            // Decode with sample size
-            options.inJustDecodeBounds = false
-            val bitmap = BitmapFactory.decodeFile(sourcePath, options)
-
-            // Save the thumbnail
-            FileOutputStream(destPath).use { out ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
-            }
-
-            bitmap.recycle()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    /**
-     * Calculate sample size for bitmap downsampling
-     */
-    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
-        val height = options.outHeight
-        val width = options.outWidth
-        var inSampleSize = 1
-
-        if (height > reqHeight || width > reqWidth) {
-            val halfHeight = height / 2
-            val halfWidth = width / 2
-
-            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2
-            }
-        }
-
-        return inSampleSize
-    }
 
     /**
      * Show a preview of the screenshot
@@ -467,9 +769,295 @@ class FloatingBubbleService : Service() {
     }
 
     /**
+     * Wait for the screenshot file to be ready and then show it
+     */
+    private fun waitForScreenshotAndShow(screenshotPath: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                var retryCount = 0
+                val maxRetries = 10
+                var fileReady = false
+                var finalPath = screenshotPath
+
+                while (!fileReady && retryCount < maxRetries) {
+                    retryCount++
+                    delay(500) // Wait 500ms between checks
+
+                    // Check if the original path exists and has content
+                    val originalFile = JavaFile(screenshotPath)
+                    if (originalFile.exists() && originalFile.length() > 0) {
+                        fileReady = true
+                        finalPath = screenshotPath
+                        Log.d(TAG, "Original screenshot file is now ready: $finalPath")
+                        break
+                    }
+
+                    // If the path contains '.pending', check if a non-pending version exists
+                    if (screenshotPath.contains(".pending")) {
+                        val nonPendingPath = screenshotPath.replace(Regex("[.]pending-[0-9]+"), "")
+                        val nonPendingFile = JavaFile(nonPendingPath)
+
+                        if (nonPendingFile.exists() && nonPendingFile.length() > 0) {
+                            fileReady = true
+                            finalPath = nonPendingPath
+                            Log.d(TAG, "Non-pending screenshot file found: $finalPath")
+                            break
+                        }
+                    }
+
+                    // Check the Screenshots directory for recent files
+                    if (retryCount > 5) {
+                        val screenshotsDir = JavaFile(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES), "Screenshots")
+
+                        if (screenshotsDir.exists() && screenshotsDir.isDirectory) {
+                            val files = screenshotsDir.listFiles()
+                            files?.sortByDescending { it.lastModified() }
+
+                            val recentFile = files?.firstOrNull {
+                                it.isFile && it.length() > 0 &&
+                                System.currentTimeMillis() - it.lastModified() < 10000 // Less than 10 seconds old
+                            }
+
+                            if (recentFile != null) {
+                                fileReady = true
+                                finalPath = recentFile.absolutePath
+                                Log.d(TAG, "Found recent screenshot in Screenshots directory: $finalPath")
+                                break
+                            }
+                        }
+                    }
+
+                    Log.d(TAG, "Waiting for screenshot file to be ready, attempt $retryCount")
+                }
+
+                if (fileReady) {
+                    // Now show the floating bubble with the ready file
+                    handleNewScreenshot(finalPath)
+                } else {
+                    Log.e(TAG, "Failed to get a ready screenshot file after $maxRetries attempts")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error waiting for screenshot", e)
+            }
+        }
+    }
+
+    /**
+     * Find a recent image to test the floating bubble
+     */
+    private fun findRecentImageForTest() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                Log.d(TAG, "Finding recent image for test")
+                val contentResolver = contentResolver
+                val projection = arrayOf(
+                    MediaStore.Images.Media.DISPLAY_NAME,
+                    MediaStore.Images.Media.DATA,
+                    MediaStore.Images.Media.DATE_ADDED
+                )
+
+                // Get the most recent image
+                val selection = "${MediaStore.Images.Media.MIME_TYPE} = ?"
+                val selectionArgs = arrayOf("image/jpeg")
+                val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
+
+                contentResolver.query(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    sortOrder
+                )?.use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val dataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+                        if (dataIndex >= 0) {
+                            val imagePath = cursor.getString(dataIndex)
+                            Log.d(TAG, "Found recent image for test: $imagePath")
+
+                            // Show the floating bubble with this image
+                            withContext(Dispatchers.Main) {
+                                handleNewScreenshot(imagePath)
+                                Toast.makeText(
+                                    this@FloatingBubbleService,
+                                    "Testing with image: $imagePath",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                    } else {
+                        Log.e(TAG, "No images found to test with")
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                this@FloatingBubbleService,
+                                "No images found to test with",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                } ?: run {
+                    Log.e(TAG, "Query returned null cursor")
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@FloatingBubbleService,
+                            "Error accessing images",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error finding recent image for test", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@FloatingBubbleService,
+                        "Error: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    /**
+     * Create a thumbnail from a screenshot
+     */
+    private fun createThumbnail(sourcePath: String, destPath: String): Boolean {
+        try {
+            // Load the original bitmap with options to reduce memory usage
+            val options = BitmapFactory.Options().apply {
+                inSampleSize = 4  // Scale down by factor of 4
+            }
+            val originalBitmap = BitmapFactory.decodeFile(sourcePath, options) ?: return false
+
+            // Create a scaled bitmap for the thumbnail
+            val maxSize = 200
+            val width = originalBitmap.width
+            val height = originalBitmap.height
+            val ratio = Math.min(maxSize.toFloat() / width, maxSize.toFloat() / height)
+
+            val scaledBitmap = Bitmap.createScaledBitmap(
+                originalBitmap,
+                (width * ratio).toInt(),
+                (height * ratio).toInt(),
+                true
+            )
+
+            // Save the thumbnail
+            JavaFileOutputStream(destPath).use { out ->
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out)
+            }
+
+            // Clean up
+            if (scaledBitmap != originalBitmap) {
+                scaledBitmap.recycle()
+            }
+            originalBitmap.recycle()
+
+            return JavaFile(destPath).exists() && JavaFile(destPath).length() > 0
+        } catch (e: Exception) {
+            Log.e(TAG, "Error creating thumbnail", e)
+            return false
+        }
+    }
+
+    /**
+     * Create a circular bitmap from a square bitmap
+     */
+    private fun getCircularBitmap(bitmap: Bitmap): Bitmap {
+        try {
+            // Create a new bitmap with the same dimensions
+            val output = Bitmap.createBitmap(
+                bitmap.width,
+                bitmap.height,
+                Bitmap.Config.ARGB_8888
+            )
+
+            // Create a canvas to draw on the new bitmap
+            val canvas = Canvas(output)
+
+            // Set up the paint
+            val paint = Paint().apply {
+                isAntiAlias = true
+                color = Color.BLACK
+            }
+
+            // Create a rectangle representing the bitmap dimensions
+            val rect = Rect(0, 0, bitmap.width, bitmap.height)
+
+            // Draw a circle on the canvas
+            canvas.drawCircle(
+                bitmap.width / 2f,
+                bitmap.height / 2f,
+                Math.min(bitmap.width, bitmap.height) / 2f, // Use the smaller dimension for perfect circle
+                paint
+            )
+
+            // Set the xfermode to clip the bitmap to the circle
+            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+
+            // Draw the bitmap onto the canvas with the circle mask
+            canvas.drawBitmap(bitmap, rect, rect, paint)
+
+            return output
+        } catch (e: Exception) {
+            Log.e(TAG, "Error creating circular bitmap", e)
+            // Return the original bitmap if there's an error
+            return bitmap
+        }
+    }
+
+    /**
+     * Vibrate the device to provide haptic feedback
+     */
+    private fun vibrateDevice() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+                val vibrator = vibratorManager.defaultVibrator
+                vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                } else {
+                    @Suppress("DEPRECATION")
+                    vibrator.vibrate(100)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Remove the floating bubble
+     */
+    private fun removeBubble() {
+        try {
+            if (::bubbleView.isInitialized) {
+                try {
+                    windowManager.removeView(bubbleView)
+                    Log.d(TAG, "Removed bubble view from window manager")
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error removing bubble view", e)
+                }
+            }
+
+            // Don't stop the service - we want it to keep running to detect more screenshots
+            // Just clear the current screenshot path so we're ready for the next one
+            currentScreenshotPath = null
+            Log.d(TAG, "Bubble removed, service continues running")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in removeBubble", e)
+        }
+    }
+
+    /**
      * Create the foreground service notification
      */
     private fun createNotification(): Notification {
+        // Intent to open the app
         val pendingIntent = PendingIntent.getActivity(
             this,
             0,
@@ -477,12 +1065,27 @@ class FloatingBubbleService : Service() {
             PendingIntent.FLAG_IMMUTABLE
         )
 
+        // Intent to restart the service
+        val restartIntent = Intent(this, FloatingBubbleService::class.java).apply {
+            action = ACTION_RESTART_SERVICE
+        }
+        val restartPendingIntent = PendingIntent.getService(
+            this,
+            1,
+            restartIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("PixelFlow")
-            .setContentText("Monitoring for screenshots")
+            .setContentTitle("PixelFlow is running")
+            .setContentText("Monitoring for screenshots and ready to organize them")
             .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setOngoing(true)
+            .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .addAction(R.drawable.ic_notification, "Restart Detection", restartPendingIntent)
             .build()
     }
 }

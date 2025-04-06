@@ -2,6 +2,7 @@ package com.aks_labs.pixelflow.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Environment
 import com.aks_labs.pixelflow.data.models.SimpleFolder
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
 
 /**
  * Manager for storing and retrieving data using SharedPreferences
@@ -28,10 +30,41 @@ class SharedPrefsManager(context: Context) {
     val screenshots: Flow<List<SimpleScreenshot>> = _screenshots.asStateFlow()
     val screenshotsValue: List<SimpleScreenshot> get() = _screenshots.value
 
+    // App directory
+    private val appDirectory: File
+
     init {
+        // Create app directory
+        appDirectory = createAppDirectory()
+
         // Load initial data
         loadFolders()
         loadScreenshots()
+    }
+
+    /**
+     * Create the main app directory and folder subdirectories
+     */
+    private fun createAppDirectory(): File {
+        val baseDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val appDir = File(baseDir, "PixelFlow")
+
+        if (!appDir.exists()) {
+            appDir.mkdirs()
+        }
+
+        return appDir
+    }
+
+    /**
+     * Get the folder directory for a specific folder
+     */
+    fun getFolderDirectory(folderName: String): File {
+        val folderDir = File(appDirectory, folderName)
+        if (!folderDir.exists()) {
+            folderDir.mkdirs()
+        }
+        return folderDir
     }
 
     /**
@@ -269,15 +302,24 @@ class SharedPrefsManager(context: Context) {
     fun initializeDefaultFolders() {
         if (_folders.value.isEmpty()) {
             val defaultFolders = listOf(
-                SimpleFolder(id = 1, name = "Quotes", iconName = "ic_quotes", position = 0, isDefault = true),
-                SimpleFolder(id = 2, name = "Tricks", iconName = "ic_tricks", position = 1, isDefault = true),
-                SimpleFolder(id = 3, name = "Images", iconName = "ic_images", position = 2, isDefault = true),
-                SimpleFolder(id = 4, name = "Posts", iconName = "ic_posts", position = 3, isDefault = true),
-                SimpleFolder(id = 5, name = "Trash", iconName = "ic_trash", position = 4, isDefault = true)
+                SimpleFolder(id = 1, name = "Quotes", iconName = "ic_quotes", position = 0, isDefault = true, isEditable = true, isRemovable = false),
+                SimpleFolder(id = 2, name = "Tricks", iconName = "ic_tricks", position = 1, isDefault = true, isEditable = true, isRemovable = false),
+                SimpleFolder(id = 3, name = "Images", iconName = "ic_images", position = 2, isDefault = true, isEditable = true, isRemovable = false),
+                SimpleFolder(id = 4, name = "Posts", iconName = "ic_posts", position = 3, isDefault = true, isEditable = true, isRemovable = false),
+                SimpleFolder(id = 5, name = "Trash", iconName = "ic_trash", position = 4, isDefault = true, isEditable = true, isRemovable = false)
             )
 
             _folders.value = defaultFolders
             saveFolders()
+        }
+
+        // Always ensure physical folders exist for all folders (including defaults)
+        // This ensures folders are created even if the app is restarted
+        _folders.value.forEach { folder ->
+            val folderDir = getFolderDirectory(folder.name)
+            if (!folderDir.exists()) {
+                folderDir.mkdirs()
+            }
         }
     }
 

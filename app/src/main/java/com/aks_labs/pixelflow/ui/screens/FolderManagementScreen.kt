@@ -96,9 +96,9 @@ fun FolderManagementScreen(
                 items(folders) { folder ->
                     FolderItem(
                         folder = folder,
-                        onEdit = { editingFolder = folder },
+                        onEdit = { if (folder.isEditable) editingFolder = folder },
                         onDelete = {
-                            if (!folder.isDefault) {
+                            if (folder.isRemovable) {
                                 viewModel.deleteFolder(folder)
                             }
                         }
@@ -186,22 +186,26 @@ fun FolderItem(
             )
 
             // Edit button
-            IconButton(onClick = onEdit) {
+            IconButton(
+                onClick = onEdit,
+                enabled = folder.isEditable
+            ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = stringResource(id = R.string.edit_folder)
+                    contentDescription = stringResource(id = R.string.edit_folder),
+                    tint = if (folder.isEditable) MaterialTheme.colorScheme.primary else Color.Gray
                 )
             }
 
-            // Delete button (disabled for default folders)
+            // Delete button (disabled for non-removable folders)
             IconButton(
                 onClick = onDelete,
-                enabled = !folder.isDefault
+                enabled = folder.isRemovable
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = stringResource(id = R.string.delete_folder),
-                    tint = if (folder.isDefault) Color.Gray else MaterialTheme.colorScheme.error
+                    tint = if (folder.isRemovable) MaterialTheme.colorScheme.error else Color.Gray
                 )
             }
         }
