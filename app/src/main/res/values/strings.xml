@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">PixelFlow</string>
+
+    <!-- Permissions -->
+    <string name="permission_rationale">PixelFlow needs access to your storage to detect and manage screenshots.</string>
+    <string name="overlay_permission_rationale">PixelFlow needs permission to draw over other apps to show the floating bubble.</string>
+
+    <!-- Floating Bubble -->
+    <string name="screenshot_bubble">Screenshot Bubble</string>
+    <string name="screenshot_moved">Screenshot successfully moved to %1$s</string>
+
+    <!-- Folders -->
+    <string name="folder_quotes">Quotes</string>
+    <string name="folder_tricks">Tricks</string>
+    <string name="folder_images">Images</string>
+    <string name="folder_posts">Posts</string>
+    <string name="folder_trash">Trash</string>
+    <string name="add_folder">Add Folder</string>
+    <string name="edit_folder">Edit Folder</string>
+    <string name="delete_folder">Delete Folder</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="enable_floating_bubble">Enable Floating Bubble</string>
+    <string name="manage_folders">Manage Folders</string>
+    <string name="screenshot_history">Screenshot History</string>
+</resources>
