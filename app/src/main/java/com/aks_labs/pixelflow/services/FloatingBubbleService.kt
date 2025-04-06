@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import androidx.cardview.widget.CardView
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -34,6 +35,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.animation.ValueAnimator
 import android.widget.ImageView
@@ -356,6 +358,12 @@ class FloatingBubbleService : Service() {
         try {
             // Set the screenshot as the bubble image
             val bubbleImageView = bubbleView.findViewById<ImageView>(R.id.bubble_image)
+            val bubbleCard = bubbleView.findViewById<CardView>(R.id.bubble_card)
+
+            // Apply initial animation
+            bubbleView.alpha = 0f
+            bubbleView.scaleX = 0.5f
+            bubbleView.scaleY = 0.5f
 
             // Check if the screenshot file exists
             val screenshotFile = File(screenshotPath)
@@ -377,9 +385,8 @@ class FloatingBubbleService : Service() {
                 return
             }
 
-            // Create a circular bitmap
-            val circularBitmap = getCircularBitmap(bitmap)
-            bubbleImageView.setImageBitmap(circularBitmap)
+            // Set the bitmap directly (CardView handles the circular shape)
+            bubbleImageView.setImageBitmap(bitmap)
         } catch (e: Exception) {
             Log.e(TAG, "Error setting bubble image", e)
             stopSelf()
@@ -405,6 +412,15 @@ class FloatingBubbleService : Service() {
 
         // Add the bubble to the window
         windowManager.addView(bubbleView, params)
+
+        // Animate the bubble entrance
+        bubbleView.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(300)
+            .setInterpolator(OvershootInterpolator(1.5f))
+            .start()
 
         // Set up touch listener for dragging
         setupBubbleTouchListener(bubbleView, params)
@@ -451,24 +467,26 @@ class FloatingBubbleService : Service() {
 
                     if (isDragging) {
                         // Calculate new position with bounds checking
-                        params.x = (initialX + dx.toInt()).coerceIn(0, width - view.width)
-                        params.y = (initialY + dy.toInt()).coerceIn(0, height - view.height)
+                        var newX = (initialX + dx.toInt()).coerceIn(0, width - view.width)
+                        var newY = (initialY + dy.toInt()).coerceIn(0, height - view.height)
 
-                        // Add a bigger scale effect while dragging
-                        view.animate()
-                            .scaleX(1.3f)
-                            .scaleY(1.3f)
-                            .setDuration(100)
-                            .start()
-
-                        // Update the bubble position
-                        windowManager.updateViewLayout(view, params)
-
-                        // Check if bubble is over any drag zone
+                        // Check for magnetic attraction to drag zones
                         if (::dragZonesView.isInitialized) {
                             val dragZone = dragZonesView.findViewById<CircularDragZone>(R.id.circular_drag_zone)
-                            val folderId = dragZone?.getFolderIdAt(event.rawX, event.rawY)
 
+                            // Highlight the zone the bubble is over or near
+                            dragZone?.highlightZoneAt(event.rawX, event.rawY)
+
+                            // Get magnetic attraction point if applicable
+                            val magneticPoint = dragZone?.getMagneticPoint(event.rawX, event.rawY)
+                            if (magneticPoint != null) {
+                                // Apply magnetic attraction
+                                newX = (magneticPoint.x - view.width / 2).toInt().coerceIn(0, width - view.width)
+                                newY = (magneticPoint.y - view.height / 2).toInt().coerceIn(0, height - view.height)
+                            }
+
+                            // Check if bubble is over any drag zone
+                            val folderId = dragZone?.getFolderIdAt(event.rawX, event.rawY)
                             if (folderId != null) {
                                 // Shrink when over a drop zone
                                 view.animate()
@@ -476,10 +494,43 @@ class FloatingBubbleService : Service() {
                                     .scaleY(0.9f)
                                     .setDuration(100)
                                     .start()
-                            }
+                            } else {
+                                // Add a bigger scale effect while dragging with material design elevation
+                                // Scale by 5dp (from 90dp to 95dp)
+                                view.animate()
+                                    .scaleX(1.055f) // 95/90 = 1.055
+                                    .scaleY(1.055f)
+                                    .setDuration(150)
+                                    .start()
 
-                            dragZone?.highlightZoneAt(event.rawX, event.rawY)
+                                // Increase elevation for dragging effect
+                                val bubbleCard = view.findViewById<CardView>(R.id.bubble_card)
+                                bubbleCard.animate()
+                                    .translationZ(16f)
+                                    .setDuration(150)
+                                    .start()
+                            }
+                        } else {
+                            // Add a bigger scale effect while dragging with material design elevation
+                            // Scale by 5dp (from 90dp to 95dp)
+                            view.animate()
+                                .scaleX(1.055f) // 95/90 = 1.055
+                                .scaleY(1.055f)
+                                .setDuration(150)
+                                .start()
+
+                            // Increase elevation for dragging effect
+                            val bubbleCard = view.findViewById<CardView>(R.id.bubble_card)
+                            bubbleCard.animate()
+                                .translationZ(16f)
+                                .setDuration(150)
+                                .start()
                         }
+
+                        // Update the bubble position
+                        params.x = newX
+                        params.y = newY
+                        windowManager.updateViewLayout(view, params)
                     }
                     true
                 }
@@ -491,6 +542,13 @@ class FloatingBubbleService : Service() {
                         .scaleY(1.0f)
                         .setDuration(200)
                         .setInterpolator(OvershootInterpolator(1.2f))
+                        .start()
+
+                    // Reset elevation
+                    val bubbleCard = view.findViewById<CardView>(R.id.bubble_card)
+                    bubbleCard.animate()
+                        .translationZ(0f)
+                        .setDuration(200)
                         .start()
 
                     if (!isDragging) {
@@ -507,12 +565,16 @@ class FloatingBubbleService : Service() {
                                 // Vibrate to provide feedback
                                 vibrateDevice()
 
+                                // Animate the drop zone
+                                dragZone.animateZone(dragZone.highlightedZoneIndex)
+
                                 // Handle screenshot drop on folder with success animation
                                 view.animate()
                                     .alpha(0.0f)
                                     .scaleX(0.0f)
                                     .scaleY(0.0f)
                                     .setDuration(300)
+                                    .setInterpolator(AccelerateInterpolator())
                                     .withEndAction {
                                         handleScreenshotDrop(folderId)
                                         removeBubble()
@@ -523,8 +585,14 @@ class FloatingBubbleService : Service() {
                                 snapToEdge(view, params)
                             }
 
-                            // Hide drag zones
-                            hideDragZones()
+                            // Hide drag zones with fade out animation
+                            dragZonesView.animate()
+                                .alpha(0.0f)
+                                .setDuration(200)
+                                .withEndAction {
+                                    hideDragZones()
+                                }
+                                .start()
                             showingDragZones = false
                         } else {
                             // Snap to edge if drag zones aren't initialized
@@ -584,6 +652,9 @@ class FloatingBubbleService : Service() {
         // Inflate the drag zones layout
         dragZonesView = LayoutInflater.from(this).inflate(R.layout.circular_drag_zones, null)
 
+        // Set initial alpha for animation
+        dragZonesView.alpha = 0f
+
         // Set up window parameters for the drag zones
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
@@ -599,6 +670,12 @@ class FloatingBubbleService : Service() {
 
         // Add the drag zones to the window
         windowManager.addView(dragZonesView, params)
+
+        // Animate the drag zones entrance
+        dragZonesView.animate()
+            .alpha(1f)
+            .setDuration(200)
+            .start()
 
         // Set up the folders in the drag zone
         val dragZone = dragZonesView.findViewById<CircularDragZone>(R.id.circular_drag_zone)

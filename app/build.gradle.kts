@@ -55,6 +55,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
+    // Material Design components
+    implementation("com.google.android.material:material:1.9.0")
+
     // We'll use SharedPreferences instead of Room
 
     // DataStore Preferences

@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="2dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="90dp"
+    android:layout_height="90dp">
 
-    <ImageView
-        android:id="@+id/bubble_image"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:scaleType="centerCrop"
-        android:contentDescription="@string/screenshot_bubble" />
+    <!-- Using a shape drawable with a perfect circle shape -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bubble_card"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_gravity="center"
+        app:cardCornerRadius="45dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardPreventCornerOverlap="true">
+
+        <!-- Using a fixed size with clipToOutline to ensure perfect circle -->
+        <ImageView
+            android:id="@+id/bubble_image"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true"
+            android:contentDescription="@string/screenshot_bubble" />
+
+    </androidx.cardview.widget.CardView>
 
 </FrameLayout>
