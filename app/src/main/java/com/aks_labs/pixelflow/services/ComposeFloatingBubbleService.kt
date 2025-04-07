@@ -405,7 +405,7 @@ class ComposeFloatingBubbleService : Service() {
             }
 
             // Create a CardView to make it circular
-            val cardView = com.google.android.material.card.MaterialCardView(this).apply {
+            val cardView = androidx.cardview.widget.CardView(this).apply {
                 radius = 45.dp.toPx() // 90dp diameter / 2
                 cardElevation = 4.dp.toPx()
                 setCardBackgroundColor(android.graphics.Color.WHITE)
