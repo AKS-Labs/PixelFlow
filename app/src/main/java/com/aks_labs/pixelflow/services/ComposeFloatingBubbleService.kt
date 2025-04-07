@@ -589,21 +589,35 @@ class ComposeFloatingBubbleService : Service() {
      * Checks if the bubble is over any drag zones and highlights the appropriate one.
      */
     private fun checkDragZoneHighlight(x: Float, y: Float): Int {
-        // Default to no highlight
-        var highlightedIndex = -1
+        // Calculate which zone is under the bubble
+        val zoneIndex = calculateZoneIndex(x, y)
+
+        // Update the drag zone state if the highlight changed
+        if (zoneIndex != dragZoneState.value.highlightedIndex) {
+            dragZoneState.value = dragZoneState.value.copy(highlightedIndex = zoneIndex)
+        }
+
+        return zoneIndex
+    }
+
+    /**
+     * Calculates which zone is under the given coordinates.
+     */
+    private fun calculateZoneIndex(x: Float, y: Float): Int {
+        if (folders.isEmpty()) return -1
+
+        // Calculate zone positions
+        val centerX = width / 2f
+        val centerY = height - 200f
+        val centerDistance = minOf(width, height) * 0.4f
+
+        val folderCount = folders.size
+        val angleRange = if (folderCount <= 5) 180f else 270f
+        val startAngle = if (folderCount <= 5) 180f else 135f
+        val angleStep = angleRange / folderCount
 
         // Check each zone
-        folders.forEachIndexed { index, folder ->
-            // Calculate zone position (this is a simplified version)
-            val centerX = width / 2f
-            val centerY = height - 200f
-            val centerDistance = minOf(width, height) * 0.4f
-
-            val folderCount = folders.size
-            val angleRange = if (folderCount <= 5) 180f else 270f
-            val startAngle = if (folderCount <= 5) 180f else 135f
-            val angleStep = angleRange / folderCount
-
+        folders.forEachIndexed { index, _ ->
             val angleInDegrees = startAngle + index * angleStep
             val angleInRadians = Math.toRadians(angleInDegrees.toDouble())
 
@@ -612,16 +626,11 @@ class ComposeFloatingBubbleService : Service() {
 
             // Check if the point is in the zone
             if (isPointInFlowerShape(x, y, zoneX, zoneY, 130f)) {
-                highlightedIndex = index
+                return index
             }
         }
 
-        // Update the drag zone state if the highlight changed
-        if (highlightedIndex != dragZoneState.value.highlightedIndex) {
-            dragZoneState.value = dragZoneState.value.copy(highlightedIndex = highlightedIndex)
-        }
-
-        return highlightedIndex
+        return -1
     }
 
     /**
@@ -648,19 +657,23 @@ class ComposeFloatingBubbleService : Service() {
                 highlightedIndex = -1
             )
 
-            // Create a traditional CircularDragZone view
-            val dragZone = com.aks_labs.pixelflow.ui.components.CircularDragZone(this)
-            dragZone.setFolders(folders)
+            // Create a ComposeView with the CircularDragZone
+            val composeView = android.view.View.inflate(this, R.layout.compose_view_container, null) as androidx.constraintlayout.widget.ConstraintLayout
+            val composeViewContainer = composeView.findViewById<androidx.compose.ui.platform.ComposeView>(R.id.compose_view)
 
-            // Create a container for the drag zone
-            val container = android.widget.FrameLayout(this)
-            container.addView(dragZone, android.widget.FrameLayout.LayoutParams(
-                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
-                android.widget.FrameLayout.LayoutParams.MATCH_PARENT
-            ))
+            // Set the content with the CircularDragZone
+            composeViewContainer.setContent {
+                androidx.compose.material3.MaterialTheme {
+                    com.aks_labs.pixelflow.ui.components.compose.CircularDragZone(
+                        folders = folders,
+                        highlightedIndex = dragZoneState.value.highlightedIndex,
+                        onFolderSelected = { folderId -> handleScreenshotDrop(folderId) }
+                    )
+                }
+            }
 
             // Store the view
-            dragZonesView = container
+            dragZonesView = composeView
 
             // Set up window parameters for the drag zones
             val params = WindowManager.LayoutParams(
