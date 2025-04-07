@@ -55,7 +55,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    // Material Design components
+    // Material Design components - keeping for backward compatibility during migration
     implementation("com.google.android.material:material:1.9.0")
 
     // We'll use SharedPreferences instead of Room
@@ -68,6 +68,30 @@ dependencies {
 
     // Image Loading
     implementation(libs.coil.compose)
+
+    // Accompanist libraries for Compose
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
+    implementation("com.google.accompanist:accompanist-permissions:0.30.1")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.30.1")
+
+    // Compose Window Insets
+    implementation("androidx.compose.foundation:foundation:1.4.3")
+
+    // Compose ConstraintLayout
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+
+    // Compose Animation
+    implementation("androidx.compose.animation:animation:1.4.3")
+
+    // Lifecycle components
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.6.2")
+
+    // SavedState
+    implementation("androidx.savedstate:savedstate:1.2.1")
+    implementation("androidx.savedstate:savedstate-ktx:1.2.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

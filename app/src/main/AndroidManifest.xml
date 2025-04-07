@@ -42,9 +42,17 @@
             </intent-filter>
         </activity>
 
-        <!-- Service for screenshot detection and floating bubble -->
+        <!-- Service for screenshot detection and floating bubble (XML-based) -->
         <service
             android:name=".services.FloatingBubbleService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync"
+            android:stopWithTask="false" />
+
+        <!-- Service for screenshot detection and floating bubble (Compose-based) -->
+        <service
+            android:name=".services.ComposeFloatingBubbleService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync"
