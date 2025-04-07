@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -41,7 +42,9 @@ fun FloatingBubble(
     size: Dp = 90.dp,
     isDragging: Boolean = false,
     onClick: () -> Unit = {},
-    onDrag: (androidx.compose.ui.geometry.Offset) -> Unit = {}
+    onDrag: (androidx.compose.ui.geometry.Offset) -> Unit = {},
+    onDragStart: () -> Unit = {},
+    onDragEnd: () -> Unit = {}
 ) {
     // Animate the scale when dragging
     val scale by animateFloatAsState(
@@ -52,30 +55,34 @@ fun FloatingBubble(
         ),
         label = "bubbleScale"
     )
-    
+
     // Animate the elevation when dragging
     val elevation by animateDpAsState(
         targetValue = if (isDragging) 8.dp else 4.dp,
         animationSpec = tween(150),
         label = "bubbleElevation"
     )
-    
+
     // Create the card with a circular shape
     Card(
         modifier = Modifier
             .size(size * scale)
             .pointerInput(Unit) {
                 detectDragGestures(
-                    onDragStart = { /* Handle drag start */ },
-                    onDragEnd = { /* Handle drag end */ },
-                    onDragCancel = { /* Handle drag cancel */ },
+                    onDragStart = { onDragStart() },
+                    onDragEnd = { onDragEnd() },
+                    onDragCancel = { onDragEnd() },
                     onDrag = { change, dragAmount ->
                         change.consume()
                         onDrag(dragAmount)
                     }
                 )
             }
-            .clickable { onClick() },
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = { onClick() }
+                )
+            },
         shape = CircleShape,
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
         colors = CardDefaults.cardColors(containerColor = Color.White)

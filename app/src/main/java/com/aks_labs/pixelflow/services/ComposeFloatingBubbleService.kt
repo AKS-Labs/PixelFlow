@@ -18,6 +18,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.provider.Settings
 import android.util.Log
+
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -93,6 +94,7 @@ class ComposeFloatingBubbleService : Service() {
     // Views
     private var bubbleView: View? = null
     private var dragZonesView: View? = null
+    private var previewView: View? = null
 
     // State for Compose
     private val bubbleState = mutableStateOf(BubbleState())
@@ -398,34 +400,47 @@ class ComposeFloatingBubbleService : Service() {
                 isDragging = false
             )
 
-            // Create a simple ImageView instead of using Compose
-            val imageView = android.widget.ImageView(this).apply {
-                setImageBitmap(bitmap)
-                scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
-            }
+            // Create a ComposeView with the FloatingBubble
+            val composeView = android.view.View.inflate(this, R.layout.compose_view_container, null) as androidx.constraintlayout.widget.ConstraintLayout
+            val composeViewContainer = composeView.findViewById<androidx.compose.ui.platform.ComposeView>(R.id.compose_view)
 
-            // Create a CardView to make it circular
-            val cardView = androidx.cardview.widget.CardView(this).apply {
-                radius = 45.dp.toPx() // 90dp diameter / 2
-                cardElevation = 4.dp.toPx()
-                setCardBackgroundColor(android.graphics.Color.WHITE)
-                addView(imageView, android.widget.FrameLayout.LayoutParams(
-                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
-                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT
-                ))
-            }
-
-            // Create the root view
-            val rootView = android.widget.FrameLayout(this).apply {
-                addView(cardView, android.widget.FrameLayout.LayoutParams(
-                    90.dp.toPx().toInt(), // 90dp size
-                    90.dp.toPx().toInt(),
-                    android.view.Gravity.CENTER
-                ))
+            // Set the content with the FloatingBubble
+            composeViewContainer.setContent {
+                androidx.compose.material3.MaterialTheme {
+                    com.aks_labs.pixelflow.ui.components.compose.FloatingBubble(
+                        screenshotBitmap = bitmap,
+                        size = androidx.compose.ui.unit.Dp(90f),
+                        isDragging = bubbleState.value.isDragging,
+                        onClick = { showScreenshotPreview() },
+                        onDrag = { offset -> handleBubbleDrag(offset) },
+                        onDragStart = {
+                            bubbleState.value = bubbleState.value.copy(isDragging = true)
+                            if (!showingDragZones) {
+                                showDragZones()
+                                showingDragZones = true
+                            }
+                        },
+                        onDragEnd = {
+                            bubbleState.value = bubbleState.value.copy(isDragging = false)
+                            if (showingDragZones) {
+                                // Check if we dropped on a zone
+                                val params = bubbleView?.layoutParams as? WindowManager.LayoutParams
+                                if (params != null) {
+                                    val droppedFolderId = checkDroppedOnZone(params.x.toFloat(), params.y.toFloat())
+                                    if (droppedFolderId != null) {
+                                        handleScreenshotDrop(droppedFolderId)
+                                    }
+                                }
+                                hideDragZones()
+                                showingDragZones = false
+                            }
+                        }
+                    )
+                }
             }
 
             // Store the view
-            bubbleView = rootView
+            bubbleView = composeView
 
             // Set up window parameters for the bubble
             val params = WindowManager.LayoutParams(
@@ -524,65 +539,193 @@ class ComposeFloatingBubbleService : Service() {
      * Sets up the touch listener for the bubble.
      */
     private fun setupBubbleTouchListener(view: View, params: WindowManager.LayoutParams) {
-        val touchHandler = TouchHandler(
-            windowManager = windowManager,
-            screenWidth = width,
-            screenHeight = height,
-            onDragStart = {
-                // Update state
-                bubbleState.value = bubbleState.value.copy(isDragging = true)
-
-                // Show drag zones
-                if (!showingDragZones) {
-                    showDragZones()
-                    showingDragZones = true
-                }
-            },
-            onDragEnd = {
-                // Update state
-                bubbleState.value = bubbleState.value.copy(isDragging = false)
-
-                // Hide drag zones
-                if (showingDragZones) {
-                    hideDragZones()
-                    showingDragZones = false
-                }
-            },
-            onDragMove = { x, y ->
-                // Check if we're over any drag zones
-                checkDragZoneHighlight(x, y)
-            },
-            onClick = {
-                showScreenshotPreview()
-            },
-            onDrop = { x, y ->
-                // Check if we dropped on a drag zone
-                val droppedFolderId = checkDroppedOnZone(x, y)
-                if (droppedFolderId != null) {
-                    handleScreenshotDrop(droppedFolderId)
-                }
-            }
-        )
-
-        touchHandler.setupTouchListener(view, params)
+        // We're now handling touch events in the Compose component
+        // This method is kept for compatibility with the existing code
+        // No need to set up touch listeners as they're handled in the Compose component
     }
 
     /**
      * Handles dragging of the bubble.
      */
     private fun handleBubbleDrag(offset: Offset) {
-        // This is handled by the TouchHandler
+        if (bubbleView == null) return
+
+        // Get the current layout parameters
+        val params = bubbleView?.layoutParams as? WindowManager.LayoutParams ?: return
+
+        // Update the position
+        params.x += offset.x.toInt()
+        params.y += offset.y.toInt()
+
+        // Ensure the bubble stays within screen bounds
+        params.x = params.x.coerceIn(0, width - 200)
+        params.y = params.y.coerceIn(0, height - 200)
+
+        // Update the view
+        windowManager.updateViewLayout(bubbleView, params)
+
+        // Check if we're over any drag zones
+        checkDragZoneHighlight(params.x.toFloat(), params.y.toFloat())
     }
 
     /**
      * Shows the screenshot preview.
      */
     private fun showScreenshotPreview() {
-        // For now, just log that the preview was requested
-        Log.d(TAG, "Screenshot preview requested")
+        try {
+            // Log that the preview was requested
+            Log.d(TAG, "Screenshot preview requested")
 
-        // In a full implementation, this would show a larger preview of the screenshot
-        // with options to edit, share, or delete it
+            // Create a ComposeView with the ScreenshotPreview
+            val composeView = android.view.View.inflate(this, R.layout.compose_view_container, null) as androidx.constraintlayout.widget.ConstraintLayout
+            val composeViewContainer = composeView.findViewById<androidx.compose.ui.platform.ComposeView>(R.id.compose_view)
+
+            // Set the content with the ScreenshotPreview
+            composeViewContainer.setContent {
+                androidx.compose.material3.MaterialTheme {
+                    com.aks_labs.pixelflow.ui.components.compose.ScreenshotPreview(
+                        isVisible = true,
+                        screenshotBitmap = bubbleState.value.bitmap,
+                        onClose = { hideScreenshotPreview() },
+                        onShare = { shareScreenshot() },
+                        onEdit = { editScreenshot() },
+                        onDelete = { deleteScreenshot() }
+                    )
+                }
+            }
+
+            // Store the view
+            previewView = composeView
+
+            // Set up window parameters for the preview
+            val params = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                if (Build.VERSION.SDK_INT >= 26)
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+                else
+                    WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT
+            )
+
+            // Add the preview to the window
+            windowManager.addView(previewView, params)
+
+            // Hide the bubble while showing the preview
+            hideBubble()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error showing screenshot preview", e)
+        }
+    }
+
+    /**
+     * Hides the screenshot preview.
+     */
+    private fun hideScreenshotPreview() {
+        try {
+            if (previewView != null) {
+                windowManager.removeView(previewView)
+                previewView = null
+            }
+
+            // Show the bubble again
+            showBubble()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error hiding screenshot preview", e)
+        }
+    }
+
+    /**
+     * Shows the bubble again after it was hidden.
+     */
+    private fun showBubble() {
+        if (bubbleView != null || currentScreenshotPath == null) return
+
+        // Show the bubble with the current screenshot
+        showFloatingBubble(currentScreenshotPath!!)
+    }
+
+    /**
+     * Hides the bubble temporarily.
+     */
+    private fun hideBubble() {
+        try {
+            if (bubbleView != null) {
+                windowManager.removeView(bubbleView)
+                bubbleView = null
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error hiding bubble", e)
+        }
+    }
+
+    /**
+     * Shares the current screenshot.
+     */
+    private fun shareScreenshot() {
+        val screenshotPath = currentScreenshotPath ?: return
+
+        // Create a share intent
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "image/png"
+
+        // Get the file URI
+        val fileUri = androidx.core.content.FileProvider.getUriForFile(
+            this,
+            "${packageName}.fileprovider",
+            java.io.File(screenshotPath)
+        )
+
+        // Add the URI to the intent
+        shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+        // Create a chooser and start it
+        val chooserIntent = Intent.createChooser(shareIntent, "Share Screenshot")
+        chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(chooserIntent)
+
+        // Hide the preview
+        hideScreenshotPreview()
+    }
+
+    /**
+     * Edits the current screenshot.
+     */
+    private fun editScreenshot() {
+        // For now, just log that the edit was requested
+        Log.d(TAG, "Screenshot edit requested")
+
+        // Hide the preview
+        hideScreenshotPreview()
+    }
+
+    /**
+     * Deletes the current screenshot.
+     */
+    private fun deleteScreenshot() {
+        val screenshotPath = currentScreenshotPath ?: return
+
+        // Delete the file
+        val file = java.io.File(screenshotPath)
+        if (file.exists()) {
+            if (file.delete()) {
+                Log.d(TAG, "Screenshot deleted: $screenshotPath")
+
+                // Notify the media scanner about the deleted file
+                val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+                val contentUri = android.net.Uri.fromFile(file)
+                mediaScanIntent.data = contentUri
+                sendBroadcast(mediaScanIntent)
+            } else {
+                Log.e(TAG, "Failed to delete screenshot: $screenshotPath")
+            }
+        }
+
+        // Hide the preview and bubble
+        hideScreenshotPreview()
+        hideBubble()
     }
 
     /**
