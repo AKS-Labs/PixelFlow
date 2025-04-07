@@ -27,8 +27,8 @@ class ComposeCircularDragZone @JvmOverloads constructor(
     private var onFolderSelectedListener: ((Long) -> Unit)? = null
 
     init {
-        // Create an AndroidComposeView with proper lifecycle management
-        val composeView = com.aks_labs.pixelflow.ui.components.compose.AndroidComposeView.create(context) {
+        // Create a ServiceComposeView with proper lifecycle management
+        val composeView = com.aks_labs.pixelflow.ui.components.compose.ServiceComposeView.create(context) {
             CircularDragZone(
                 folders = folders.value,
                 highlightedIndex = highlightedIndex.value,

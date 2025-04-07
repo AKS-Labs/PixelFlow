@@ -2,7 +2,6 @@ package com.aks_labs.pixelflow.ui.components.compose
 
 import android.content.Context
 import android.view.View
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 
 /**
@@ -15,13 +14,9 @@ object ComposeViewFactory {
      *
      * @param context The context to create the view with
      * @param content The composable content to display
-     * @return A properly configured AndroidComposeView
+     * @return A properly configured ServiceComposeView
      */
     fun createComposeView(context: Context, content: @Composable () -> Unit): View {
-        return AndroidComposeView.create(context) {
-            MaterialTheme {
-                content()
-            }
-        }
+        return ServiceComposeView.create(context, content)
     }
 }

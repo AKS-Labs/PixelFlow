@@ -17,10 +17,10 @@ import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 
 /**
- * A custom ComposeView implementation for use in a Service context.
- * This class provides a proper lifecycle for Compose in a Service.
+ * A wrapper for ComposeView that can be used in a Service context.
+ * This class provides proper lifecycle management for Compose in a Service.
  */
-class AndroidComposeView private constructor(context: Context) {
+class ServiceComposeView private constructor(context: Context) {
 
     private val lifecycleOwner = ServiceLifecycleOwner()
     private val frameLayout = FrameLayout(context)
@@ -100,12 +100,12 @@ class AndroidComposeView private constructor(context: Context) {
 
     companion object {
         /**
-         * Creates a new AndroidComposeView with the given content.
+         * Creates a new ServiceComposeView with the given content.
          */
         fun create(context: Context, content: @Composable () -> Unit): View {
-            val androidComposeView = AndroidComposeView(context)
-            androidComposeView.setContent(content)
-            return androidComposeView.getView()
+            val serviceComposeView = ServiceComposeView(context)
+            serviceComposeView.setContent(content)
+            return serviceComposeView.getView()
         }
     }
 }
