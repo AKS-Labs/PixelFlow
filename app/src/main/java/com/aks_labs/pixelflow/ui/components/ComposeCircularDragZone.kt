@@ -18,59 +18,54 @@ class ComposeCircularDragZone @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
-    
+
     // State for the Composable
     private val folders = mutableStateOf<List<SimpleFolder>>(emptyList())
     private val highlightedIndex = mutableStateOf(-1)
-    
+
     // Callback for folder selection
     private var onFolderSelectedListener: ((Long) -> Unit)? = null
-    
-    // ComposeView for hosting the Composable
-    private val composeView: ComposeView
-    
+
     init {
-        // Inflate the layout
-        val view = LayoutInflater.from(context).inflate(R.layout.compose_view_container, this, true)
-        
-        // Get the ComposeView
-        composeView = view.findViewById(R.id.compose_view)
-        
-        // Set the content
-        composeView.setContent {
-            androidx.compose.material3.MaterialTheme {
-                CircularDragZone(
-                    folders = folders.value,
-                    highlightedIndex = highlightedIndex.value,
-                    onFolderSelected = { folderId ->
-                        onFolderSelectedListener?.invoke(folderId)
-                    }
-                )
-            }
+        // Create a ComposeView with proper lifecycle owners
+        val composeView = com.aks_labs.pixelflow.ui.components.compose.ComposeViewFactory.createComposeView(context) {
+            CircularDragZone(
+                folders = folders.value,
+                highlightedIndex = highlightedIndex.value,
+                onFolderSelected = { folderId ->
+                    onFolderSelectedListener?.invoke(folderId)
+                }
+            )
         }
+
+        // Add the ComposeView to this layout
+        addView(composeView, LayoutParams(
+            LayoutParams.MATCH_PARENT,
+            LayoutParams.MATCH_PARENT
+        ))
     }
-    
+
     /**
      * Sets the folders to display.
      */
     fun setFolders(newFolders: List<SimpleFolder>) {
         folders.value = newFolders
     }
-    
+
     /**
      * Sets the highlighted zone index.
      */
     fun setHighlightedIndex(index: Int) {
         highlightedIndex.value = index
     }
-    
+
     /**
      * Sets the listener for folder selection.
      */
     fun setOnFolderSelectedListener(listener: (Long) -> Unit) {
         onFolderSelectedListener = listener
     }
-    
+
     /**
      * Highlights the zone at the given coordinates.
      */
@@ -79,7 +74,7 @@ class ComposeCircularDragZone @JvmOverloads constructor(
         val index = getZoneIndexAt(x, y)
         setHighlightedIndex(index)
     }
-    
+
     /**
      * Gets the zone index at the given coordinates.
      */

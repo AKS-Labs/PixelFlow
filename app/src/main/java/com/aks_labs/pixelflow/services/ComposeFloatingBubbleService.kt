@@ -85,7 +85,6 @@ class ComposeFloatingBubbleService : Service() {
     private lateinit var windowManager: WindowManager
     private lateinit var screenshotDetector: ScreenshotDetector
     private lateinit var sharedPrefsManager: SharedPrefsManager
-    private lateinit var composeViewFactory: ComposeViewFactory
 
     // Coroutine scope for background tasks
     private var serviceJob: Job? = null
@@ -123,7 +122,6 @@ class ComposeFloatingBubbleService : Service() {
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         screenshotDetector = ScreenshotDetector(this) { path -> handleNewScreenshot(path) }
         sharedPrefsManager = pixelFlowApp.sharedPrefsManager
-        composeViewFactory = ComposeViewFactory(this)
 
         // Get screen dimensions
         val displayMetrics = resources.displayMetrics
@@ -400,43 +398,37 @@ class ComposeFloatingBubbleService : Service() {
                 isDragging = false
             )
 
-            // Create a ComposeView with the FloatingBubble
-            val composeView = android.view.View.inflate(this, R.layout.compose_view_container, null) as androidx.constraintlayout.widget.ConstraintLayout
-            val composeViewContainer = composeView.findViewById<androidx.compose.ui.platform.ComposeView>(R.id.compose_view)
-
-            // Set the content with the FloatingBubble
-            composeViewContainer.setContent {
-                androidx.compose.material3.MaterialTheme {
-                    com.aks_labs.pixelflow.ui.components.compose.FloatingBubble(
-                        screenshotBitmap = bitmap,
-                        size = androidx.compose.ui.unit.Dp(90f),
-                        isDragging = bubbleState.value.isDragging,
-                        onClick = { showScreenshotPreview() },
-                        onDrag = { offset -> handleBubbleDrag(offset) },
-                        onDragStart = {
-                            bubbleState.value = bubbleState.value.copy(isDragging = true)
-                            if (!showingDragZones) {
-                                showDragZones()
-                                showingDragZones = true
-                            }
-                        },
-                        onDragEnd = {
-                            bubbleState.value = bubbleState.value.copy(isDragging = false)
-                            if (showingDragZones) {
-                                // Check if we dropped on a zone
-                                val params = bubbleView?.layoutParams as? WindowManager.LayoutParams
-                                if (params != null) {
-                                    val droppedFolderId = checkDroppedOnZone(params.x.toFloat(), params.y.toFloat())
-                                    if (droppedFolderId != null) {
-                                        handleScreenshotDrop(droppedFolderId)
-                                    }
-                                }
-                                hideDragZones()
-                                showingDragZones = false
-                            }
+            // Create a ComposeView with the FloatingBubble using our factory
+            val composeView = com.aks_labs.pixelflow.ui.components.compose.ComposeViewFactory.createComposeView(this) {
+                com.aks_labs.pixelflow.ui.components.compose.FloatingBubble(
+                    screenshotBitmap = bitmap,
+                    size = androidx.compose.ui.unit.Dp(90f),
+                    isDragging = bubbleState.value.isDragging,
+                    onClick = { showScreenshotPreview() },
+                    onDrag = { offset -> handleBubbleDrag(offset) },
+                    onDragStart = {
+                        bubbleState.value = bubbleState.value.copy(isDragging = true)
+                        if (!showingDragZones) {
+                            showDragZones()
+                            showingDragZones = true
                         }
-                    )
-                }
+                    },
+                    onDragEnd = {
+                        bubbleState.value = bubbleState.value.copy(isDragging = false)
+                        if (showingDragZones) {
+                            // Check if we dropped on a zone
+                            val params = bubbleView?.layoutParams as? WindowManager.LayoutParams
+                            if (params != null) {
+                                val droppedFolderId = checkDroppedOnZone(params.x.toFloat(), params.y.toFloat())
+                                if (droppedFolderId != null) {
+                                    handleScreenshotDrop(droppedFolderId)
+                                }
+                            }
+                            hideDragZones()
+                            showingDragZones = false
+                        }
+                    }
+                )
             }
 
             // Store the view
@@ -576,22 +568,16 @@ class ComposeFloatingBubbleService : Service() {
             // Log that the preview was requested
             Log.d(TAG, "Screenshot preview requested")
 
-            // Create a ComposeView with the ScreenshotPreview
-            val composeView = android.view.View.inflate(this, R.layout.compose_view_container, null) as androidx.constraintlayout.widget.ConstraintLayout
-            val composeViewContainer = composeView.findViewById<androidx.compose.ui.platform.ComposeView>(R.id.compose_view)
-
-            // Set the content with the ScreenshotPreview
-            composeViewContainer.setContent {
-                androidx.compose.material3.MaterialTheme {
-                    com.aks_labs.pixelflow.ui.components.compose.ScreenshotPreview(
-                        isVisible = true,
-                        screenshotBitmap = bubbleState.value.bitmap,
-                        onClose = { hideScreenshotPreview() },
-                        onShare = { shareScreenshot() },
-                        onEdit = { editScreenshot() },
-                        onDelete = { deleteScreenshot() }
-                    )
-                }
+            // Create a ComposeView with the ScreenshotPreview using our factory
+            val composeView = com.aks_labs.pixelflow.ui.components.compose.ComposeViewFactory.createComposeView(this) {
+                com.aks_labs.pixelflow.ui.components.compose.ScreenshotPreview(
+                    isVisible = true,
+                    screenshotBitmap = bubbleState.value.bitmap,
+                    onClose = { hideScreenshotPreview() },
+                    onShare = { shareScreenshot() },
+                    onEdit = { editScreenshot() },
+                    onDelete = { deleteScreenshot() }
+                )
             }
 
             // Store the view
@@ -800,19 +786,13 @@ class ComposeFloatingBubbleService : Service() {
                 highlightedIndex = -1
             )
 
-            // Create a ComposeView with the CircularDragZone
-            val composeView = android.view.View.inflate(this, R.layout.compose_view_container, null) as androidx.constraintlayout.widget.ConstraintLayout
-            val composeViewContainer = composeView.findViewById<androidx.compose.ui.platform.ComposeView>(R.id.compose_view)
-
-            // Set the content with the CircularDragZone
-            composeViewContainer.setContent {
-                androidx.compose.material3.MaterialTheme {
-                    com.aks_labs.pixelflow.ui.components.compose.CircularDragZone(
-                        folders = folders,
-                        highlightedIndex = dragZoneState.value.highlightedIndex,
-                        onFolderSelected = { folderId -> handleScreenshotDrop(folderId) }
-                    )
-                }
+            // Create a ComposeView with the CircularDragZone using our factory
+            val composeView = com.aks_labs.pixelflow.ui.components.compose.ComposeViewFactory.createComposeView(this) {
+                com.aks_labs.pixelflow.ui.components.compose.CircularDragZone(
+                    folders = folders,
+                    highlightedIndex = dragZoneState.value.highlightedIndex,
+                    onFolderSelected = { folderId -> handleScreenshotDrop(folderId) }
+                )
             }
 
             // Store the view

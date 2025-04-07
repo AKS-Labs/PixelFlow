@@ -6,27 +6,34 @@ import android.widget.FrameLayout
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 
 /**
  * Factory for creating ComposeView instances that can be used in a Service context.
  */
-class ComposeViewFactory(private val context: Context) {
+object ComposeViewFactory {
 
     /**
-     * Creates a ComposeView with the given content.
-     * For use in a Service, we wrap the ComposeView in a FrameLayout to avoid lifecycle issues.
+     * Creates a ComposeView with the necessary configuration for use in a Service.
+     *
+     * @param context The context to create the view with
+     * @param content The composable content to display
+     * @return A properly configured ComposeView wrapped in a FrameLayout
      */
-    fun createComposeView(content: @Composable () -> Unit): View {
+    fun createComposeView(context: Context, content: @Composable () -> Unit): View {
         // Create a FrameLayout to hold the ComposeView
         val frameLayout = FrameLayout(context)
 
         // Create the ComposeView
-        val composeView = ComposeView(context)
+        val composeView = ComposeView(context).apply {
+            // Set the composition strategy to dispose when detached
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
 
-        // Set the content with the proper theme
-        composeView.setContent {
-            MaterialTheme {
-                content()
+            // Set the content
+            setContent {
+                MaterialTheme {
+                    content()
+                }
             }
         }
 

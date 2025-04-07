@@ -38,6 +38,7 @@ import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.animation.ValueAnimator
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -65,6 +66,13 @@ import kotlin.math.abs
  * Service to display and manage the floating bubble
  */
 class FloatingBubbleService : Service() {
+
+    // Extension function to convert dp to pixels
+    private val Int.dp: Float
+        get() = this * resources.displayMetrics.density
+
+    // Extension function to convert dp to pixels
+    private fun Float.toPx(): Float = this * resources.displayMetrics.density
 
     companion object {
         private const val TAG = "FloatingBubbleService"
@@ -353,13 +361,39 @@ class FloatingBubbleService : Service() {
             e.printStackTrace()
         }
 
-        // Inflate the bubble layout
-        bubbleView = LayoutInflater.from(this).inflate(R.layout.floating_bubble, null)
+        // Create a custom bubble view programmatically
+        val frameLayout = FrameLayout(this)
+        val cardView = CardView(this)
+        val imageView = ImageView(this)
+
+        // Configure the card view
+        cardView.radius = 45.dp.toPx()
+        cardView.cardElevation = 6.dp.toPx()
+        cardView.setCardBackgroundColor(Color.WHITE)
+
+        // Configure the image view
+        imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+
+        // Add the image view to the card view
+        cardView.addView(imageView, FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
+        ))
+
+        // Add the card view to the frame layout
+        frameLayout.addView(cardView, FrameLayout.LayoutParams(
+            90.dp.toPx().toInt(),
+            90.dp.toPx().toInt(),
+            Gravity.CENTER
+        ))
+
+        // Set the bubble view
+        bubbleView = frameLayout
 
         try {
             // Set the screenshot as the bubble image
-            val bubbleImageView = bubbleView.findViewById<ImageView>(R.id.bubble_image)
-            val bubbleCard = bubbleView.findViewById<CardView>(R.id.bubble_card)
+            val bubbleImageView = imageView
+            val bubbleCard = cardView
 
             // Apply initial animation
             bubbleView.alpha = 0f
@@ -497,7 +531,8 @@ class FloatingBubbleService : Service() {
                                     .start()
 
                                 // Increase elevation for dragging effect
-                                val bubbleCard = view.findViewById<CardView>(R.id.bubble_card)
+                                // Find the CardView (it's the first child of the FrameLayout)
+                                val bubbleCard = (view as FrameLayout).getChildAt(0) as CardView
                                 bubbleCard.animate()
                                     .translationZ(16f)
                                     .setDuration(150)
@@ -513,7 +548,8 @@ class FloatingBubbleService : Service() {
                                 .start()
 
                             // Increase elevation for dragging effect
-                            val bubbleCard = view.findViewById<CardView>(R.id.bubble_card)
+                            // Find the CardView (it's the first child of the FrameLayout)
+                            val bubbleCard = (view as FrameLayout).getChildAt(0) as CardView
                             bubbleCard.animate()
                                 .translationZ(16f)
                                 .setDuration(150)
@@ -538,7 +574,8 @@ class FloatingBubbleService : Service() {
                         .start()
 
                     // Reset elevation
-                    val bubbleCard = view.findViewById<CardView>(R.id.bubble_card)
+                    // Find the CardView (it's the first child of the FrameLayout)
+                    val bubbleCard = (view as FrameLayout).getChildAt(0) as CardView
                     bubbleCard.animate()
                         .translationZ(0f)
                         .setDuration(200)
