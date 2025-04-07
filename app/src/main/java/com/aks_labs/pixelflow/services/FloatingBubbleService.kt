@@ -48,6 +48,7 @@ import com.aks_labs.pixelflow.data.models.SimpleFolder
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
 import com.aks_labs.pixelflow.pixelFlowApp
 import com.aks_labs.pixelflow.ui.components.CircularDragZone
+import com.aks_labs.pixelflow.ui.components.ComposeCircularDragZone
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -472,22 +473,14 @@ class FloatingBubbleService : Service() {
 
                         // Check for magnetic attraction to drag zones
                         if (::dragZonesView.isInitialized) {
-                            val dragZone = dragZonesView.findViewById<CircularDragZone>(R.id.circular_drag_zone)
+                            val dragZone = dragZonesView as ComposeCircularDragZone
 
                             // Highlight the zone the bubble is over or near
-                            dragZone?.highlightZoneAt(event.rawX, event.rawY)
-
-                            // Get magnetic attraction point if applicable
-                            val magneticPoint = dragZone?.getMagneticPoint(event.rawX, event.rawY)
-                            if (magneticPoint != null) {
-                                // Apply magnetic attraction
-                                newX = (magneticPoint.x - view.width / 2).toInt().coerceIn(0, width - view.width)
-                                newY = (magneticPoint.y - view.height / 2).toInt().coerceIn(0, height - view.height)
-                            }
+                            dragZone.highlightZoneAt(event.rawX, event.rawY)
 
                             // Check if bubble is over any drag zone
-                            val folderId = dragZone?.getFolderIdAt(event.rawX, event.rawY)
-                            if (folderId != null) {
+                            val zoneIndex = dragZone.getZoneIndexAt(event.rawX, event.rawY)
+                            if (zoneIndex >= 0) {
                                 // Shrink when over a drop zone
                                 view.animate()
                                     .scaleX(0.9f)
@@ -558,28 +551,29 @@ class FloatingBubbleService : Service() {
                     } else {
                         // It was a drag, check if dropped on a zone
                         if (::dragZonesView.isInitialized) {
-                            val dragZone = dragZonesView.findViewById<CircularDragZone>(R.id.circular_drag_zone)
-                            val folderId = dragZone?.getFolderIdAt(event.rawX, event.rawY)
+                            val dragZone = dragZonesView as ComposeCircularDragZone
+                            val zoneIndex = dragZone.getZoneIndexAt(event.rawX, event.rawY)
 
-                            if (folderId != null) {
-                                // Vibrate to provide feedback
-                                vibrateDevice()
+                            if (zoneIndex >= 0) {
+                                // Get the folder ID from the zone index
+                                val folder = folders.getOrNull(zoneIndex)
+                                if (folder != null) {
+                                    // Vibrate to provide feedback
+                                    vibrateDevice()
 
-                                // Animate the drop zone
-                                dragZone.animateZone(dragZone.highlightedZoneIndex)
-
-                                // Handle screenshot drop on folder with success animation
-                                view.animate()
-                                    .alpha(0.0f)
-                                    .scaleX(0.0f)
-                                    .scaleY(0.0f)
-                                    .setDuration(300)
-                                    .setInterpolator(AccelerateInterpolator())
-                                    .withEndAction {
-                                        handleScreenshotDrop(folderId)
-                                        removeBubble()
-                                    }
-                                    .start()
+                                    // Handle screenshot drop on folder with success animation
+                                    view.animate()
+                                        .alpha(0.0f)
+                                        .scaleX(0.0f)
+                                        .scaleY(0.0f)
+                                        .setDuration(300)
+                                        .setInterpolator(AccelerateInterpolator())
+                                        .withEndAction {
+                                            handleScreenshotDrop(folder.id)
+                                            removeBubble()
+                                        }
+                                        .start()
+                                }
                             } else {
                                 // Snap to edge if not dropped on a folder
                                 snapToEdge(view, params)
@@ -649,8 +643,8 @@ class FloatingBubbleService : Service() {
             e.printStackTrace()
         }
 
-        // Inflate the drag zones layout
-        dragZonesView = LayoutInflater.from(this).inflate(R.layout.circular_drag_zones, null)
+        // Create the drag zones view using the Compose-based implementation
+        dragZonesView = ComposeCircularDragZone(this)
 
         // Set initial alpha for animation
         dragZonesView.alpha = 0f
@@ -678,8 +672,10 @@ class FloatingBubbleService : Service() {
             .start()
 
         // Set up the folders in the drag zone
-        val dragZone = dragZonesView.findViewById<CircularDragZone>(R.id.circular_drag_zone)
-        dragZone?.setFolders(folders)
+        (dragZonesView as ComposeCircularDragZone).apply {
+            setFolders(folders)
+            setOnFolderSelectedListener { folderId -> handleScreenshotDrop(folderId) }
+        }
     }
 
     /**
