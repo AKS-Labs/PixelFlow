@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import com.aks_labs.pixelflow.services.ComposeFloatingBubbleService
+import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
 
 /**
  * Receiver to start the FloatingBubbleService when the device boots
@@ -24,8 +24,8 @@ class BootReceiver : BroadcastReceiver() {
             Intent.ACTION_MY_PACKAGE_REPLACED -> {
                 Log.d(TAG, "Starting FloatingBubbleService after boot or app update")
 
-                // Start the ComposeFloatingBubbleService
-                val serviceIntent = Intent(context, ComposeFloatingBubbleService::class.java)
+                // Start the ViewBasedFloatingBubbleService
+                val serviceIntent = Intent(context, ViewBasedFloatingBubbleService::class.java)
                 serviceIntent.action = "START_ON_BOOT"
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

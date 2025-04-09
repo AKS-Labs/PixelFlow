@@ -34,7 +34,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.aks_labs.pixelflow.services.ComposeFloatingBubbleService
+import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
 import com.aks_labs.pixelflow.ui.screens.FolderManagementScreen
 import com.aks_labs.pixelflow.ui.screens.HomeScreen
 import com.aks_labs.pixelflow.ui.screens.ScreenshotHistoryScreen
@@ -141,11 +141,11 @@ class MainActivity : ComponentActivity() {
 
     private fun startFloatingBubbleService() {
         try {
-            Log.d(TAG, "Starting ComposeFloatingBubbleService")
-            val intent = Intent(this, ComposeFloatingBubbleService::class.java)
+            Log.d(TAG, "Starting ViewBasedFloatingBubbleService")
+            val intent = Intent(this, ViewBasedFloatingBubbleService::class.java)
 
             // Add a specific action to indicate this is a normal start
-            intent.action = "START_FROM_APP"
+            intent.action = ViewBasedFloatingBubbleService.ACTION_START_FROM_APP
 
             // For Android 8.0 (Oreo) and above, we need to start as a foreground service
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -161,7 +161,7 @@ class MainActivity : ComponentActivity() {
 
             // Schedule a check to verify the service is running
             Handler(Looper.getMainLooper()).postDelayed({
-                if (!ComposeFloatingBubbleService.isRunning()) {
+                if (!ViewBasedFloatingBubbleService.isRunning()) {
                     Log.w(TAG, "Service not running after start request, trying again")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         startForegroundService(intent)
@@ -171,7 +171,7 @@ class MainActivity : ComponentActivity() {
                 }
             }, 5000) // Check after 5 seconds
         } catch (e: Exception) {
-            Log.e(TAG, "Error starting ComposeFloatingBubbleService", e)
+            Log.e(TAG, "Error starting ViewBasedFloatingBubbleService", e)
             Toast.makeText(this, "Error starting service: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -12,7 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.aks_labs.pixelflow.data.models.SimpleFolder
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
 import com.aks_labs.pixelflow.pixelFlowApp
-import com.aks_labs.pixelflow.services.FloatingBubbleService
+import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -65,15 +66,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Start the floating bubble service
      */
     fun startFloatingBubbleService(context: Context) {
-        val intent = Intent(context, FloatingBubbleService::class.java)
-        context.startService(intent)
+        val intent = Intent(context, ViewBasedFloatingBubbleService::class.java)
+        intent.action = ViewBasedFloatingBubbleService.ACTION_START_FROM_APP
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent)
+        } else {
+            context.startService(intent)
+        }
     }
 
     /**
      * Stop the floating bubble service
      */
     fun stopFloatingBubbleService(context: Context) {
-        val intent = Intent(context, FloatingBubbleService::class.java)
+        val intent = Intent(context, ViewBasedFloatingBubbleService::class.java)
         context.stopService(intent)
     }
 

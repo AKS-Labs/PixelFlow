@@ -11,7 +11,7 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import com.aks_labs.pixelflow.services.FloatingBubbleService
+import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -123,8 +123,8 @@ fun HomeScreen(
                 Button(
                     onClick = {
                         // Start the service normally
-                        val intent = Intent(context, FloatingBubbleService::class.java)
-                        intent.action = "START_FROM_APP"
+                        val intent = Intent(context, ViewBasedFloatingBubbleService::class.java)
+                        intent.action = ViewBasedFloatingBubbleService.ACTION_START_FROM_APP
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             context.startForegroundService(intent)
                         } else {
@@ -139,7 +139,7 @@ fun HomeScreen(
                 Button(
                     onClick = {
                         // Check if the service is running
-                        val isRunning = FloatingBubbleService.isRunning()
+                        val isRunning = ViewBasedFloatingBubbleService.isRunning()
                         Toast.makeText(
                             context,
                             "Service is ${if (isRunning) "running" else "not running"}",
@@ -153,7 +153,7 @@ fun HomeScreen(
                 Button(
                     onClick = {
                         // Manually trigger the test mode
-                        val intent = Intent(context, FloatingBubbleService::class.java)
+                        val intent = Intent(context, ViewBasedFloatingBubbleService::class.java)
                         intent.action = "MANUAL_TEST"
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             context.startForegroundService(intent)
@@ -169,7 +169,7 @@ fun HomeScreen(
                 Button(
                     onClick = {
                         // Stop the service
-                        val intent = Intent(context, FloatingBubbleService::class.java)
+                        val intent = Intent(context, ViewBasedFloatingBubbleService::class.java)
                         intent.action = "STOP_SERVICE"
                         // First send the stop intent to set the flag
                         context.startService(intent)
@@ -196,6 +196,28 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(0.8f)
             ) {
                 Text(text = stringResource(id = R.string.screenshot_history))
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Test activity button
+            val testActivityClass = remember {
+                try {
+                    Class.forName("com.aks_labs.pixelflow.ui.test.ComposeServiceTestActivity")
+                } catch (e: Exception) {
+                    null
+                }
+            }
+            Button(
+                onClick = {
+                    testActivityClass?.let { activityClass ->
+                        val intent = Intent(context, activityClass)
+                        context.startActivity(intent)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(0.8f)
+            ) {
+                Text(text = "Test Compose Service")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
