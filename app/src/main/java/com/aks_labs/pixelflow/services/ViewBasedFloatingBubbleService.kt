@@ -3,6 +3,7 @@ package com.aks_labs.pixelflow.services
 import android.app.Service
 import android.content.ContentResolver
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.database.ContentObserver
 import android.graphics.Bitmap
 import android.graphics.PixelFormat
@@ -13,10 +14,12 @@ import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import androidx.core.content.FileProvider
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +28,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.view.GestureDetectorCompat
 import com.aks_labs.pixelflow.R
 import com.aks_labs.pixelflow.data.models.Folder
 import com.aks_labs.pixelflow.ui.components.ViewBasedCircularDragZones
@@ -792,7 +796,33 @@ class ViewBasedFloatingBubbleService : Service() {
      * Touch listener for the bubble to handle drag and drop.
      */
     private inner class BubbleTouchListener : View.OnTouchListener {
+        // Gesture detector for double-tap detection
+        private val gestureDetector = GestureDetectorCompat(this@ViewBasedFloatingBubbleService,
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onDoubleTap(e: MotionEvent): Boolean {
+                    Log.d(TAG, "Double tap detected")
+                    // Launch Google Lens with the current screenshot
+                    launchGoogleLens()
+                    return true
+                }
+
+                override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                    // Only handle single tap if we're not dragging
+                    if (!isDragging && isClick(e)) {
+                        // Show screenshot preview
+                        showScreenshotPreview()
+                        return true
+                    }
+                    return false
+                }
+            })
+
         override fun onTouch(view: View, event: MotionEvent): Boolean {
+            // Let the gesture detector handle the event first for double-tap detection
+            if (gestureDetector.onTouchEvent(event)) {
+                return true
+            }
+
             val params = view.layoutParams as WindowManager.LayoutParams
 
             when (event.action) {
@@ -892,12 +922,6 @@ class ViewBasedFloatingBubbleService : Service() {
                             // Snap to the nearest edge
                             snapToEdge(view, params)
                         }
-                    } else {
-                        // It was a click, not a drag
-                        if (isClick(event)) {
-                            // Show screenshot preview
-                            showScreenshotPreview()
-                        }
                     }
 
                     return true
@@ -937,6 +961,132 @@ class ViewBasedFloatingBubbleService : Service() {
         // TODO: Implement screenshot preview
         // For now, just show a toast
         ScreenUtils.showToast(this, "Screenshot preview")
+    }
+
+    /**
+     * Launches Google Lens with the current screenshot.
+     */
+    private fun launchGoogleLens() {
+        Log.d(TAG, "Launching Google Lens with screenshot")
+
+        try {
+            if (currentScreenshotPath == null) {
+                Log.e(TAG, "Cannot launch Google Lens: No screenshot available")
+                ScreenUtils.showToast(this, "No screenshot available")
+                return
+            }
+
+            // Create a content URI for the screenshot file using FileProvider
+            val screenshotFile = File(currentScreenshotPath!!)
+            val screenshotUri = FileProvider.getUriForFile(
+                this,
+                "${packageName}.fileprovider",
+                screenshotFile
+            )
+
+            Log.d(TAG, "Screenshot URI: $screenshotUri")
+
+            // Try different approaches to launch Google Lens
+            var success = false
+
+            // Approach 1: Use Google Lens directly with ACTION_SEND
+            try {
+                val lensIntent = Intent(Intent.ACTION_SEND)
+                lensIntent.type = "image/*"
+                lensIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri)
+                lensIntent.setPackage("com.google.android.googlequicksearchbox")
+                lensIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                lensIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                startActivity(lensIntent)
+                vibrateDevice() // Provide haptic feedback
+                Log.d(TAG, "Google Lens launched with ACTION_SEND")
+                success = true
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to launch Google Lens with ACTION_SEND: ${e.message}")
+            }
+
+            // Approach 2: Use Google Photos with ACTION_SEND
+            if (!success) {
+                try {
+                    val photosIntent = Intent(Intent.ACTION_SEND)
+                    photosIntent.type = "image/*"
+                    photosIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri)
+                    photosIntent.setPackage("com.google.android.apps.photos")
+                    photosIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    photosIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                    startActivity(photosIntent)
+                    vibrateDevice() // Provide haptic feedback
+                    Log.d(TAG, "Google Photos launched with ACTION_SEND")
+                    success = true
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to launch Google Photos: ${e.message}")
+                }
+            }
+
+            // Approach 3: Use a chooser with ACTION_SEND
+            if (!success) {
+                try {
+                    val sendIntent = Intent(Intent.ACTION_SEND)
+                    sendIntent.type = "image/*"
+                    sendIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri)
+                    sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                    val chooser = Intent.createChooser(sendIntent, "Search with Google Lens")
+                    chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                    startActivity(chooser)
+                    vibrateDevice() // Provide haptic feedback
+                    Log.d(TAG, "Chooser launched with ACTION_SEND")
+                    success = true
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to launch chooser: ${e.message}")
+                }
+            }
+
+            // Approach 4: Use Google app with ACTION_VIEW
+            if (!success) {
+                try {
+                    val googleIntent = Intent(Intent.ACTION_VIEW)
+                    googleIntent.setPackage("com.google.android.googlequicksearchbox")
+                    googleIntent.data = screenshotUri
+                    googleIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    googleIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                    startActivity(googleIntent)
+                    vibrateDevice() // Provide haptic feedback
+                    Log.d(TAG, "Google app launched with ACTION_VIEW")
+                    success = true
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to launch Google app with ACTION_VIEW: ${e.message}")
+                }
+            }
+
+            // Approach 5: Use web browser with lens.google.com
+            if (!success) {
+                try {
+                    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://lens.google.com"))
+                    webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                    startActivity(webIntent)
+                    vibrateDevice() // Provide haptic feedback
+                    Log.d(TAG, "Web Google Lens launched")
+                    success = true
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to launch web Google Lens: ${e.message}")
+                }
+            }
+
+            // If all approaches failed
+            if (!success) {
+                ScreenUtils.showToast(this, "Google Lens not available")
+                Log.e(TAG, "Google Lens not available - all approaches failed")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error launching Google Lens", e)
+            ScreenUtils.showToast(this, "Error launching Google Lens")
+        }
     }
 
     /**
