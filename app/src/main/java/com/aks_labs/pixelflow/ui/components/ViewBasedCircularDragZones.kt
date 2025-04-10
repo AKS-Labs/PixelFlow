@@ -200,8 +200,14 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
             val y = centerY - semiCircleRadius * sin(angle).toFloat()
 
             // Ensure the zone is fully visible on screen
-            val adjustedX = x.coerceIn(ZONE_RADIUS_HIGHLIGHTED + 20f, width - ZONE_RADIUS_HIGHLIGHTED - 20f)
-            val adjustedY = y.coerceIn(ZONE_RADIUS_HIGHLIGHTED + 20f, height - ZONE_RADIUS_HIGHLIGHTED - 20f)
+            val minX = ZONE_RADIUS_HIGHLIGHTED + 20f
+            val maxX = width - ZONE_RADIUS_HIGHLIGHTED - 20f
+            val minY = ZONE_RADIUS_HIGHLIGHTED + 20f
+            val maxY = height - ZONE_RADIUS_HIGHLIGHTED - 20f
+
+            // Make sure min is less than max
+            val adjustedX = if (minX < maxX) x.coerceIn(minX, maxX) else x
+            val adjustedY = if (minY < maxY) y.coerceIn(minY, maxY) else y
 
             zonePositions.add(ZonePosition(adjustedX, adjustedY))
         }
