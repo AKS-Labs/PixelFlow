@@ -10,6 +10,7 @@
         android:layout_height="90dp"
         app:cardCornerRadius="45dp"
         app:cardElevation="8dp"
+        app:cardPreventCornerOverlap="true"
         app:cardBackgroundColor="@android:color/white">
 
         <ImageView

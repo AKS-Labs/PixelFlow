@@ -186,17 +186,42 @@ class ViewBasedFloatingBubbleService : Service() {
 
     /**
      * Initialize the folders for drag zones.
+     * Loads folders from SharedPrefsManager to ensure custom folders are included.
      */
     private fun initFolders() {
         // Clear existing folders
         folders.clear()
 
-        // Add default folders
-        folders.add(Folder("1", "Tricks", R.drawable.ic_folder))
-        folders.add(Folder("2", "Quotes", R.drawable.ic_folder))
-        folders.add(Folder("3", "Recipes", R.drawable.ic_folder))
-        folders.add(Folder("4", "Ideas", R.drawable.ic_folder))
-        folders.add(Folder("5", "Other", R.drawable.ic_folder))
+        try {
+            // Get the SharedPrefsManager instance
+            val sharedPrefsManager = com.aks_labs.pixelflow.data.SharedPrefsManager(this)
+
+            // Initialize default folders if none exist
+            sharedPrefsManager.initializeDefaultFolders()
+
+            // Get all folders from SharedPrefsManager
+            val allFolders = sharedPrefsManager.foldersValue
+
+            // Convert and add all folders to our list
+            allFolders.forEach { simpleFolder ->
+                folders.add(Folder(
+                    id = simpleFolder.id.toString(),
+                    name = simpleFolder.name,
+                    iconResId = R.drawable.ic_folder
+                ))
+            }
+
+            Log.d(TAG, "Loaded ${folders.size} folders from SharedPrefsManager")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading folders from SharedPrefsManager", e)
+
+            // Fallback to default folders if there's an error
+            folders.add(Folder("1", "Tricks", R.drawable.ic_folder))
+            folders.add(Folder("2", "Quotes", R.drawable.ic_folder))
+            folders.add(Folder("3", "Recipes", R.drawable.ic_folder))
+            folders.add(Folder("4", "Ideas", R.drawable.ic_folder))
+            folders.add(Folder("5", "Other", R.drawable.ic_folder))
+        }
     }
 
     /**
@@ -204,6 +229,15 @@ class ViewBasedFloatingBubbleService : Service() {
      */
     private fun onNewScreenshot(screenshotPath: String) {
         Log.d(TAG, "New screenshot detected: $screenshotPath")
+
+        // Get the file name to check if it's already processed
+        val fileName = File(screenshotPath).name
+
+        // Skip if already processed
+        if (processedScreenshots.contains(fileName)) {
+            Log.d(TAG, "Skipping already processed screenshot: $fileName")
+            return
+        }
 
         // Check if the file exists and has content
         val file = File(screenshotPath)
@@ -230,6 +264,15 @@ class ViewBasedFloatingBubbleService : Service() {
      * Waits for a screenshot file to be ready.
      */
     private fun waitForScreenshotFile(screenshotPath: String) {
+        // Get the file name to check if it's already processed
+        val fileName = File(screenshotPath).name
+
+        // Skip if already processed
+        if (processedScreenshots.contains(fileName)) {
+            Log.d(TAG, "Skipping already processed screenshot in waitForScreenshotFile: $fileName")
+            return
+        }
+
         Thread {
             var attempts = 0
             val maxAttempts = 10
@@ -241,6 +284,12 @@ class ViewBasedFloatingBubbleService : Service() {
 
                 try {
                     Thread.sleep(500) // Wait for 500ms
+
+                    // Check again if it's been processed while we were waiting
+                    if (processedScreenshots.contains(fileName)) {
+                        Log.d(TAG, "Screenshot was processed by another thread while waiting: $fileName")
+                        break
+                    }
 
                     val file = File(screenshotPath)
                     if (file.exists() && file.length() > 0) {
@@ -333,6 +382,9 @@ class ViewBasedFloatingBubbleService : Service() {
     private fun showDragZones() {
         try {
             Log.d(TAG, "Showing drag zones - START")
+
+            // Refresh folders from SharedPrefsManager to ensure we have the latest
+            refreshFolders()
             Log.d(TAG, "Folders count: ${folders.size}")
 
             // First, hide any existing drag zones to prevent duplicates
@@ -372,6 +424,34 @@ class ViewBasedFloatingBubbleService : Service() {
     }
 
     /**
+     * Refreshes the folders list from SharedPrefsManager.
+     * This ensures we always have the latest folders including any custom ones.
+     */
+    private fun refreshFolders() {
+        try {
+            // Get the SharedPrefsManager instance
+            val sharedPrefsManager = com.aks_labs.pixelflow.data.SharedPrefsManager(this)
+
+            // Get all folders from SharedPrefsManager
+            val allFolders = sharedPrefsManager.foldersValue
+
+            // Clear existing folders and add the updated ones
+            folders.clear()
+            allFolders.forEach { simpleFolder ->
+                folders.add(Folder(
+                    id = simpleFolder.id.toString(),
+                    name = simpleFolder.name,
+                    iconResId = R.drawable.ic_folder
+                ))
+            }
+
+            Log.d(TAG, "Refreshed ${folders.size} folders from SharedPrefsManager")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error refreshing folders from SharedPrefsManager", e)
+        }
+    }
+
+    /**
      * Hides the drag zones.
      */
     private fun hideDragZones() {
@@ -395,6 +475,9 @@ class ViewBasedFloatingBubbleService : Service() {
         }
     }
 
+    // Keep track of processed screenshots to avoid re-detecting them
+    private val processedScreenshots = mutableSetOf<String>()
+
     /**
      * Handles dropping a screenshot into a folder.
      */
@@ -409,12 +492,42 @@ class ViewBasedFloatingBubbleService : Service() {
             // Vibrate to provide feedback
             vibrateDevice()
 
-            // Move the screenshot to the folder
-            moveScreenshotToFolder(currentScreenshotPath!!, folder)
+            // Store the current screenshot path to prevent re-detection
+            val screenshotPath = currentScreenshotPath!!
+            val screenshotName = java.io.File(screenshotPath).name
 
-            // Remove the bubble and hide drag zones
-            removeBubble()
-            hideDragZones()
+            // Add to processed screenshots set
+            processedScreenshots.add(screenshotName)
+            Log.d(TAG, "Added to processed screenshots: $screenshotName")
+
+            // First remove the bubble with animation
+            if (bubbleView != null) {
+                bubbleView?.animate()
+                    ?.alpha(0f)
+                    ?.scaleX(0f)
+                    ?.scaleY(0f)
+                    ?.setDuration(300)
+                    ?.withEndAction {
+                        // Move the screenshot to the folder
+                        moveScreenshotToFolder(screenshotPath, folder)
+
+                        // Remove the bubble and hide drag zones
+                        removeBubble()
+                        hideDragZones()
+
+                        // Clear the current screenshot path to prevent duplicates
+                        currentScreenshotPath = null
+                        currentScreenshotBitmap = null
+                    }
+                    ?.start()
+            } else {
+                // If no bubble view (unlikely), just process normally
+                moveScreenshotToFolder(screenshotPath, folder)
+                removeBubble()
+                hideDragZones()
+                currentScreenshotPath = null
+                currentScreenshotBitmap = null
+            }
         }
     }
 
@@ -422,34 +535,46 @@ class ViewBasedFloatingBubbleService : Service() {
      * Moves a screenshot to a folder.
      */
     private fun moveScreenshotToFolder(screenshotPath: String, folder: Folder) {
-        // Create the main PixelFlow directory in Pictures
-        val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-        val pixelFlowDir = java.io.File(picturesDir, "PixelFlow")
-        if (!pixelFlowDir.exists()) {
-            val created = pixelFlowDir.mkdirs()
-            Log.d(TAG, "Created PixelFlow directory: $created")
-        }
-
-        // Create the folder directory if it doesn't exist
-        val folderDir = java.io.File(pixelFlowDir, folder.name)
-        if (!folderDir.exists()) {
-            val created = folderDir.mkdirs()
-            Log.d(TAG, "Created folder directory ${folder.name}: $created")
-        }
-
-        // Get the source file
-        val sourceFile = java.io.File(screenshotPath)
-        if (!sourceFile.exists()) {
-            Log.e(TAG, "Source file does not exist: $screenshotPath")
-            return
-        }
-
-        // Create the destination file
-        val destFile = java.io.File(folderDir, sourceFile.name)
-
         try {
-            // Copy the file
-            sourceFile.copyTo(destFile, overwrite = true)
+            // Create the main PixelFlow directory in Pictures
+            val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            val pixelFlowDir = java.io.File(picturesDir, "PixelFlow")
+            if (!pixelFlowDir.exists()) {
+                val created = pixelFlowDir.mkdirs()
+                Log.d(TAG, "Created PixelFlow directory: $created")
+            }
+
+            // Create the folder directory if it doesn't exist
+            val folderDir = java.io.File(pixelFlowDir, folder.name)
+            if (!folderDir.exists()) {
+                val created = folderDir.mkdirs()
+                Log.d(TAG, "Created folder directory ${folder.name}: $created")
+            }
+
+            // Get the source file
+            val sourceFile = java.io.File(screenshotPath)
+            if (!sourceFile.exists()) {
+                Log.e(TAG, "Source file does not exist: $screenshotPath")
+                return
+            }
+
+            // Create the destination file
+            val destFile = java.io.File(folderDir, sourceFile.name)
+
+            // Use FileInputStream and FileOutputStream for more reliable file copying
+            val inputStream = java.io.FileInputStream(sourceFile)
+            val outputStream = java.io.FileOutputStream(destFile)
+            val buffer = ByteArray(1024)
+            var length: Int
+
+            while (inputStream.read(buffer).also { length = it } > 0) {
+                outputStream.write(buffer, 0, length)
+            }
+
+            outputStream.flush()
+            outputStream.close()
+            inputStream.close()
+
             Log.d(TAG, "Screenshot copied to folder: ${folder.name} at ${destFile.absolutePath}")
 
             // Show a toast notification
@@ -462,8 +587,25 @@ class ViewBasedFloatingBubbleService : Service() {
                 arrayOf("image/jpeg"),
                 null
             )
+
+            // Delete the original file if it's in the Screenshots folder
+            // This makes it a move operation rather than a copy
+            if (sourceFile.parent?.contains("Screenshots") == true) {
+                if (sourceFile.delete()) {
+                    Log.d(TAG, "Original screenshot deleted successfully")
+                    // Notify the media scanner that the file has been deleted
+                    MediaScannerConnection.scanFile(
+                        this,
+                        arrayOf(sourceFile.absolutePath),
+                        null,
+                        null
+                    )
+                } else {
+                    Log.e(TAG, "Failed to delete original screenshot")
+                }
+            }
         } catch (e: Exception) {
-            Log.e(TAG, "Error copying screenshot to folder", e)
+            Log.e(TAG, "Error copying screenshot to folder (Ask Gemini)", e)
             ScreenUtils.showToast(this, "Error saving screenshot")
         }
     }
@@ -554,16 +696,19 @@ class ViewBasedFloatingBubbleService : Service() {
                             // Check if it's a screenshot by name
                             val isScreenshot = name.lowercase().contains("screenshot")
                             val fileExists = File(path).exists()
+                            val isAlreadyProcessed = processedScreenshots.contains(name)
 
-                            Log.d(TAG, "Is screenshot by name: $isScreenshot, File exists: $fileExists")
+                            Log.d(TAG, "Is screenshot by name: $isScreenshot, File exists: $fileExists, Already processed: $isAlreadyProcessed")
 
-                            if (isScreenshot && fileExists) {
+                            if (isScreenshot && fileExists && !isAlreadyProcessed) {
                                 Log.d(TAG, "Screenshot detected: $path")
 
                                 // Process on the main thread
                                 handler.post {
                                     onNewScreenshot(path)
                                 }
+                            } else if (isScreenshot && isAlreadyProcessed) {
+                                Log.d(TAG, "Skipping already processed screenshot: $name")
                             }
                         }
                     }
@@ -600,14 +745,22 @@ class ViewBasedFloatingBubbleService : Service() {
                 )?.use { cursor ->
                     if (cursor.moveToFirst()) {
                         val dataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+                        val nameIndex = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
 
-                        if (dataIndex >= 0) {
+                        if (dataIndex >= 0 && nameIndex >= 0) {
                             val path = cursor.getString(dataIndex)
-                            Log.d(TAG, "Found recent screenshot during startup: $path")
+                            val name = cursor.getString(nameIndex)
+                            val isAlreadyProcessed = processedScreenshots.contains(name)
 
-                            // Process on the main thread
-                            handler.post {
-                                onNewScreenshot(path)
+                            Log.d(TAG, "Found recent screenshot during startup: $path, Already processed: $isAlreadyProcessed")
+
+                            if (!isAlreadyProcessed) {
+                                // Process on the main thread
+                                handler.post {
+                                    onNewScreenshot(path)
+                                }
+                            } else {
+                                Log.d(TAG, "Skipping already processed screenshot: $name")
                             }
                         }
                     }
@@ -673,10 +826,11 @@ class ViewBasedFloatingBubbleService : Service() {
                             showDragZones()
                         }
 
-                        // Scale up the bubble with bouncing animation
+                        // Scale up the bubble by 5dp with bouncing animation
+                        // 90dp to 95dp is approximately a 1.056 scale factor
                         view.animate()
-                            .scaleX(1.055f)
-                            .scaleY(1.055f)
+                            .scaleX(1.056f)
+                            .scaleY(1.056f)
                             .setDuration(150)
                             .setInterpolator(android.view.animation.OvershootInterpolator(1.2f))
                             .start()
@@ -734,6 +888,9 @@ class ViewBasedFloatingBubbleService : Service() {
                         } else {
                             // Hide drag zones
                             hideDragZones()
+
+                            // Snap to the nearest edge
+                            snapToEdge(view, params)
                         }
                     } else {
                         // It was a click, not a drag
@@ -780,5 +937,34 @@ class ViewBasedFloatingBubbleService : Service() {
         // TODO: Implement screenshot preview
         // For now, just show a toast
         ScreenUtils.showToast(this, "Screenshot preview")
+    }
+
+    /**
+     * Snaps the bubble to the nearest edge of the screen.
+     */
+    private fun snapToEdge(view: View, params: WindowManager.LayoutParams) {
+        // Calculate the center of the bubble
+        val centerX = params.x + view.width / 2
+
+        // Determine which edge is closer (left or right)
+        val toRight = centerX > width / 2
+
+        // Calculate the target X position
+        val targetX = if (toRight) width - view.width else 0
+
+        // Animate the bubble to the edge
+        val animator = android.animation.ValueAnimator.ofInt(params.x, targetX)
+        animator.duration = 300
+        animator.interpolator = android.view.animation.DecelerateInterpolator()
+        animator.addUpdateListener { animation ->
+            params.x = animation.animatedValue as Int
+            try {
+                windowManager.updateViewLayout(view, params)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error updating bubble position during snap", e)
+                animator.cancel()
+            }
+        }
+        animator.start()
     }
 }

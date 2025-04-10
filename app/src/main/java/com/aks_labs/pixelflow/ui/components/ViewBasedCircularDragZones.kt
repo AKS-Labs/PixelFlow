@@ -179,21 +179,21 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
     }
 
     /**
-     * Calculates the positions of the zones in a semi-circular pattern.
+     * Calculates the positions of the zones in a semi-circular pattern at the bottom of the screen.
      * Adjusts the layout based on the number of folders to ensure optimal spacing.
      */
     private fun calculateZonePositions() {
         zonePositions.clear()
 
         val centerX = width / 2f
-        val centerY = height - 100f // Position near the bottom
+        val centerY = height - ZONE_RADIUS_HIGHLIGHTED - 40f // Position at the bottom with padding
 
         val folderCount = folders.size
         if (folderCount == 0) return
 
         // Adjust the semi-circle radius based on screen size and folder count
         // For more folders, we need a larger radius to prevent overlap
-        val baseRadius = height * SEMI_CIRCLE_RADIUS_RATIO
+        val baseRadius = width * 0.4f // Use width instead of height for better horizontal spacing
         val semiCircleRadius = when {
             folderCount <= 3 -> baseRadius * 0.8f
             folderCount <= 5 -> baseRadius * 0.9f
@@ -228,14 +228,15 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
             // Calculate the angle for this zone
             val angle = startAngle + (i * angleStep)
 
-            // Calculate the position
-            val x = centerX + semiCircleRadius * cos(angle).toFloat()
-            val y = centerY - semiCircleRadius * sin(angle).toFloat()
+            // Calculate the position - note we're using a semi-circle at the bottom of the screen
+            // so we use sin for X and cos for Y (with cos inverted to point upward)
+            val x = centerX + semiCircleRadius * sin(angle - PI/2).toFloat()
+            val y = centerY - semiCircleRadius * cos(angle - PI/2).toFloat()
 
             // Ensure the zone is fully visible on screen
             val minX = ZONE_RADIUS_HIGHLIGHTED + 20f
             val maxX = width - ZONE_RADIUS_HIGHLIGHTED - 20f
-            val minY = ZONE_RADIUS_HIGHLIGHTED + 20f
+            val minY = 100f // Allow some space at the top
             val maxY = height - ZONE_RADIUS_HIGHLIGHTED - 20f
 
             // Make sure min is less than max
