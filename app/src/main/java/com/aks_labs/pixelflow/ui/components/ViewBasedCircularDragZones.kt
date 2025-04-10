@@ -36,7 +36,7 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         private const val SEMI_CIRCLE_RADIUS_RATIO = 0.4f // Ratio of screen height for semi-circle radius
         private const val MAGNETIC_ATTRACTION_DISTANCE = 150f // Distance for magnetic attraction
         private const val MAGNETIC_ATTRACTION_STRENGTH = 0.3f // Strength of magnetic attraction (0-1)
-        private const val WAVE_COUNT = 14 // Number of waves around the perimeter
+        private const val WAVE_COUNT = 12 // Number of waves around the perimeter
         private const val WAVE_AMPLITUDE = 8f // Amplitude of the waves (how pronounced they are)
         private const val VIBRATION_DURATION = 20L // Duration of vibration feedback in milliseconds
     }
