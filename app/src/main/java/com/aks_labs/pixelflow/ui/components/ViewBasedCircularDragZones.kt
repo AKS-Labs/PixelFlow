@@ -180,6 +180,7 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
 
     /**
      * Calculates the positions of the zones in a semi-circular pattern.
+     * Adjusts the layout based on the number of folders to ensure optimal spacing.
      */
     private fun calculateZonePositions() {
         zonePositions.clear()
@@ -187,18 +188,45 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         val centerX = width / 2f
         val centerY = height - 100f // Position near the bottom
 
-        // Calculate semi-circle radius based on screen size
-        val semiCircleRadius = height * SEMI_CIRCLE_RADIUS_RATIO
-
         val folderCount = folders.size
         if (folderCount == 0) return
 
-        // Calculate the angle between each zone
-        val angleStep = PI / (folderCount - 1)
+        // Adjust the semi-circle radius based on screen size and folder count
+        // For more folders, we need a larger radius to prevent overlap
+        val baseRadius = height * SEMI_CIRCLE_RADIUS_RATIO
+        val semiCircleRadius = when {
+            folderCount <= 3 -> baseRadius * 0.8f
+            folderCount <= 5 -> baseRadius * 0.9f
+            folderCount <= 7 -> baseRadius * 1.0f
+            else -> baseRadius * 1.1f
+        }
+
+        // For a single folder, place it at the bottom center
+        if (folderCount == 1) {
+            val x = centerX
+            val y = centerY
+            zonePositions.add(ZonePosition(x, y))
+            return
+        }
+
+        // For multiple folders, arrange in a semi-circle
+        // Calculate the angle range and starting angle based on folder count
+        val angleRange = when {
+            folderCount == 2 -> PI / 2 // 90 degrees for 2 folders
+            folderCount <= 4 -> 2 * PI / 3 // 120 degrees for 3-4 folders
+            folderCount <= 6 -> 3 * PI / 4 // 135 degrees for 5-6 folders
+            else -> PI // 180 degrees (full semi-circle) for 7+ folders
+        }
+
+        // Center the arrangement by adjusting the starting angle
+        val startAngle = (PI - angleRange) / 2
+
+        // Calculate the angle step between each zone
+        val angleStep = angleRange / (folderCount - 1)
 
         for (i in 0 until folderCount) {
-            // Calculate the angle for this zone (0 to PI)
-            val angle = i * angleStep.toDouble()
+            // Calculate the angle for this zone
+            val angle = startAngle + (i * angleStep)
 
             // Calculate the position
             val x = centerX + semiCircleRadius * cos(angle).toFloat()
@@ -269,7 +297,7 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
                 textPaint.isFakeBoldText = false // Regular text weight
 
                 // Center the text properly both horizontally and vertically
-                val textWidth = textPaint.measureText(folder.name)
+                // No need to measure text width since we're using Paint.Align.CENTER
 
                 // Get text height metrics for vertical centering
                 val textBounds = Rect()
@@ -277,7 +305,9 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
                 val textHeight = textBounds.height()
 
                 // Draw text centered both horizontally and vertically
-                canvas.drawText(folder.name, zone.x - textWidth / 2, zone.y + textHeight / 2, textPaint)
+                // The Paint.Align.CENTER handles horizontal centering, but we need to adjust vertical position
+                // The baseline is at y position, so we need to offset by half the text height
+                canvas.drawText(folder.name, zone.x, zone.y + textHeight / 3, textPaint)
             }
         }
     }

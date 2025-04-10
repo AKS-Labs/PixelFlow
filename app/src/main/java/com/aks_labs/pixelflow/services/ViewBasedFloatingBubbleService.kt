@@ -6,8 +6,10 @@ import android.content.Intent
 import android.database.ContentObserver
 import android.graphics.Bitmap
 import android.graphics.PixelFormat
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -420,10 +422,19 @@ class ViewBasedFloatingBubbleService : Service() {
      * Moves a screenshot to a folder.
      */
     private fun moveScreenshotToFolder(screenshotPath: String, folder: Folder) {
+        // Create the main PixelFlow directory in Pictures
+        val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val pixelFlowDir = java.io.File(picturesDir, "PixelFlow")
+        if (!pixelFlowDir.exists()) {
+            val created = pixelFlowDir.mkdirs()
+            Log.d(TAG, "Created PixelFlow directory: $created")
+        }
+
         // Create the folder directory if it doesn't exist
-        val folderDir = java.io.File(getExternalFilesDir(null), "PixelFlow/${folder.name}")
+        val folderDir = java.io.File(pixelFlowDir, folder.name)
         if (!folderDir.exists()) {
-            folderDir.mkdirs()
+            val created = folderDir.mkdirs()
+            Log.d(TAG, "Created folder directory ${folder.name}: $created")
         }
 
         // Get the source file
@@ -439,10 +450,18 @@ class ViewBasedFloatingBubbleService : Service() {
         try {
             // Copy the file
             sourceFile.copyTo(destFile, overwrite = true)
-            Log.d(TAG, "Screenshot copied to folder: ${folder.name}")
+            Log.d(TAG, "Screenshot copied to folder: ${folder.name} at ${destFile.absolutePath}")
 
             // Show a toast notification
             ScreenUtils.showToast(this, "Screenshot saved to ${folder.name}")
+
+            // Scan the file so it appears in the gallery
+            MediaScannerConnection.scanFile(
+                this,
+                arrayOf(destFile.absolutePath),
+                arrayOf("image/jpeg"),
+                null
+            )
         } catch (e: Exception) {
             Log.e(TAG, "Error copying screenshot to folder", e)
             ScreenUtils.showToast(this, "Error saving screenshot")
