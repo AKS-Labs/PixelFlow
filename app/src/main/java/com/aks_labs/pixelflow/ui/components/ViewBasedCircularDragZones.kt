@@ -36,8 +36,8 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         private const val SEMI_CIRCLE_RADIUS_RATIO = 0.4f // Ratio of screen height for semi-circle radius
         private const val MAGNETIC_ATTRACTION_DISTANCE = 150f // Distance for magnetic attraction
         private const val MAGNETIC_ATTRACTION_STRENGTH = 0.3f // Strength of magnetic attraction (0-1)
-        private const val PETAL_COUNT = 12 // Number of petals in the flower shape
-        private const val PETAL_DEPTH = 0.3f // How deep the curves between petals are (0-1)
+        private const val WAVE_COUNT = 14 // Number of waves around the perimeter
+        private const val WAVE_AMPLITUDE = 8f // Amplitude of the waves (how pronounced they are)
         private const val VIBRATION_DURATION = 20L // Duration of vibration feedback in milliseconds
     }
 
@@ -242,97 +242,71 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
             // Determine the radius based on highlight state
             val radius = if (isHighlighted) ZONE_RADIUS_HIGHLIGHTED else ZONE_RADIUS
 
-            // Set the zone color
+            // Set the zone color to match the reference image
             zonePaint.color = if (isHighlighted)
                 ContextCompat.getColor(context, R.color.colorAccent)
             else
-                Color.WHITE
+                Color.rgb(240, 240, 240) // Light gray like in the reference image
 
-            // Create a flower shape path
+            // Create the wavy-edged circular path
             val path = createFlowerPath(zone.x, zone.y, radius)
 
-            // Draw the zone with enhanced shadow for depth
-            zonePaint.setShadowLayer(16f, 0f, 6f, Color.argb(120, 0, 0, 0))
+            // Draw the zone with a subtle shadow for depth
+            zonePaint.setShadowLayer(8f, 0f, 2f, Color.argb(60, 0, 0, 0))
             canvas.drawPath(path, zonePaint)
 
-            // Draw a subtle inner shadow/highlight for 3D effect
-            if (!isHighlighted) {
-                val highlightPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-                highlightPaint.color = Color.argb(40, 255, 255, 255)
-                highlightPaint.style = Paint.Style.STROKE
-                highlightPaint.strokeWidth = 8f
-                canvas.drawPath(path, highlightPaint)
-            }
-
-            // Draw the stroke with a thinner line for elegance
-            zoneStrokePaint.strokeWidth = 1.5f
+            // Draw a very subtle stroke
+            zoneStrokePaint.color = Color.argb(30, 0, 0, 0) // Very transparent black
+            zoneStrokePaint.strokeWidth = 1f
             canvas.drawPath(path, zoneStrokePaint)
 
             // Draw the folder name
             if (i < folders.size) {
                 val folder = folders[i]
-                textPaint.color = if (isHighlighted) Color.WHITE else Color.BLACK
-                textPaint.textSize = 14f * resources.displayMetrics.density // 14sp
-                textPaint.isFakeBoldText = true // Make text slightly bolder
+                textPaint.color = Color.rgb(30, 30, 30) // Dark gray text like in the reference image
+                textPaint.textSize = 16f * resources.displayMetrics.density // 16sp
+                textPaint.isFakeBoldText = false // Regular text weight
 
                 // Center the text properly
                 val textWidth = textPaint.measureText(folder.name)
-                canvas.drawText(folder.name, zone.x - textWidth / 2, zone.y + 4f, textPaint)
+                canvas.drawText(folder.name, zone.x - textWidth / 2, zone.y, textPaint)
             }
         }
     }
 
     /**
-     * Creates a flower-shaped path for a zone, similar to the reference image.
+     * Creates a wavy-edged circular path that exactly matches the reference image.
      */
     private fun createFlowerPath(centerX: Float, centerY: Float, radius: Float): Path {
         val path = Path()
 
-        // Calculate the angle between each petal
-        val angleStep = (2.0 * Math.PI / PETAL_COUNT)
+        // For a shape like in the reference image, we need a simple wavy circle
+        // with gentle, evenly-spaced undulations
 
-        // We'll use Bezier curves to create smooth, rounded petals
-        // For each petal, we'll create 4 points:
-        // 1. The start point (at the petal base)
-        // 2. The control point for the first curve
-        // 3. The control point for the second curve
-        // 4. The end point (at the next petal base)
+        // Start at the first point (right side of the circle)
+        var angle = 0.0
+        var waveRadius = radius + WAVE_AMPLITUDE * Math.cos(WAVE_COUNT * angle)
+        var x = centerX + waveRadius * Math.cos(angle)
+        var y = centerY + waveRadius * Math.sin(angle)
+        path.moveTo(x.toFloat(), y.toFloat())
 
-        for (i in 0 until PETAL_COUNT) {
-            // Calculate the angles for this petal
-            val startAngle = i * angleStep
-            val peakAngle = startAngle + (angleStep / 2.0)
-            val endAngle = startAngle + angleStep
+        // Add points around the circle with high precision for smooth curves
+        // Using 720 points (2 points per degree) for extra smoothness
+        val angleIncrement = 2.0 * Math.PI / 720.0
 
-            // Calculate the points for this petal
-            val innerRadius = radius * (1.0 - PETAL_DEPTH)
+        for (i in 1 until 721) {
+            angle = i * angleIncrement
 
-            // Start point (petal base)
-            val startX = centerX + (innerRadius * Math.cos(startAngle)).toFloat()
-            val startY = centerY + (innerRadius * Math.sin(startAngle)).toFloat()
+            // Calculate the radius with a gentle wave
+            // Using cosine for symmetrical, rounded waves
+            waveRadius = radius + WAVE_AMPLITUDE * Math.cos(WAVE_COUNT * angle)
 
-            // Peak point (petal tip)
-            val peakX = centerX + (radius * Math.cos(peakAngle)).toFloat()
-            val peakY = centerY + (radius * Math.sin(peakAngle)).toFloat()
+            // Calculate the point coordinates
+            x = centerX + waveRadius * Math.cos(angle)
+            y = centerY + waveRadius * Math.sin(angle)
 
-            // End point (next petal base)
-            val endX = centerX + (innerRadius * Math.cos(endAngle)).toFloat()
-            val endY = centerY + (innerRadius * Math.sin(endAngle)).toFloat()
-
-            // Control points for the curves (to create rounded petals)
-            val ctrl1X = centerX + (radius * 0.9 * Math.cos(startAngle + angleStep * 0.3)).toFloat()
-            val ctrl1Y = centerY + (radius * 0.9 * Math.sin(startAngle + angleStep * 0.3)).toFloat()
-            val ctrl2X = centerX + (radius * 0.9 * Math.cos(endAngle - angleStep * 0.3)).toFloat()
-            val ctrl2Y = centerY + (radius * 0.9 * Math.sin(endAngle - angleStep * 0.3)).toFloat()
-
-            // If this is the first petal, move to the start point
-            if (i == 0) {
-                path.moveTo(startX, startY)
-            }
-
-            // Draw the petal using cubic Bezier curves
-            path.cubicTo(ctrl1X, ctrl1Y, peakX, peakY, peakX, peakY)
-            path.cubicTo(peakX, peakY, ctrl2X, ctrl2Y, endX, endY)
+            // Add the point to the path
+            path.lineTo(x.toFloat(), y.toFloat())
         }
 
         // Close the path
