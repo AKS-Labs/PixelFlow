@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.Rect
 import android.graphics.RectF
 import android.os.Build
 import android.os.VibrationEffect
@@ -31,13 +32,13 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "CircularDragZones"
-        private const val ZONE_RADIUS = 90f // Base radius of each zone
-        private const val ZONE_RADIUS_HIGHLIGHTED = 100f // Radius when highlighted
+        private const val ZONE_RADIUS = 110f // Base radius of each zone
+        private const val ZONE_RADIUS_HIGHLIGHTED = 120f // Radius when highlighted
         private const val SEMI_CIRCLE_RADIUS_RATIO = 0.4f // Ratio of screen height for semi-circle radius
         private const val MAGNETIC_ATTRACTION_DISTANCE = 150f // Distance for magnetic attraction
         private const val MAGNETIC_ATTRACTION_STRENGTH = 0.3f // Strength of magnetic attraction (0-1)
         private const val WAVE_COUNT = 12 // Number of waves around the perimeter
-        private const val WAVE_AMPLITUDE = 8f // Amplitude of the waves (how pronounced they are)
+        private const val WAVE_AMPLITUDE = 5f // Amplitude of the waves (how pronounced they are)
         private const val VIBRATION_DURATION = 20L // Duration of vibration feedback in milliseconds
     }
 
@@ -267,9 +268,16 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
                 textPaint.textSize = 16f * resources.displayMetrics.density // 16sp
                 textPaint.isFakeBoldText = false // Regular text weight
 
-                // Center the text properly
+                // Center the text properly both horizontally and vertically
                 val textWidth = textPaint.measureText(folder.name)
-                canvas.drawText(folder.name, zone.x - textWidth / 2, zone.y, textPaint)
+
+                // Get text height metrics for vertical centering
+                val textBounds = Rect()
+                textPaint.getTextBounds(folder.name, 0, folder.name.length, textBounds)
+                val textHeight = textBounds.height()
+
+                // Draw text centered both horizontally and vertically
+                canvas.drawText(folder.name, zone.x - textWidth / 2, zone.y + textHeight / 2, textPaint)
             }
         }
     }
