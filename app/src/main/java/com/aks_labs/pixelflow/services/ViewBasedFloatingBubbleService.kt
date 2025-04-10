@@ -654,15 +654,36 @@ class ViewBasedFloatingBubbleService : Service() {
                             showDragZones()
                         }
 
-                        // Scale up the bubble
-                        view.animate().scaleX(1.1f).scaleY(1.1f).setDuration(100).start()
+                        // Scale up the bubble with bouncing animation
+                        view.animate()
+                            .scaleX(1.055f)
+                            .scaleY(1.055f)
+                            .setDuration(150)
+                            .setInterpolator(android.view.animation.OvershootInterpolator(1.2f))
+                            .start()
                     }
 
-                    // Update highlighted zone
+                    // Update highlighted zone and apply magnetic attraction
                     if (isDragging && dragZonesView != null) {
                         val centerX = params.x + view.width / 2f
                         val centerY = params.y + view.height / 2f
-                        dragZonesView?.updateHighlight(centerX, centerY)
+
+                        // Get potentially adjusted position with magnetic attraction
+                        val (newX, newY) = dragZonesView?.updateHighlight(centerX, centerY) ?: Pair(centerX, centerY)
+
+                        // Apply the magnetic attraction if position changed
+                        if (newX != centerX || newY != centerY) {
+                            // Calculate new params position from center point
+                            params.x = (newX - view.width / 2f).toInt()
+                            params.y = (newY - view.height / 2f).toInt()
+
+                            // Ensure the bubble stays within screen bounds
+                            params.x = params.x.coerceIn(0, width - view.width)
+                            params.y = params.y.coerceIn(0, height - view.height)
+
+                            // Update the view position
+                            windowManager.updateViewLayout(view, params)
+                        }
                     }
 
                     return true
@@ -674,8 +695,13 @@ class ViewBasedFloatingBubbleService : Service() {
                         // Reset dragging state
                         isDragging = false
 
-                        // Scale down the bubble
-                        view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start()
+                        // Scale down the bubble with bouncing animation
+                        view.animate()
+                            .scaleX(1.0f)
+                            .scaleY(1.0f)
+                            .setDuration(200)
+                            .setInterpolator(android.view.animation.BounceInterpolator())
+                            .start()
 
                         // Check if we dropped on a zone
                         val droppedFolderId = checkDroppedOnZone(
