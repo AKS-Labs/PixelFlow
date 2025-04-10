@@ -36,8 +36,8 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         private const val SEMI_CIRCLE_RADIUS_RATIO = 0.4f // Ratio of screen height for semi-circle radius
         private const val MAGNETIC_ATTRACTION_DISTANCE = 150f // Distance for magnetic attraction
         private const val MAGNETIC_ATTRACTION_STRENGTH = 0.3f // Strength of magnetic attraction (0-1)
-        private const val WAVE_COUNT = 8 // Number of waves in the flower/gear shape
-        private const val WAVE_AMPLITUDE = 15f // Amplitude of the waves
+        private const val WAVE_COUNT = 12 // Number of waves in the flower/gear shape
+        private const val WAVE_AMPLITUDE = 12f // Amplitude of the waves
         private const val VIBRATION_DURATION = 20L // Duration of vibration feedback in milliseconds
     }
 
@@ -269,20 +269,22 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
     private fun createFlowerPath(centerX: Float, centerY: Float, radius: Float): Path {
         val path = Path()
 
-        // Calculate points around the circle
-        val angleStep = (2 * Math.PI / WAVE_COUNT).toFloat()
+        // For a more symmetrical flower shape, we'll use a cosine function
+        // with the number of petals equal to WAVE_COUNT
 
         // Start at the first point
         var angle = 0.0
-        var waveRadius = radius + WAVE_AMPLITUDE * Math.sin(WAVE_COUNT * angle)
+        var waveRadius = radius + WAVE_AMPLITUDE * Math.cos(WAVE_COUNT * angle)
         var x = centerX + waveRadius * Math.cos(angle)
         var y = centerY + waveRadius * Math.sin(angle)
         path.moveTo(x.toFloat(), y.toFloat())
 
-        // Add the rest of the points
-        for (i in 1 until 360) {
-            angle = i * Math.PI / 180.0
-            waveRadius = radius + WAVE_AMPLITUDE * Math.sin(WAVE_COUNT * angle)
+        // Add the rest of the points with more precision for smoother curves
+        val angleIncrement = 2.0 * Math.PI / 360.0
+        for (i in 1 until 361) {
+            angle = i * angleIncrement
+            // Using cosine instead of sine for more symmetrical, rounded petals
+            waveRadius = radius + WAVE_AMPLITUDE * Math.cos(WAVE_COUNT * angle)
             x = centerX + waveRadius * Math.cos(angle)
             y = centerY + waveRadius * Math.sin(angle)
             path.lineTo(x.toFloat(), y.toFloat())
