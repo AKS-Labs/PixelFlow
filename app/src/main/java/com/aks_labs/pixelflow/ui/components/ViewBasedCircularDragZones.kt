@@ -267,19 +267,19 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         val angleStep = (2 * Math.PI / WAVE_COUNT).toFloat()
 
         // Start at the first point
-        var angle = 0f
-        var waveRadius = radius + WAVE_AMPLITUDE * Math.sin(WAVE_COUNT * angle).toFloat()
-        var x = centerX + waveRadius * Math.cos(angle).toFloat()
-        var y = centerY + waveRadius * Math.sin(angle).toFloat()
-        path.moveTo(x, y)
+        var angle = 0.0
+        var waveRadius = radius + WAVE_AMPLITUDE * Math.sin(WAVE_COUNT * angle)
+        var x = centerX + waveRadius * Math.cos(angle)
+        var y = centerY + waveRadius * Math.sin(angle)
+        path.moveTo(x.toFloat(), y.toFloat())
 
         // Add the rest of the points
         for (i in 1 until 360) {
-            angle = i * Math.PI.toFloat() / 180f
-            waveRadius = radius + WAVE_AMPLITUDE * Math.sin(WAVE_COUNT * angle).toFloat()
-            x = centerX + waveRadius * Math.cos(angle).toFloat()
-            y = centerY + waveRadius * Math.sin(angle).toFloat()
-            path.lineTo(x, y)
+            angle = i * Math.PI / 180.0
+            waveRadius = radius + WAVE_AMPLITUDE * Math.sin(WAVE_COUNT * angle)
+            x = centerX + waveRadius * Math.cos(angle)
+            y = centerY + waveRadius * Math.sin(angle)
+            path.lineTo(x.toFloat(), y.toFloat())
         }
 
         // Close the path
