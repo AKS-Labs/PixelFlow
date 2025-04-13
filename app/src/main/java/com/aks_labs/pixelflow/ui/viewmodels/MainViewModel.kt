@@ -14,8 +14,11 @@ import com.aks_labs.pixelflow.data.models.SimpleFolder
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
 import com.aks_labs.pixelflow.pixelFlowApp
 import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
+import com.aks_labs.pixelflow.data.SharedPrefsManager.ThemeMode
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -42,6 +45,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             preferences[BUBBLE_ENABLED_KEY] ?: true // Default to true
         }
         .stateIn(viewModelScope, SharingStarted.Eagerly, true)
+
+    // Theme mode
+    private val _themeMode = MutableStateFlow(sharedPrefsManager.getThemeMode())
+    val themeMode = _themeMode.asStateFlow()
 
     /**
      * Set whether the floating bubble is enabled
@@ -154,5 +161,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun moveScreenshotToFolder(screenshotId: Long, folderId: Long) {
         sharedPrefsManager.moveScreenshotToFolder(screenshotId, folderId)
+    }
+
+    /**
+     * Set the theme mode
+     */
+    fun setThemeMode(themeMode: ThemeMode) {
+        sharedPrefsManager.setThemeMode(themeMode)
+        _themeMode.value = themeMode
     }
 }

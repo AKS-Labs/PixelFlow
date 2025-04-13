@@ -193,13 +193,20 @@ class SharedPrefsManager(context: Context) {
         val currentFolders = _folders.value.toMutableList()
         val folder = currentFolders.find { it.id == folderId }
 
-        if (folder != null && !folder.isDefault) {
+        if (folder != null && folder.isRemovable) {
+            // Ensure the folder directory exists (for reference)
+            getFolderDirectory(folder.name)
+
+            // Remove the folder from the list
             currentFolders.remove(folder)
             _folders.value = currentFolders
             saveFolders()
 
             // Also delete all screenshots in this folder
             deleteScreenshotsByFolder(folderId)
+
+            // Note: We don't delete the physical folder to avoid data loss
+            // Users can still access their screenshots in the file system
         }
     }
 
@@ -302,11 +309,14 @@ class SharedPrefsManager(context: Context) {
     fun initializeDefaultFolders() {
         if (_folders.value.isEmpty()) {
             val defaultFolders = listOf(
-                SimpleFolder(id = 1, name = "Quotes", iconName = "ic_quotes", position = 0, isDefault = true, isEditable = true, isRemovable = false),
-                SimpleFolder(id = 2, name = "Tricks", iconName = "ic_tricks", position = 1, isDefault = true, isEditable = true, isRemovable = false),
-                SimpleFolder(id = 3, name = "Images", iconName = "ic_images", position = 2, isDefault = true, isEditable = true, isRemovable = false),
-                SimpleFolder(id = 4, name = "Posts", iconName = "ic_posts", position = 3, isDefault = true, isEditable = true, isRemovable = false),
-                SimpleFolder(id = 5, name = "Trash", iconName = "ic_trash", position = 4, isDefault = true, isEditable = true, isRemovable = false)
+                SimpleFolder(id = 1, name = "Posts", iconName = "ic_posts", position = 0, isDefault = true, isEditable = true, isRemovable = true),
+                SimpleFolder(id = 2, name = "Docs", iconName = "ic_images", position = 1, isDefault = true, isEditable = true, isRemovable = true),
+                SimpleFolder(id = 3, name = "Chats", iconName = "ic_quotes", position = 2, isDefault = true, isEditable = true, isRemovable = true),
+                SimpleFolder(id = 4, name = "Payments", iconName = "ic_tricks", position = 3, isDefault = true, isEditable = true, isRemovable = true),
+                SimpleFolder(id = 5, name = "Memes", iconName = "ic_images", position = 4, isDefault = true, isEditable = true, isRemovable = true),
+                SimpleFolder(id = 6, name = "Tweets", iconName = "ic_posts", position = 5, isDefault = true, isEditable = true, isRemovable = true),
+                SimpleFolder(id = 7, name = "Quotes", iconName = "ic_quotes", position = 6, isDefault = true, isEditable = true, isRemovable = true),
+                SimpleFolder(id = 8, name = "Messages", iconName = "ic_tricks", position = 7, isDefault = true, isEditable = true, isRemovable = true)
             )
 
             _folders.value = defaultFolders
@@ -339,9 +349,36 @@ class SharedPrefsManager(context: Context) {
         return maxId + 1
     }
 
+    /**
+     * Theme mode enum
+     */
+    enum class ThemeMode {
+        SYSTEM, LIGHT, DARK
+    }
+
+    /**
+     * Get the current theme mode
+     */
+    fun getThemeMode(): ThemeMode {
+        val themeModeString = sharedPreferences.getString(KEY_THEME_MODE, ThemeMode.SYSTEM.name)
+        return try {
+            ThemeMode.valueOf(themeModeString ?: ThemeMode.SYSTEM.name)
+        } catch (e: Exception) {
+            ThemeMode.SYSTEM
+        }
+    }
+
+    /**
+     * Set the theme mode
+     */
+    fun setThemeMode(themeMode: ThemeMode) {
+        sharedPreferences.edit().putString(KEY_THEME_MODE, themeMode.name).apply()
+    }
+
     companion object {
         private const val PREFS_NAME = "pixelflow_prefs"
         private const val KEY_FOLDERS = "folders"
         private const val KEY_SCREENSHOTS = "screenshots"
+        private const val KEY_THEME_MODE = "theme_mode"
     }
 }

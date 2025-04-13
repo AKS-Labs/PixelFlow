@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -60,6 +61,7 @@ fun FolderManagementScreen(
     val folders by viewModel.folders.collectAsState(initial = emptyList())
     var showAddDialog by remember { mutableStateOf(false) }
     var editingFolder by remember { mutableStateOf<SimpleFolder?>(null) }
+    var folderToDelete by remember { mutableStateOf<SimpleFolder?>(null) }
 
     Scaffold(
         topBar = {
@@ -96,11 +98,9 @@ fun FolderManagementScreen(
                 items(folders) { folder ->
                     FolderItem(
                         folder = folder,
-                        onEdit = { if (folder.isEditable) editingFolder = folder },
+                        onEdit = { editingFolder = folder },
                         onDelete = {
-                            if (folder.isRemovable) {
-                                viewModel.deleteFolder(folder)
-                            }
+                            folderToDelete = folder
                         }
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -127,6 +127,31 @@ fun FolderManagementScreen(
                 onUpdateFolder = { updatedFolder ->
                     viewModel.updateFolder(updatedFolder)
                     editingFolder = null
+                }
+            )
+        }
+
+        // Delete Folder Confirmation Dialog
+        folderToDelete?.let { folder ->
+            AlertDialog(
+                onDismissRequest = { folderToDelete = null },
+                title = { Text("Delete Folder") },
+                text = { Text("Are you sure you want to delete the folder '${folder.name}'? This action cannot be undone.") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.deleteFolder(folder)
+                            folderToDelete = null
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                    ) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { folderToDelete = null }) {
+                        Text("Cancel")
+                    }
                 }
             )
         }
@@ -187,25 +212,23 @@ fun FolderItem(
 
             // Edit button
             IconButton(
-                onClick = onEdit,
-                enabled = folder.isEditable
+                onClick = onEdit
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = stringResource(id = R.string.edit_folder),
-                    tint = if (folder.isEditable) MaterialTheme.colorScheme.primary else Color.Gray
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
 
-            // Delete button (disabled for non-removable folders)
+            // Delete button
             IconButton(
-                onClick = onDelete,
-                enabled = folder.isRemovable
+                onClick = onDelete
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = stringResource(id = R.string.delete_folder),
-                    tint = if (folder.isRemovable) MaterialTheme.colorScheme.error else Color.Gray
+                    tint = MaterialTheme.colorScheme.error
                 )
             }
         }
@@ -312,8 +335,7 @@ fun EditFolderDialog(
                     value = folderName,
                     onValueChange = { folderName = it },
                     label = { Text("Folder Name") },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !folder.isDefault
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -330,32 +352,28 @@ fun EditFolderDialog(
                         iconResId = R.drawable.ic_quotes,
                         iconName = "ic_quotes",
                         isSelected = selectedIconName == "ic_quotes",
-                        onClick = { selectedIconName = "ic_quotes" },
-                        enabled = !folder.isDefault
+                        onClick = { selectedIconName = "ic_quotes" }
                     )
 
                     FolderIconOption(
                         iconResId = R.drawable.ic_tricks,
                         iconName = "ic_tricks",
                         isSelected = selectedIconName == "ic_tricks",
-                        onClick = { selectedIconName = "ic_tricks" },
-                        enabled = !folder.isDefault
+                        onClick = { selectedIconName = "ic_tricks" }
                     )
 
                     FolderIconOption(
                         iconResId = R.drawable.ic_images,
                         iconName = "ic_images",
                         isSelected = selectedIconName == "ic_images",
-                        onClick = { selectedIconName = "ic_images" },
-                        enabled = !folder.isDefault
+                        onClick = { selectedIconName = "ic_images" }
                     )
 
                     FolderIconOption(
                         iconResId = R.drawable.ic_posts,
                         iconName = "ic_posts",
                         isSelected = selectedIconName == "ic_posts",
-                        onClick = { selectedIconName = "ic_posts" },
-                        enabled = !folder.isDefault
+                        onClick = { selectedIconName = "ic_posts" }
                     )
                 }
             }
@@ -367,7 +385,7 @@ fun EditFolderDialog(
                         onUpdateFolder(folder.copy(name = folderName, iconName = selectedIconName))
                     }
                 },
-                enabled = folderName.isNotBlank() && !folder.isDefault
+                enabled = folderName.isNotBlank()
             ) {
                 Text(text = "Update")
             }
