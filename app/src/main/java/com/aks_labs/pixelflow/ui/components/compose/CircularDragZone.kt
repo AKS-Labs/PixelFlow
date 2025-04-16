@@ -79,8 +79,8 @@ fun CircularDragZone(
             if (folders.isEmpty()) return@Canvas
 
             val centerX = size.width / 2f
-            val centerY = size.height - 200.dp.toPx()
-            val centerDistance = size.width * 0.45f // 45% of screen width for a prominent arc
+            val centerY = size.height - size.height / 4f // Position the center point at 3/4 of the screen height
+            val centerDistance = size.width * 0.4f // 40% of screen width
 
             val folderCount = folders.size
 
@@ -88,7 +88,7 @@ fun CircularDragZone(
             if (folderCount == 1) {
                 val folder = folders[0]
                 val x = centerX
-                val y = centerY
+                val y = size.height - 200.dp.toPx() // Place at the bottom with padding
 
                 // Calculate radius with animation if needed
                 val radius = with(density) {
@@ -153,23 +153,42 @@ fun CircularDragZone(
                 return@Canvas
             }
 
-            // For the reference image look, we use a semi-circle (180 degrees)
-            // Starting from the left side (180°) to the right side (0°)
-            // We use 210° to 30° to make the arc more prominent
-            val startAngle = 210f // 210 degrees (left side)
-            val endAngle = 30f // 30 degrees (right side)
-            val angleRange = startAngle - endAngle // 180 degrees total (semi-circle)
+            // Calculate the angle range based on folder count
+            // For few folders (2-8), use a bottom arc (150 degrees)
+            // For more folders (9+), gradually expand to a full circle (360 degrees)
+            val minFolders = 2
+            val maxFolders = 16 // At this point, we'll have a full circle
+
+            // Start with a bottom arc (150 degrees)
+            val minAngleRange = 150f // About 150 degrees
+            val maxAngleRange = 360f // 360 degrees (full circle)
+
+            // Calculate the transition factor (0 to 1) based on folder count
+            val transitionFactor = if (folderCount <= 8) {
+                0f // Use the minimum arc for 2-8 folders
+            } else {
+                kotlin.math.min(1f, (folderCount - 8f) / (maxFolders - 8f))
+            }
+
+            // Calculate the actual angle range using the transition factor
+            val angleRange = minAngleRange + (maxAngleRange - minAngleRange) * transitionFactor
+
+            // For few folders, center the arc at the bottom (90 degrees)
+            val arcCenterAngle = 90f // Bottom center (90 degrees)
+
+            // Calculate the start and end angles to center the arc
+            val startAngle = arcCenterAngle - angleRange / 2
+            val endAngle = arcCenterAngle + angleRange / 2
 
             // Calculate the angle step between each zone
-            val angleStep = angleRange / (folderCount - 1)
+            val angleStep = angleRange / folderCount
 
             folders.forEachIndexed { index, folder ->
-                val angleInDegrees = startAngle - index * angleStep // Move from left to right
+                val angleInDegrees = startAngle + index * angleStep
                 val angleInRadians = Math.toRadians(angleInDegrees.toDouble())
 
                 val x = centerX + centerDistance * cos(angleInRadians).toFloat()
-                // Use negative sin to make the arc appear at the bottom
-                val y = centerY - centerDistance * sin(angleInRadians).toFloat()
+                val y = centerY + centerDistance * sin(angleInRadians).toFloat()
 
                 // Calculate radius with animation if needed
                 val radius = with(density) {

@@ -181,14 +181,14 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
     }
 
     /**
-     * Calculates the positions of the zones in a semi-circular arc layout at the bottom of the screen,
-     * exactly matching the reference images with zones arranged like digits in an analog clock.
+     * Calculates the positions of the zones in a circular layout that starts as an arc
+     * and expands to a full circle as more folders are added, with equal spacing between zones.
      */
     private fun calculateZonePositions() {
         zonePositions.clear()
 
         val centerX = width / 2f
-        val bottomY = height - ZONE_RADIUS_HIGHLIGHTED - 40f // Position at the bottom with padding
+        val centerY = height - height / 4f // Position the center point at 3/4 of the screen height
 
         val folderCount = folders.size
         if (folderCount == 0) return
@@ -196,33 +196,52 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         // For a single folder, place it at the bottom center
         if (folderCount == 1) {
             val x = centerX
-            val y = bottomY
+            val y = height - ZONE_RADIUS_HIGHLIGHTED - 40f
             zonePositions.add(ZonePosition(x, y))
             return
         }
 
-        // Calculate the arc radius based on screen width to ensure a proper semi-circle
-        // This creates the exact look from the reference images
-        val arcRadius = width * 0.45f // 45% of screen width for a prominent arc
+        // Calculate the arc radius based on screen width
+        val arcRadius = width * 0.4f // 40% of screen width
 
-        // For the reference image look, we use a semi-circle (180 degrees)
-        // Starting from the left side (180°) to the right side (0°)
-        // We use PI + PI/6 to PI/6 to make the arc more prominent (210° to 30°)
-        val startAngle = PI + PI/6 // 210 degrees (left side)
-        val endAngle = PI/6 // 30 degrees (right side)
-        val angleRange = startAngle - endAngle // 180 degrees total (semi-circle)
+        // Calculate the angle range based on folder count
+        // For few folders (2-8), use a bottom arc (180-220 degrees)
+        // For more folders (9+), gradually expand to a full circle (360 degrees)
+        val minFolders = 2
+        val maxFolders = 16 // At this point, we'll have a full circle
+
+        // Start with a bottom arc (180-220 degrees)
+        val minAngleRange = 5 * PI / 6 // About 150 degrees
+        val maxAngleRange = 2 * PI // 360 degrees (full circle)
+
+        // Calculate the transition factor (0 to 1) based on folder count
+        val transitionFactor = if (folderCount <= 8) {
+            0.0 // Use the minimum arc for 2-8 folders
+        } else {
+            min(1.0, (folderCount - 8) / (maxFolders - 8).toDouble())
+        }
+
+        // Calculate the actual angle range using the transition factor
+        val angleRange = minAngleRange + (maxAngleRange - minAngleRange) * transitionFactor
+
+        // For few folders, center the arc at the bottom (PI/2 or 90 degrees)
+        // For many folders, use a full circle starting from the top (-PI/2 or 270 degrees)
+        val arcCenterAngle = PI / 2 // Bottom center (90 degrees)
+
+        // Calculate the start and end angles to center the arc
+        val startAngle = arcCenterAngle - angleRange / 2
+        val endAngle = arcCenterAngle + angleRange / 2
 
         // Calculate the angle step between each zone
-        val angleStep = angleRange / (folderCount - 1)
+        val angleStep = angleRange / folderCount
 
         for (i in 0 until folderCount) {
             // Calculate the angle for this zone
-            val angle = startAngle - i * angleStep // Move from left to right
+            val angle = startAngle + i * angleStep
 
             // Calculate the position using standard parametric circle equations
             val x = centerX + arcRadius * cos(angle).toFloat()
-            // Use negative sin to make the arc appear at the bottom
-            val y = bottomY - arcRadius * sin(angle).toFloat()
+            val y = centerY + arcRadius * sin(angle).toFloat()
 
             // Ensure the zone is fully visible on screen
             val minX = ZONE_RADIUS_HIGHLIGHTED + 20f
