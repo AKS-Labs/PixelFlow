@@ -154,25 +154,24 @@ fun CircularDragZone(
             }
 
             // Calculate the angle range based on folder count
-            // Start with a semi-circle (180°) for few folders
-            // Gradually expand to a full circle (360°) as more folders are added
-            val maxAngleRange = 360f // 360 degrees (full circle)
-            val minAngleRange = 180f // 180 degrees (semi-circle)
+            // Start with a small arc at the bottom (like sunrise)
+            // Gradually expand upward as more folders are added
+            val maxAngleRange = 180f // 180 degrees (semi-circle)
+            val minAngleRange = 60f // 60 degrees (small arc at bottom)
 
             // Calculate the angle range using a smooth transition formula
-            // This creates a gradual expansion from semi-circle to full circle
-            val transitionFactor = kotlin.math.min(1f, (folderCount - 2) / 14f) // Transition completes at 16 folders
+            // This creates a gradual expansion from a small arc to a semi-circle
+            val transitionFactor = kotlin.math.min(1f, (folderCount - 2) / 10f) // Transition completes at 12 folders
             val angleRange = minAngleRange + (maxAngleRange - minAngleRange) * transitionFactor
 
-            // Calculate the starting angle to center the arc
-            // For a semi-circle, start at 0 (right side)
-            // For a full circle, start at -90 (top)
-            val fullCircleStartAngle = -90f // Start from top for full circle
-            val semiCircleStartAngle = 0f // Start from right for semi-circle
-            val startAngle = semiCircleStartAngle + (fullCircleStartAngle - semiCircleStartAngle) * transitionFactor
+            // Calculate the starting angle to center the arc at the bottom
+            // We always start from the bottom and expand upward
+            // 90 degrees is the bottom of the circle
+            val startAngle = 90f - angleRange / 2
+            val endAngle = 90f + angleRange / 2
 
             // Calculate the angle step between each zone
-            val angleStep = angleRange / folderCount
+            val angleStep = angleRange / (folderCount - 1)
 
             folders.forEachIndexed { index, folder ->
                 val angleInDegrees = startAngle + index * angleStep

@@ -182,7 +182,7 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
 
     /**
      * Calculates the positions of the zones in a responsive arc layout that adapts from a semi-circle
-     * to a full circle as more folders are added.
+     * to a full circle as more folders are added, starting from the bottom of the screen like a sunrise.
      */
     private fun calculateZonePositions() {
         zonePositions.clear()
@@ -216,25 +216,24 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         }
 
         // Calculate the angle range based on folder count
-        // Start with a semi-circle (180°) for few folders
-        // Gradually expand to a full circle (360°) as more folders are added
-        val maxAngleRange = 2 * PI // 360 degrees (full circle)
-        val minAngleRange = PI // 180 degrees (semi-circle)
+        // Start with a small arc at the bottom (like sunrise)
+        // Gradually expand upward as more folders are added
+        val maxAngleRange = PI // 180 degrees (semi-circle)
+        val minAngleRange = PI / 3 // 60 degrees (small arc at bottom)
 
         // Calculate the angle range using a smooth transition formula
-        // This creates a gradual expansion from semi-circle to full circle
-        val transitionFactor = min(1.0, (folderCount - 2) / 14.0) // Transition completes at 16 folders
+        // This creates a gradual expansion from a small arc to a semi-circle
+        val transitionFactor = min(1.0, (folderCount - 2) / 10.0) // Transition completes at 12 folders
         val angleRange = minAngleRange + (maxAngleRange - minAngleRange) * transitionFactor
 
-        // Calculate the starting angle to center the arc
-        // For a semi-circle, start at 0 (right side)
-        // For a full circle, start at -PI/2 (top)
-        val fullCircleStartAngle = -PI / 2 // Start from top for full circle
-        val semiCircleStartAngle = 0.0 // Start from right for semi-circle
-        val startAngle = semiCircleStartAngle + (fullCircleStartAngle - semiCircleStartAngle) * transitionFactor
+        // Calculate the starting angle to center the arc at the bottom
+        // We always start from the bottom and expand upward
+        // PI/2 is the bottom of the circle (90 degrees)
+        val startAngle = PI / 2 - angleRange / 2
+        val endAngle = PI / 2 + angleRange / 2
 
         // Calculate the angle step between each zone
-        val angleStep = angleRange / folderCount
+        val angleStep = angleRange / (folderCount - 1)
 
         for (i in 0 until folderCount) {
             // Calculate the angle for this zone
