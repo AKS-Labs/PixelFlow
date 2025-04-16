@@ -203,13 +203,14 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
 
         // Calculate the arc radius based on screen width to ensure a proper semi-circle
         // This creates the exact look from the reference images
-        val arcRadius = width * 0.4f // 40% of screen width for a nice arc
+        val arcRadius = width * 0.45f // 45% of screen width for a prominent arc
 
-        // For the reference image look, we always use a semi-circle (180 degrees)
-        // Starting from the left side (-180°) to the right side (0°)
-        val startAngle = PI // 180 degrees (left side)
-        val endAngle = 0.0 // 0 degrees (right side)
-        val angleRange = PI // 180 degrees total (semi-circle)
+        // For the reference image look, we use a semi-circle (180 degrees)
+        // Starting from the left side (180°) to the right side (0°)
+        // We use PI + PI/6 to PI/6 to make the arc more prominent (210° to 30°)
+        val startAngle = PI + PI/6 // 210 degrees (left side)
+        val endAngle = PI/6 // 30 degrees (right side)
+        val angleRange = startAngle - endAngle // 180 degrees total (semi-circle)
 
         // Calculate the angle step between each zone
         val angleStep = angleRange / (folderCount - 1)
@@ -220,7 +221,8 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
 
             // Calculate the position using standard parametric circle equations
             val x = centerX + arcRadius * cos(angle).toFloat()
-            val y = bottomY + arcRadius * sin(angle).toFloat()
+            // Use negative sin to make the arc appear at the bottom
+            val y = bottomY - arcRadius * sin(angle).toFloat()
 
             // Ensure the zone is fully visible on screen
             val minX = ZONE_RADIUS_HIGHLIGHTED + 20f

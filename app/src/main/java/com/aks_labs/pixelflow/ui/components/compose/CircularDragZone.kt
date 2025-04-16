@@ -80,7 +80,7 @@ fun CircularDragZone(
 
             val centerX = size.width / 2f
             val centerY = size.height - 200.dp.toPx()
-            val centerDistance = size.width * 0.4f // 40% of screen width for a nice arc
+            val centerDistance = size.width * 0.45f // 45% of screen width for a prominent arc
 
             val folderCount = folders.size
 
@@ -153,11 +153,12 @@ fun CircularDragZone(
                 return@Canvas
             }
 
-            // For the reference image look, we always use a semi-circle (180 degrees)
+            // For the reference image look, we use a semi-circle (180 degrees)
             // Starting from the left side (180°) to the right side (0°)
-            val startAngle = 180f // 180 degrees (left side)
-            val endAngle = 0f // 0 degrees (right side)
-            val angleRange = 180f // 180 degrees total (semi-circle)
+            // We use 210° to 30° to make the arc more prominent
+            val startAngle = 210f // 210 degrees (left side)
+            val endAngle = 30f // 30 degrees (right side)
+            val angleRange = startAngle - endAngle // 180 degrees total (semi-circle)
 
             // Calculate the angle step between each zone
             val angleStep = angleRange / (folderCount - 1)
@@ -167,7 +168,8 @@ fun CircularDragZone(
                 val angleInRadians = Math.toRadians(angleInDegrees.toDouble())
 
                 val x = centerX + centerDistance * cos(angleInRadians).toFloat()
-                val y = centerY + centerDistance * sin(angleInRadians).toFloat()
+                // Use negative sin to make the arc appear at the bottom
+                val y = centerY - centerDistance * sin(angleInRadians).toFloat()
 
                 // Calculate radius with animation if needed
                 val radius = with(density) {
