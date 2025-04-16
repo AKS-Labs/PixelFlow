@@ -90,7 +90,7 @@ PixelFlow is an Android app designed to enhance screenshot management by automat
 - Enhance the UI with more Material Design 3 components
 - Optimize performance for older devices
 
-## Design Philosophy
+## Design Philosophy 
 - Focus on Material Design 3 for a modern, cohesive look
 - Prioritize intuitive user experience with visual feedback
 - Create a playful yet functional interface
@@ -98,3 +98,4 @@ PixelFlow is an Android app designed to enhance screenshot management by automat
 - Implement smooth animations for a polished experience
 
 This project demonstrates advanced Android development techniques including custom views, services, background processing, drag-and-drop interfaces, and Material Design implementation, all while maintaining a focus on user experience and visual appeal.
+

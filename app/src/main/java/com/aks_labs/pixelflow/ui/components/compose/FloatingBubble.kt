@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
@@ -46,9 +47,9 @@ fun FloatingBubble(
     onDragStart: () -> Unit = {},
     onDragEnd: () -> Unit = {}
 ) {
-    // Animate the scale when dragging
+    // Scale factor for when the bubble is being dragged
     val scale by animateFloatAsState(
-        targetValue = if (isDragging) 1.055f else 1f, // Increase by 5dp when dragged
+        targetValue = if (isDragging) 1.056f else 1f, // 95dp/90dp = 1.056
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
@@ -66,7 +67,8 @@ fun FloatingBubble(
     // Create the card with a circular shape
     Card(
         modifier = Modifier
-            .size(size * scale)
+            .size(size)
+            .scale(scale) // Apply scale animation
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = { onDragStart() },

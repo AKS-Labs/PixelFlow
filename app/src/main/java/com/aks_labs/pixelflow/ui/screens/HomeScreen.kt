@@ -20,13 +20,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -338,7 +334,7 @@ fun HomeScreen(
             }
         )
 
-        // Create a LazyColumn with animated items
+        // Create a LazyColumn with simple fade-in animation
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -348,25 +344,10 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             itemsIndexed(items) { index, item ->
-                // Create a transition state for each item
-                val visibleState = remember { MutableTransitionState(false) }
-
-                // Start the animation when the item is first composed
-                LaunchedEffect(key1 = item.id) {
-                    visibleState.targetState = true
-                }
-
-                // Animate the item's appearance
+                // Simple fade-in animation without bounce
                 AnimatedVisibility(
-                    visibleState = visibleState,
-                    enter = fadeIn(animationSpec = tween(durationMillis = 500, delayMillis = index * 100)) +
-                            slideInVertically(
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                ),
-                                initialOffsetY = { it * 2 } // Start from 2x the height below
-                            ),
+                    visible = true,
+                    enter = fadeIn(animationSpec = tween(durationMillis = 300, delayMillis = index * 50)),
                     exit = fadeOut()
                 ) {
                     item.content()

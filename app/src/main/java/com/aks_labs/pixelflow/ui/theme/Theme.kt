@@ -2,6 +2,7 @@ package com.aks_labs.pixelflow.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import android.view.WindowManager
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -9,10 +10,14 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aks_labs.pixelflow.data.SharedPrefsManager.ThemeMode
 import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
@@ -78,6 +83,21 @@ fun PixelFlowTheme(
 
         useDarkTheme -> DarkColorScheme
         else -> LightColorScheme
+    }
+
+    // Set up transparent status bar
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = Color.Transparent.toArgb()
+
+            // Make status bar icons dark or light based on theme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !useDarkTheme
+
+            // Make the status bar transparent and extend content behind it
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+        }
     }
 
     MaterialTheme(

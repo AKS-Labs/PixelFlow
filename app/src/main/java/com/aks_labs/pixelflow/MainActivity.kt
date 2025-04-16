@@ -29,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -37,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
 import com.aks_labs.pixelflow.ui.screens.FolderManagementScreen
 import com.aks_labs.pixelflow.ui.screens.HomeScreen
+import com.aks_labs.pixelflow.ui.screens.PermissionSetupScreen
 import com.aks_labs.pixelflow.ui.screens.ScreenshotHistoryScreen
 import com.aks_labs.pixelflow.ui.screens.SettingsScreen
 import com.aks_labs.pixelflow.ui.theme.PixelFlowTheme
@@ -66,9 +68,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // enableEdgeToEdge()
-
-        // Check and request permissions
-        checkAndRequestPermissions()
 
         setContent {
             val viewModel: MainViewModel = viewModel()
@@ -139,7 +138,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun startFloatingBubbleService() {
+    fun startFloatingBubbleService() {
         try {
             Log.d(TAG, "Starting ViewBasedFloatingBubbleService")
             val intent = Intent(this, ViewBasedFloatingBubbleService::class.java)
@@ -193,12 +192,51 @@ fun PixelFlowApp(
     var showPreview by remember { mutableStateOf(false) }
     var previewPath by remember { mutableStateOf("") }
 
+    // Check if onboarding has been completed
+    val context = LocalContext.current
+    val activity = context as MainActivity
+    val sharedPrefsManager = remember { (context.applicationContext as PixelFlowApplication).sharedPrefsManager }
+    val onboardingCompleted = remember { sharedPrefsManager.isOnboardingCompleted() }
+
+    // Start service if permissions are granted and onboarding is completed
+    LaunchedEffect(onboardingCompleted) {
+        if (onboardingCompleted) {
+            // Check if all permissions are granted before starting service
+            val hasStoragePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) ==
+                        android.content.pm.PackageManager.PERMISSION_GRANTED
+            } else {
+                context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                        android.content.pm.PackageManager.PERMISSION_GRANTED
+            }
+
+            val hasOverlayPermission = Settings.canDrawOverlays(context)
+
+            val hasManageFilesPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                Environment.isExternalStorageManager()
+            } else {
+                true // Not needed for Android < 11
+            }
+
+            if (hasStoragePermission && hasOverlayPermission &&
+                (hasManageFilesPermission || Build.VERSION.SDK_INT < Build.VERSION_CODES.R)) {
+                activity.startFloatingBubbleService()
+            }
+        }
+    }
+
+    // Set the start destination based on onboarding status
+    val startDestination = if (onboardingCompleted) "home" else "permission_setup"
+
     Scaffold { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "home",
+            startDestination = startDestination,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable("permission_setup") {
+                PermissionSetupScreen(navController, sharedPrefsManager)
+            }
             composable("home") {
                 HomeScreen(navController, viewModel)
             }

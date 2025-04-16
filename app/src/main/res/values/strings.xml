@@ -9,6 +9,7 @@
     <string name="screenshot_bubble">Screenshot Bubble</string>
     <string name="screenshot_moved">Screenshot successfully moved to %1$s</string>
     <string name="screenshot_thumbnail">Screenshot Thumbnail</string>
+    <string name="action_button">Action Button</string>
 
     <!-- Folders -->
     <string name="folder_quotes">Quotes</string>

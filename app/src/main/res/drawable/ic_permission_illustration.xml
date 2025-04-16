@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+    
+    <!-- Background curves -->
+    <path
+        android:fillColor="#E0F7FA"
+        android:pathData="M40,120 C40,80 80,40 120,40 C160,40 200,80 200,120 C200,160 160,200 120,200 C80,200 40,160 40,120 Z" />
+    
+    <!-- Light blue curved line -->
+    <path
+        android:strokeColor="#64B5F6"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M40,120 C40,80 80,40 120,40 C160,40 200,80 200,120" />
+    
+    <!-- Light green box with QR code icon -->
+    <path
+        android:fillColor="#A5D6A7"
+        android:pathData="M90,80 L110,80 L110,100 L90,100 Z" />
+    <path
+        android:strokeColor="#2E7D32"
+        android:strokeWidth="2"
+        android:pathData="M95,85 L105,85 L105,95 L95,95 Z" />
+    <path
+        android:strokeColor="#2E7D32"
+        android:strokeWidth="2"
+        android:pathData="M97,87 L97,93 M103,87 L103,93" />
+    <path
+        android:strokeColor="#2E7D32"
+        android:strokeWidth="2"
+        android:pathData="M99,89 L101,89 M99,91 L101,91" />
+    
+    <!-- Light green box with document icon -->
+    <path
+        android:fillColor="#A5D6A7"
+        android:pathData="M170,80 L190,80 L190,100 L170,100 Z" />
+    <path
+        android:strokeColor="#2E7D32"
+        android:strokeWidth="2"
+        android:pathData="M175,85 L185,85 L185,95 L175,95 Z" />
+    <path
+        android:strokeColor="#2E7D32"
+        android:strokeWidth="2"
+        android:pathData="M177,88 L183,88 M177,91 L183,91" />
+    
+    <!-- Light blue curved line bottom -->
+    <path
+        android:strokeColor="#64B5F6"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M200,120 C200,160 160,200 120,200 C80,200 40,160 40,120" />
+    
+    <!-- Light green box with tag icon -->
+    <path
+        android:fillColor="#A5D6A7"
+        android:pathData="M90,140 L110,140 L110,160 L90,160 Z" />
+    <path
+        android:strokeColor="#2E7D32"
+        android:strokeWidth="2"
+        android:pathData="M95,145 L105,145 L105,155 L95,155 Z" />
+    <path
+        android:strokeColor="#2E7D32"
+        android:strokeWidth="2"
+        android:pathData="M97,147 L103,147 M97,153 L103,153" />
+    
+    <!-- Light purple box with search icon -->
+    <path
+        android:fillColor="#B39DDB"
+        android:pathData="M170,140 L190,140 L190,160 L170,160 Z" />
+    <path
+        android:strokeColor="#4527A0"
+        android:strokeWidth="2"
+        android:pathData="M180,145 C177,145 175,147 175,150 C175,153 177,155 180,155 C183,155 185,153 185,150" />
+    <path
+        android:strokeColor="#4527A0"
+        android:strokeWidth="2"
+        android:pathData="M185,155 L187,157" />
+    
+    <!-- Central stacked screenshots -->
+    <path
+        android:fillColor="#90CAF9"
+        android:pathData="M110,100 L140,100 L140,140 L110,140 Z" />
+    <path
+        android:fillColor="#64B5F6"
+        android:pathData="M120,110 L150,110 L150,150 L120,150 Z" />
+    <path
+        android:fillColor="#42A5F5"
+        android:pathData="M130,120 L160,120 L160,160 L130,160 Z" />
+    
+    <!-- Circle connector -->
+    <path
+        android:fillColor="#42A5F5"
+        android:pathData="M160,140 C160,140 160,140 160,140 C163,140 165,142 165,145 C165,148 163,150 160,150" />
+</vector>

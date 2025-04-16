@@ -524,15 +524,21 @@ class FloatingBubbleService : Service() {
                             } else {
                                 // Add a bigger scale effect while dragging with material design elevation
                                 // Scale by 5dp (from 90dp to 95dp)
+                                // Ensure we scale both X and Y equally to maintain the circular shape
+                                val scaleValue = 1.055f // 95/90 = 1.055
                                 view.animate()
-                                    .scaleX(1.055f) // 95/90 = 1.055
-                                    .scaleY(1.055f)
+                                    .scaleX(scaleValue)
+                                    .scaleY(scaleValue)
                                     .setDuration(150)
                                     .start()
 
-                                // Increase elevation for dragging effect
-                                // Find the CardView (it's the first child of the FrameLayout)
+                                // Update the CardView's corner radius to maintain perfect circle
                                 val bubbleCard = (view as FrameLayout).getChildAt(0) as CardView
+                                val newSize = (90 * scaleValue).toInt()
+                                val newRadius = newSize / 2f
+                                bubbleCard.radius = newRadius
+
+                                // Increase elevation for dragging effect
                                 bubbleCard.animate()
                                     .translationZ(16f)
                                     .setDuration(150)
@@ -541,15 +547,23 @@ class FloatingBubbleService : Service() {
                         } else {
                             // Add a bigger scale effect while dragging with material design elevation
                             // Scale by 5dp (from 90dp to 95dp)
+                            // Ensure we scale both X and Y equally to maintain the circular shape
+                            val scaleValue = 1.055f // 95/90 = 1.055
                             view.animate()
-                                .scaleX(1.055f) // 95/90 = 1.055
-                                .scaleY(1.055f)
+                                .scaleX(scaleValue)
+                                .scaleY(scaleValue)
                                 .setDuration(150)
                                 .start()
 
                             // Increase elevation for dragging effect
                             // Find the CardView (it's the first child of the FrameLayout)
                             val bubbleCard = (view as FrameLayout).getChildAt(0) as CardView
+
+                            // Update the CardView's corner radius to maintain perfect circle
+                            val newSize = (90 * scaleValue).toInt()
+                            val newRadius = newSize / 2f
+                            bubbleCard.radius = newRadius
+
                             bubbleCard.animate()
                                 .translationZ(16f)
                                 .setDuration(150)
@@ -576,6 +590,10 @@ class FloatingBubbleService : Service() {
                     // Reset elevation
                     // Find the CardView (it's the first child of the FrameLayout)
                     val bubbleCard = (view as FrameLayout).getChildAt(0) as CardView
+
+                    // Reset the corner radius to maintain perfect circle
+                    bubbleCard.radius = 45f // Half of 90dp
+
                     bubbleCard.animate()
                         .translationZ(0f)
                         .setDuration(200)

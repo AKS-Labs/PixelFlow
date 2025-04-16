@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+    
+    <!-- Background circle -->
+    <path
+        android:fillColor="#E3F2FD"
+        android:pathData="M120,120m-100,0a100,100 0,1 1,200 0a100,100 0,1 1,-200 0" />
+    
+    <!-- Stacked screenshots -->
+    <path
+        android:fillColor="#90CAF9"
+        android:pathData="M140,80L180,80L180,160L140,160Z"
+        android:rotation="10"
+        android:pivotX="160"
+        android:pivotY="120" />
+    
+    <path
+        android:fillColor="#64B5F6"
+        android:pathData="M120,80L160,80L160,160L120,160Z"
+        android:rotation="5"
+        android:pivotX="140"
+        android:pivotY="120" />
+    
+    <path
+        android:fillColor="#42A5F5"
+        android:pathData="M100,80L140,80L140,160L100,160Z"
+        android:rotation="0"
+        android:pivotX="120"
+        android:pivotY="120" />
+    
+    <!-- Magnifying glass -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#1976D2"
+        android:strokeWidth="4"
+        android:pathData="M80,120m-30,0a30,30 0,1 1,60 0a30,30 0,1 1,-60 0" />
+    
+    <path
+        android:strokeColor="#1976D2"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:pathData="M100,140L120,160" />
+    
+    <!-- QR code icon -->
+    <path
+        android:fillColor="#81C784"
+        android:pathData="M60,60m-20,0a20,20 0,1 1,40 0a20,20 0,1 1,-40 0" />
+    
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,50h5v5h-5z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M55,50h5v5h-5z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M60,50h5v5h-5z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M65,50h5v5h-5z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,55h5v5h-5z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M60,55h5v5h-5z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,60h5v5h-5z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M60,60h5v5h-5z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,65h5v5h-5z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M55,65h5v5h-5z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M60,65h5v5h-5z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M65,65h5v5h-5z" />
+    
+    <!-- Document icon -->
+    <path
+        android:fillColor="#AED581"
+        android:pathData="M180,60m-20,0a20,20 0,1 1,40 0a20,20 0,1 1,-40 0" />
+    
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M170,50L190,50L190,70L170,70Z" />
+    
+    <path
+        android:fillColor="#81C784"
+        android:pathData="M175,55h10v2h-10z" />
+    <path
+        android:fillColor="#81C784"
+        android:pathData="M175,59h10v2h-10z" />
+    <path
+        android:fillColor="#81C784"
+        android:pathData="M175,63h10v2h-10z" />
+    
+    <!-- Search icon -->
+    <path
+        android:fillColor="#90CAF9"
+        android:pathData="M180,180m-20,0a20,20 0,1 1,40 0a20,20 0,1 1,-40 0" />
+    
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#1976D2"
+        android:strokeWidth="2"
+        android:pathData="M180,180m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0" />
+    
+    <path
+        android:strokeColor="#1976D2"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M187,187L193,193" />
+    
+    <!-- Tag icon -->
+    <path
+        android:fillColor="#81D4FA"
+        android:pathData="M60,180m-20,0a20,20 0,1 1,40 0a20,20 0,1 1,-40 0" />
+    
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,170L70,170L70,190L60,185L50,190Z" />
+    
+    <path
+        android:fillColor="#29B6F6"
+        android:pathData="M60,175m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+    
+    <!-- Connecting lines -->
+    <path
+        android:strokeColor="#64B5F6"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M60,80C70,100 90,110 100,120" />
+    
+    <path
+        android:strokeColor="#64B5F6"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M180,80C170,100 150,110 140,120" />
+    
+    <path
+        android:strokeColor="#64B5F6"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M60,160C70,140 90,130 100,120" />
+    
+    <path
+        android:strokeColor="#64B5F6"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M180,160C170,140 150,130 140,120" />
+</vector>

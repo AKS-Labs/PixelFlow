@@ -42,27 +42,12 @@
             </intent-filter>
         </activity>
 
-        <!-- Test activity for Compose service -->
+        <!-- Test activity for Compose service is commented out until implemented
         <activity
             android:name=".ui.test.ComposeServiceTestActivity"
             android:exported="false"
             android:theme="@style/Theme.PixelFlow" />
-
-        <!-- Service for screenshot detection and floating bubble (XML-based) -->
-        <service
-            android:name=".services.FloatingBubbleService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="dataSync"
-            android:stopWithTask="false" />
-
-        <!-- Service for screenshot detection and floating bubble (Compose-based) -->
-        <service
-            android:name=".services.ComposeFloatingBubbleService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="dataSync"
-            android:stopWithTask="false" />
+        -->
 
         <!-- Service for screenshot detection and floating bubble (View-based) -->
         <service
