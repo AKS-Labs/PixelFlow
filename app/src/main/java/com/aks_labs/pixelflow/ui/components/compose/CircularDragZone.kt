@@ -80,7 +80,7 @@ fun CircularDragZone(
 
             val centerX = size.width / 2f
             val centerY = size.height - 200.dp.toPx()
-            val centerDistance = minOf(size.width, size.height) * 0.4f
+            val centerDistance = size.width * 0.4f // 40% of screen width for a nice arc
 
             val folderCount = folders.size
 
@@ -153,28 +153,17 @@ fun CircularDragZone(
                 return@Canvas
             }
 
-            // Calculate the angle range based on folder count
-            // Start with a small arc at the bottom (like sunrise)
-            // Gradually expand upward as more folders are added
-            val maxAngleRange = 180f // 180 degrees (semi-circle)
-            val minAngleRange = 60f // 60 degrees (small arc at bottom)
-
-            // Calculate the angle range using a smooth transition formula
-            // This creates a gradual expansion from a small arc to a semi-circle
-            val transitionFactor = kotlin.math.min(1f, (folderCount - 2) / 10f) // Transition completes at 12 folders
-            val angleRange = minAngleRange + (maxAngleRange - minAngleRange) * transitionFactor
-
-            // Calculate the starting angle to center the arc at the bottom
-            // We always start from the bottom and expand upward
-            // 90 degrees is the bottom of the circle
-            val startAngle = 90f - angleRange / 2
-            val endAngle = 90f + angleRange / 2
+            // For the reference image look, we always use a semi-circle (180 degrees)
+            // Starting from the left side (180°) to the right side (0°)
+            val startAngle = 180f // 180 degrees (left side)
+            val endAngle = 0f // 0 degrees (right side)
+            val angleRange = 180f // 180 degrees total (semi-circle)
 
             // Calculate the angle step between each zone
             val angleStep = angleRange / (folderCount - 1)
 
             folders.forEachIndexed { index, folder ->
-                val angleInDegrees = startAngle + index * angleStep
+                val angleInDegrees = startAngle - index * angleStep // Move from left to right
                 val angleInRadians = Math.toRadians(angleInDegrees.toDouble())
 
                 val x = centerX + centerDistance * cos(angleInRadians).toFloat()

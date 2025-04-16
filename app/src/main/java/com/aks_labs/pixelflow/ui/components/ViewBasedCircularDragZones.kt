@@ -181,67 +181,46 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
     }
 
     /**
-     * Calculates the positions of the zones in a responsive arc layout that adapts from a semi-circle
-     * to a full circle as more folders are added, starting from the bottom of the screen like a sunrise.
+     * Calculates the positions of the zones in a semi-circular arc layout at the bottom of the screen,
+     * exactly matching the reference images with zones arranged like digits in an analog clock.
      */
     private fun calculateZonePositions() {
         zonePositions.clear()
 
         val centerX = width / 2f
-        val centerY = height - ZONE_RADIUS_HIGHLIGHTED - 40f // Position at the bottom with padding
+        val bottomY = height - ZONE_RADIUS_HIGHLIGHTED - 40f // Position at the bottom with padding
 
         val folderCount = folders.size
         if (folderCount == 0) return
 
-        // Calculate the optimal radius based on screen size and folder count
-        // We use a smaller radius for fewer folders and a larger one for more folders
-        val screenSize = min(width, height)
-        val baseRadius = screenSize * 0.35f // Base radius as a percentage of screen size
-
-        // Adjust radius based on folder count to prevent overlap
-        val arcRadius = when {
-            folderCount <= 3 -> baseRadius * 0.85f
-            folderCount <= 5 -> baseRadius * 0.9f
-            folderCount <= 8 -> baseRadius * 0.95f
-            folderCount <= 12 -> baseRadius * 1.0f
-            else -> baseRadius * 1.1f
-        }
-
         // For a single folder, place it at the bottom center
         if (folderCount == 1) {
             val x = centerX
-            val y = centerY
+            val y = bottomY
             zonePositions.add(ZonePosition(x, y))
             return
         }
 
-        // Calculate the angle range based on folder count
-        // Start with a small arc at the bottom (like sunrise)
-        // Gradually expand upward as more folders are added
-        val maxAngleRange = PI // 180 degrees (semi-circle)
-        val minAngleRange = PI / 3 // 60 degrees (small arc at bottom)
+        // Calculate the arc radius based on screen width to ensure a proper semi-circle
+        // This creates the exact look from the reference images
+        val arcRadius = width * 0.4f // 40% of screen width for a nice arc
 
-        // Calculate the angle range using a smooth transition formula
-        // This creates a gradual expansion from a small arc to a semi-circle
-        val transitionFactor = min(1.0, (folderCount - 2) / 10.0) // Transition completes at 12 folders
-        val angleRange = minAngleRange + (maxAngleRange - minAngleRange) * transitionFactor
-
-        // Calculate the starting angle to center the arc at the bottom
-        // We always start from the bottom and expand upward
-        // PI/2 is the bottom of the circle (90 degrees)
-        val startAngle = PI / 2 - angleRange / 2
-        val endAngle = PI / 2 + angleRange / 2
+        // For the reference image look, we always use a semi-circle (180 degrees)
+        // Starting from the left side (-180°) to the right side (0°)
+        val startAngle = PI // 180 degrees (left side)
+        val endAngle = 0.0 // 0 degrees (right side)
+        val angleRange = PI // 180 degrees total (semi-circle)
 
         // Calculate the angle step between each zone
         val angleStep = angleRange / (folderCount - 1)
 
         for (i in 0 until folderCount) {
             // Calculate the angle for this zone
-            val angle = startAngle + i * angleStep
+            val angle = startAngle - i * angleStep // Move from left to right
 
             // Calculate the position using standard parametric circle equations
             val x = centerX + arcRadius * cos(angle).toFloat()
-            val y = centerY + arcRadius * sin(angle).toFloat()
+            val y = bottomY + arcRadius * sin(angle).toFloat()
 
             // Ensure the zone is fully visible on screen
             val minX = ZONE_RADIUS_HIGHLIGHTED + 20f
