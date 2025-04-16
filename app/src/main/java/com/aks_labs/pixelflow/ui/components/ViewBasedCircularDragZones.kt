@@ -19,7 +19,9 @@ import com.aks_labs.pixelflow.R
 import com.aks_labs.pixelflow.data.models.Folder
 import kotlin.math.PI
 import kotlin.math.cos
+import kotlin.math.min
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  * A custom view that displays circular drag zones in a semi-circular pattern.
@@ -179,8 +181,8 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
     }
 
     /**
-     * Calculates the positions of the zones in a semi-circular pattern at the bottom of the screen.
-     * Adjusts the layout based on the number of folders to ensure optimal spacing.
+     * Calculates the positions of the zones in a responsive arc layout that adapts from a semi-circle
+     * to a full circle as more folders are added.
      */
     private fun calculateZonePositions() {
         zonePositions.clear()
@@ -191,13 +193,17 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         val folderCount = folders.size
         if (folderCount == 0) return
 
-        // Adjust the semi-circle radius based on screen size and folder count
-        // For more folders, we need a larger radius to prevent overlap
-        val baseRadius = width * 0.4f // Use width instead of height for better horizontal spacing
-        val semiCircleRadius = when {
-            folderCount <= 3 -> baseRadius * 0.8f
+        // Calculate the optimal radius based on screen size and folder count
+        // We use a smaller radius for fewer folders and a larger one for more folders
+        val screenSize = min(width, height)
+        val baseRadius = screenSize * 0.35f // Base radius as a percentage of screen size
+
+        // Adjust radius based on folder count to prevent overlap
+        val arcRadius = when {
+            folderCount <= 3 -> baseRadius * 0.85f
             folderCount <= 5 -> baseRadius * 0.9f
-            folderCount <= 7 -> baseRadius * 1.0f
+            folderCount <= 8 -> baseRadius * 0.95f
+            folderCount <= 12 -> baseRadius * 1.0f
             else -> baseRadius * 1.1f
         }
 
@@ -209,34 +215,39 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
             return
         }
 
-        // For multiple folders, arrange in a semi-circle
-        // Calculate the angle range and starting angle based on folder count
-        val angleRange = when {
-            folderCount == 2 -> PI / 2 // 90 degrees for 2 folders
-            folderCount <= 4 -> 2 * PI / 3 // 120 degrees for 3-4 folders
-            folderCount <= 6 -> 3 * PI / 4 // 135 degrees for 5-6 folders
-            else -> PI // 180 degrees (full semi-circle) for 7+ folders
-        }
+        // Calculate the angle range based on folder count
+        // Start with a semi-circle (180°) for few folders
+        // Gradually expand to a full circle (360°) as more folders are added
+        val maxAngleRange = 2 * PI // 360 degrees (full circle)
+        val minAngleRange = PI // 180 degrees (semi-circle)
 
-        // Center the arrangement by adjusting the starting angle
-        val startAngle = (PI - angleRange) / 2
+        // Calculate the angle range using a smooth transition formula
+        // This creates a gradual expansion from semi-circle to full circle
+        val transitionFactor = min(1.0, (folderCount - 2) / 14.0) // Transition completes at 16 folders
+        val angleRange = minAngleRange + (maxAngleRange - minAngleRange) * transitionFactor
+
+        // Calculate the starting angle to center the arc
+        // For a semi-circle, start at 0 (right side)
+        // For a full circle, start at -PI/2 (top)
+        val fullCircleStartAngle = -PI / 2 // Start from top for full circle
+        val semiCircleStartAngle = 0.0 // Start from right for semi-circle
+        val startAngle = semiCircleStartAngle + (fullCircleStartAngle - semiCircleStartAngle) * transitionFactor
 
         // Calculate the angle step between each zone
-        val angleStep = angleRange / (folderCount - 1)
+        val angleStep = angleRange / folderCount
 
         for (i in 0 until folderCount) {
             // Calculate the angle for this zone
-            val angle = startAngle + (i * angleStep)
+            val angle = startAngle + i * angleStep
 
-            // Calculate the position - note we're using a semi-circle at the bottom of the screen
-            // so we use sin for X and cos for Y (with cos inverted to point upward)
-            val x = centerX + semiCircleRadius * sin(angle - PI/2).toFloat()
-            val y = centerY - semiCircleRadius * cos(angle - PI/2).toFloat()
+            // Calculate the position using standard parametric circle equations
+            val x = centerX + arcRadius * cos(angle).toFloat()
+            val y = centerY + arcRadius * sin(angle).toFloat()
 
             // Ensure the zone is fully visible on screen
             val minX = ZONE_RADIUS_HIGHLIGHTED + 20f
             val maxX = width - ZONE_RADIUS_HIGHLIGHTED - 20f
-            val minY = 100f // Allow some space at the top
+            val minY = ZONE_RADIUS_HIGHLIGHTED + 20f // Allow some space at the top
             val maxY = height - ZONE_RADIUS_HIGHLIGHTED - 20f
 
             // Make sure min is less than max

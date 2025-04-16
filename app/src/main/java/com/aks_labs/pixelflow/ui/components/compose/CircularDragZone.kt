@@ -83,8 +83,95 @@ fun CircularDragZone(
             val centerDistance = minOf(size.width, size.height) * 0.4f
 
             val folderCount = folders.size
-            val angleRange = if (folderCount <= 5) 180f else 270f
-            val startAngle = if (folderCount <= 5) 180f else 135f
+
+            // For a single folder, place it at the bottom center
+            if (folderCount == 1) {
+                val folder = folders[0]
+                val x = centerX
+                val y = centerY
+
+                // Calculate radius with animation if needed
+                val radius = with(density) {
+                    var r = zoneRadius.toPx()
+                    if (0 == highlightedIndex) {
+                        r += highlightExtraRadius.toPx()
+                        r *= pulseScale // Apply pulse animation
+                    }
+                    r
+                }
+
+                // Create flower/gear path
+                val path = createFlowerPath(x, y, radius, petalCount, petalDepth)
+
+                // Draw shadow for highlighted zone
+                if (0 == highlightedIndex) {
+                    translate(2f, 4f) {
+                        drawPath(
+                            path = path,
+                            color = Color.Black.copy(alpha = 0.16f),
+                            style = Stroke(width = 3f)
+                        )
+                    }
+                }
+
+                // Draw zone background (white with 100% opacity)
+                drawPath(
+                    path = path,
+                    color = Color.White,
+                    style = Fill
+                )
+
+                // Draw border
+                drawPath(
+                    path = path,
+                    color = Color.White,
+                    style = Stroke(width = 3f)
+                )
+
+                // Draw highlight ring for highlighted zone
+                if (0 == highlightedIndex) {
+                    val highlightPath = createFlowerPath(x, y, radius * 1.05f, petalCount, petalDepth)
+                    drawPath(
+                        path = highlightPath,
+                        color = Color.White,
+                        style = Stroke(width = 6f)
+                    )
+                }
+
+                // Draw folder name with black text for better contrast
+                drawContext.canvas.nativeCanvas.drawText(
+                    folder.name,
+                    x,
+                    y + 15f,
+                    Paint().apply {
+                        color = android.graphics.Color.BLACK
+                        textSize = 40f
+                        textAlign = Paint.Align.CENTER
+                    }
+                )
+
+                return@Canvas
+            }
+
+            // Calculate the angle range based on folder count
+            // Start with a semi-circle (180°) for few folders
+            // Gradually expand to a full circle (360°) as more folders are added
+            val maxAngleRange = 360f // 360 degrees (full circle)
+            val minAngleRange = 180f // 180 degrees (semi-circle)
+
+            // Calculate the angle range using a smooth transition formula
+            // This creates a gradual expansion from semi-circle to full circle
+            val transitionFactor = kotlin.math.min(1f, (folderCount - 2) / 14f) // Transition completes at 16 folders
+            val angleRange = minAngleRange + (maxAngleRange - minAngleRange) * transitionFactor
+
+            // Calculate the starting angle to center the arc
+            // For a semi-circle, start at 0 (right side)
+            // For a full circle, start at -90 (top)
+            val fullCircleStartAngle = -90f // Start from top for full circle
+            val semiCircleStartAngle = 0f // Start from right for semi-circle
+            val startAngle = semiCircleStartAngle + (fullCircleStartAngle - semiCircleStartAngle) * transitionFactor
+
+            // Calculate the angle step between each zone
             val angleStep = angleRange / folderCount
 
             folders.forEachIndexed { index, folder ->
