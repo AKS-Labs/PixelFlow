@@ -31,11 +31,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import com.aks_labs.pixelflow.R
 import com.aks_labs.pixelflow.data.models.Folder
+import com.aks_labs.pixelflow.ui.components.DirectActionExecutor
 import com.aks_labs.pixelflow.ui.components.ViewBasedCircularDragZones
+import com.aks_labs.pixelflow.ui.components.FloatingActionButtons
 import com.aks_labs.pixelflow.utils.BitmapUtils
 import com.aks_labs.pixelflow.utils.ScreenUtils
 import java.io.File
+import kotlin.math.cos
 import kotlin.math.pow
+import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
@@ -75,14 +79,37 @@ class ViewBasedFloatingBubbleService : Service() {
     // Views
     private var bubbleView: View? = null
     private var dragZonesView: ViewBasedCircularDragZones? = null
+    private var actionButtonsView: FloatingActionButtons? = null
 
     // Current screenshot
     private var currentScreenshotPath: String? = null
     private var currentScreenshotBitmap: Bitmap? = null
 
+    // Direct action executor
+    private lateinit var directActionExecutor: DirectActionExecutor
+
+    /**
+     * Gets the current screenshot path.
+     */
+    fun getCurrentScreenshotPath(): String? {
+        return currentScreenshotPath
+    }
+
+    /**
+     * Clears the current screenshot data.
+     */
+    fun clearCurrentScreenshot() {
+        currentScreenshotPath = null
+        currentScreenshotBitmap = null
+    }
+
     // Drag state
     private var isDragging = false
     private var showingDragZones = false
+    private var showingActionButtons = false
+
+    // Vibration control
+    private var lastVibrationTime = 0L
 
     // Initial touch position for drag calculations
     private var initialTouchX = 0f
@@ -112,6 +139,9 @@ class ViewBasedFloatingBubbleService : Service() {
         val displayMetrics = resources.displayMetrics
         width = displayMetrics.widthPixels
         height = displayMetrics.heightPixels
+
+        // Initialize direct action executor
+        directActionExecutor = DirectActionExecutor(this, this)
 
         // Initialize folders
         initFolders()
@@ -181,6 +211,7 @@ class ViewBasedFloatingBubbleService : Service() {
         // Clean up views
         removeBubble()
         hideDragZones()
+        hideActionButtons()
 
         // Reset the running flag
         isServiceRunning = false
@@ -368,7 +399,7 @@ class ViewBasedFloatingBubbleService : Service() {
     /**
      * Removes the floating bubble.
      */
-    private fun removeBubble() {
+    fun removeBubble() {
         if (bubbleView != null) {
             try {
                 windowManager.removeView(bubbleView)
@@ -399,6 +430,9 @@ class ViewBasedFloatingBubbleService : Service() {
                 setFolders(folders)
                 setOnFolderSelectedListener { folderId ->
                     handleScreenshotDrop(folderId)
+                }
+                setOnActionSelectedListener { actionType ->
+                    handleAction(actionType)
                 }
             }
 
@@ -458,7 +492,7 @@ class ViewBasedFloatingBubbleService : Service() {
     /**
      * Hides the drag zones.
      */
-    private fun hideDragZones() {
+    fun hideDragZones() {
         try {
             Log.d(TAG, "Hiding drag zones - START")
             if (dragZonesView != null) {
@@ -621,6 +655,58 @@ class ViewBasedFloatingBubbleService : Service() {
         if (dragZonesView == null) return null
 
         return dragZonesView?.getFolderIdAt(x, y)
+    }
+
+    /**
+     * Checks if the bubble is over any action button and returns the action type.
+     * Returns -1 if not over any action button.
+     */
+    private fun checkDroppedOnActionButton(x: Float, y: Float): Int {
+        if (actionButtonsView == null) return -1
+
+        // First try using the action buttons view's built-in method
+        val actionType = actionButtonsView?.getActionAt(x, y) ?: -1
+        if (actionType != -1) {
+            Log.d(TAG, "Found action $actionType using getActionAt")
+            return actionType
+        }
+
+        // If that fails, try a more direct approach with generous thresholds
+        val deleteButtonPosition = calculateDeleteButtonPosition()
+        val shareButtonPosition = calculateShareButtonPosition()
+        val trashButtonPosition = calculateTrashButtonPosition()
+
+        val deleteButtonDistance = calculateDistance(x, y, deleteButtonPosition.first, deleteButtonPosition.second)
+        val shareButtonDistance = calculateDistance(x, y, shareButtonPosition.first, shareButtonPosition.second)
+        val trashButtonDistance = calculateDistance(x, y, trashButtonPosition.first, trashButtonPosition.second)
+
+        Log.d(TAG, "Delete button distance: $deleteButtonDistance")
+        Log.d(TAG, "Share button distance: $shareButtonDistance")
+        Log.d(TAG, "Trash button distance: $trashButtonDistance")
+
+        // Find the closest button with a very generous threshold
+        val minDistance = minOf(deleteButtonDistance, shareButtonDistance, trashButtonDistance)
+        val threshold = 300f // Extremely generous threshold
+
+        if (minDistance < threshold) {
+            return when (minDistance) {
+                deleteButtonDistance -> {
+                    Log.d(TAG, "Closest to DELETE button")
+                    FloatingActionButtons.ACTION_DELETE
+                }
+                shareButtonDistance -> {
+                    Log.d(TAG, "Closest to SHARE button")
+                    FloatingActionButtons.ACTION_SHARE
+                }
+                trashButtonDistance -> {
+                    Log.d(TAG, "Closest to TRASH button")
+                    FloatingActionButtons.ACTION_TRASH
+                }
+                else -> -1
+            }
+        }
+
+        return -1
     }
 
     /**
@@ -793,6 +879,13 @@ class ViewBasedFloatingBubbleService : Service() {
     }
 
     /**
+     * Calculates the distance between two points.
+     */
+    private fun calculateDistance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+        return sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
+    }
+
+    /**
      * Touch listener for the bubble to handle drag and drop.
      */
     private inner class BubbleTouchListener : View.OnTouchListener {
@@ -814,6 +907,12 @@ class ViewBasedFloatingBubbleService : Service() {
                         return true
                     }
                     return false
+                }
+
+                override fun onLongPress(e: MotionEvent) {
+                    Log.d(TAG, "Long press detected")
+                    // Show action buttons around the bubble
+                    showActionButtons()
                 }
             })
 
@@ -866,6 +965,45 @@ class ViewBasedFloatingBubbleService : Service() {
                             .start()
                     }
 
+                    // Update action buttons position if they're showing
+                    if (showingActionButtons && isDragging) {
+                        // Get the center of the bubble
+                        val centerX = params.x + view.width / 2
+                        val centerY = params.y + view.height / 2
+
+                        // Update action buttons position
+                        actionButtonsView?.updateBubblePosition(centerX, centerY)
+
+                        // Check if we're hovering over an action button
+                        val isOverButton = actionButtonsView?.updateHighlight(centerX.toFloat(), centerY.toFloat()) ?: false
+
+                        // Get the action type for more detailed logging
+                        if (isOverButton) {
+                            val actionType = actionButtonsView?.getActionAt(centerX.toFloat(), centerY.toFloat()) ?: -1
+                            Log.d(TAG, "Hovering over action button at ($centerX, $centerY) with type: $actionType")
+
+                            // Provide haptic feedback when hovering over a button
+                            if (System.currentTimeMillis() - lastVibrationTime > 500) { // Limit vibration frequency
+                                vibrateDevice()
+                                lastVibrationTime = System.currentTimeMillis()
+                            }
+
+                            // Scale the bubble slightly to indicate it can be dropped
+                            view.animate()
+                                .scaleX(1.1f)
+                                .scaleY(1.1f)
+                                .setDuration(100)
+                                .start()
+                        } else {
+                            // Reset the scale if not over a button
+                            view.animate()
+                                .scaleX(1.05f)
+                                .scaleY(1.05f)
+                                .setDuration(100)
+                                .start()
+                        }
+                    }
+
                     // Update highlighted zone and apply magnetic attraction
                     if (isDragging && dragZonesView != null) {
                         val centerX = params.x + view.width / 2f
@@ -893,10 +1031,60 @@ class ViewBasedFloatingBubbleService : Service() {
                 }
 
                 MotionEvent.ACTION_UP -> {
+                    // Hide action buttons when touch ends
+                    if (showingActionButtons) {
+                        // Get the center of the bubble
+                        val centerX = params.x + view.width / 2f
+                        val centerY = params.y + view.height / 2f
+
+                        // ULTRA SIMPLE APPROACH: Use the existing executeActionAt method
+                        if (actionButtonsView != null) {
+                            Log.d(TAG, "ULTRA SIMPLE: Checking if dropped on action button at ($centerX, $centerY)")
+
+                            // Try to execute an action at the current position
+                            val actionExecuted = actionButtonsView!!.executeActionAt(centerX, centerY)
+                            Log.d(TAG, "ULTRA SIMPLE: Action executed: $actionExecuted")
+
+                            if (actionExecuted) {
+                                // Animate the bubble disappearing AFTER executing the action
+                                Log.d(TAG, "ULTRA SIMPLE: Starting disappear animation")
+                                view.animate()
+                                    .alpha(0f)
+                                    .scaleX(0f)
+                                    .scaleY(0f)
+                                    .setDuration(300)
+                                    .start()
+
+                                // Remove the bubble after a delay to ensure animation completes
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    Log.d(TAG, "ULTRA SIMPLE: Removing bubble after delay")
+                                    removeBubble()
+                                }, 350)
+
+                                return true
+                            }
+                        }
+
+                        // Hide action buttons if no action was executed
+                        hideActionButtons()
+                    }
+
                     // Check if we were dragging
                     if (isDragging) {
                         // Reset dragging state
                         isDragging = false
+
+                        // Get the center of the bubble
+                        val centerX = params.x + view.width / 2f
+                        val centerY = params.y + view.height / 2f
+
+                        // Check if we're over an action zone in the drag zones
+                        val dragZoneActionType = dragZonesView?.getActionAt(centerX, centerY) ?: -1
+                        if (dragZoneActionType != -1) {
+                            // Handle the action
+                            handleAction(dragZoneActionType)
+                            return true
+                        }
 
                         // Scale down the bubble with bouncing animation
                         view.animate()
@@ -961,6 +1149,336 @@ class ViewBasedFloatingBubbleService : Service() {
         // TODO: Implement screenshot preview
         // For now, just show a toast
         ScreenUtils.showToast(this, "Screenshot preview")
+    }
+
+    /**
+     * Shows the action buttons around the floating bubble.
+     */
+    private fun showActionButtons() {
+        try {
+            Log.d(TAG, "Showing action buttons")
+
+            // First, hide any existing action buttons to prevent duplicates
+            hideActionButtons()
+
+            // Get the bubble position and size
+            val bubbleView = this.bubbleView ?: return
+            val bubbleParams = bubbleView.layoutParams as WindowManager.LayoutParams
+            val bubbleSize = bubbleView.width
+
+            // Create a new action buttons view
+            actionButtonsView = FloatingActionButtons(
+                this,
+                bubbleParams.x + bubbleSize / 2,
+                bubbleParams.y + bubbleSize / 2,
+                bubbleSize
+            ).apply {
+                setOnActionSelectedListener { actionType ->
+                    handleAction(actionType)
+                }
+            }
+
+            // Set up window parameters for the action buttons
+            val params = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                if (Build.VERSION.SDK_INT >= 26)
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+                else
+                    WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT
+            )
+
+            // Add the action buttons to the window
+            windowManager.addView(actionButtonsView, params)
+
+            // Set the flag to indicate action buttons are showing
+            showingActionButtons = true
+
+            Log.d(TAG, "Action buttons added to window manager")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error showing action buttons", e)
+        }
+    }
+
+    /**
+     * Hides the action buttons.
+     */
+    private fun hideActionButtons() {
+        try {
+            Log.d(TAG, "Hiding action buttons")
+            if (actionButtonsView != null) {
+                windowManager.removeView(actionButtonsView)
+                actionButtonsView = null
+                Log.d(TAG, "Action buttons removed from window manager")
+            }
+
+            // Update the flag
+            showingActionButtons = false
+        } catch (e: Exception) {
+            Log.e(TAG, "Error hiding action buttons", e)
+            // Make sure the flag is reset even if there's an error
+            showingActionButtons = false
+        }
+    }
+
+    /**
+     * Handles an action selection.
+     * DRAG ZONE APPROACH: Using the same approach as drag zones
+     */
+    private fun handleAction(actionType: Int) {
+        try {
+            Log.d(TAG, "DRAG ZONE APPROACH: handleAction called with actionType: $actionType")
+
+            // DRAG ZONE APPROACH: Execute the action BEFORE hiding UI elements
+            // This ensures the action is executed immediately
+
+            // Handle the action based on type
+            when (actionType) {
+                // Delete actions
+                ViewBasedCircularDragZones.ACTION_DELETE, FloatingActionButtons.ACTION_DELETE -> {
+                    // Delete the screenshot
+                    val source = if (actionType == ViewBasedCircularDragZones.ACTION_DELETE) "drag zone" else "floating button"
+                    Log.d(TAG, "DRAG ZONE APPROACH: Executing DELETE action from $source")
+
+                    // Check if we have a screenshot to delete
+                    if (currentScreenshotPath == null) {
+                        Log.e(TAG, "DRAG ZONE APPROACH: Cannot delete screenshot: currentScreenshotPath is null")
+                        ScreenUtils.showToast(this, "No screenshot to delete")
+                        return
+                    }
+
+                    // Provide haptic feedback
+                    vibrateDevice()
+
+                    // Delete the screenshot IMMEDIATELY
+                    Log.d(TAG, "DRAG ZONE APPROACH: Calling deleteScreenshot() directly")
+                    deleteScreenshot()
+                    Log.d(TAG, "DRAG ZONE APPROACH: deleteScreenshot() completed")
+                }
+
+                // Share actions
+                ViewBasedCircularDragZones.ACTION_SHARE, FloatingActionButtons.ACTION_SHARE -> {
+                    // Share the screenshot
+                    val source = if (actionType == ViewBasedCircularDragZones.ACTION_SHARE) "drag zone" else "floating button"
+                    Log.d(TAG, "DRAG ZONE APPROACH: Executing SHARE action from $source")
+
+                    // Check if we have a screenshot to share
+                    if (currentScreenshotPath == null) {
+                        Log.e(TAG, "DRAG ZONE APPROACH: Cannot share screenshot: currentScreenshotPath is null")
+                        ScreenUtils.showToast(this, "No screenshot to share")
+                        return
+                    }
+
+                    // Provide haptic feedback
+                    vibrateDevice()
+
+                    // Share the screenshot IMMEDIATELY
+                    Log.d(TAG, "DRAG ZONE APPROACH: Calling shareScreenshot() directly")
+                    shareScreenshot()
+                    Log.d(TAG, "DRAG ZONE APPROACH: shareScreenshot() completed")
+                }
+
+                // Trash actions
+                ViewBasedCircularDragZones.ACTION_TRASH, FloatingActionButtons.ACTION_TRASH -> {
+                    // Move to trash folder
+                    val source = if (actionType == ViewBasedCircularDragZones.ACTION_TRASH) "drag zone" else "floating button"
+                    Log.d(TAG, "DRAG ZONE APPROACH: Executing TRASH action from $source")
+
+                    // Check if we have a screenshot to move
+                    if (currentScreenshotPath == null) {
+                        Log.e(TAG, "DRAG ZONE APPROACH: Cannot move screenshot to trash: currentScreenshotPath is null")
+                        ScreenUtils.showToast(this, "No screenshot to move")
+                        return
+                    }
+
+                    // Provide haptic feedback
+                    vibrateDevice()
+
+                    // Move to trash IMMEDIATELY
+                    Log.d(TAG, "DRAG ZONE APPROACH: Calling moveToTrash() directly")
+                    moveToTrash()
+                    Log.d(TAG, "DRAG ZONE APPROACH: moveToTrash() completed")
+                }
+
+                // Unknown action
+                else -> {
+                    Log.d(TAG, "DRAG ZONE APPROACH: Unknown action type: $actionType")
+                }
+            }
+
+            // DRAG ZONE APPROACH: Hide UI elements AFTER executing the action
+            Log.d(TAG, "DRAG ZONE APPROACH: Hiding UI elements after action execution")
+            dragZonesView?.hideActionZones()
+            hideActionButtons()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error handling action", e)
+            ScreenUtils.showToast(this, "Error: ${e.message}")
+        }
+    }
+
+    /**
+     * Deletes the current screenshot.
+     * DRAG ZONE APPROACH: Using the same approach as drag zones
+     */
+    private fun deleteScreenshot() {
+        Log.d(TAG, "DRAG ZONE APPROACH: deleteScreenshot() called")
+        if (currentScreenshotPath == null) {
+            Log.d(TAG, "DRAG ZONE APPROACH: No screenshot to delete - path is null")
+            ScreenUtils.showToast(this, "No screenshot to delete")
+            return
+        }
+
+        try {
+            val file = File(currentScreenshotPath!!)
+            Log.d(TAG, "DRAG ZONE APPROACH: Attempting to delete file: ${file.absolutePath}")
+
+            if (file.exists()) {
+                Log.d(TAG, "DRAG ZONE APPROACH: File exists, attempting to delete")
+                val deleted = file.delete()
+                Log.d(TAG, "DRAG ZONE APPROACH: File deletion result: $deleted")
+
+                if (deleted) {
+                    Log.d(TAG, "DRAG ZONE APPROACH: Screenshot deleted successfully")
+                    ScreenUtils.showToast(this, "Screenshot deleted")
+
+                    // Notify the media scanner that the file has been deleted
+                    MediaScannerConnection.scanFile(
+                        this,
+                        arrayOf(file.absolutePath),
+                        null,
+                        null
+                    )
+
+                    // DRAG ZONE APPROACH: Add to processed screenshots to prevent re-detection
+                    processedScreenshots.add(file.name)
+                    Log.d(TAG, "DRAG ZONE APPROACH: Added to processed screenshots: ${file.name}")
+
+                    // Remove the bubble
+                    Log.d(TAG, "DRAG ZONE APPROACH: Removing bubble after deletion")
+                    removeBubble()
+                    hideDragZones()
+                    currentScreenshotPath = null
+                    currentScreenshotBitmap = null
+                } else {
+                    Log.e(TAG, "DRAG ZONE APPROACH: Failed to delete screenshot")
+                    ScreenUtils.showToast(this, "Failed to delete screenshot")
+                }
+            } else {
+                Log.e(TAG, "DRAG ZONE APPROACH: Screenshot file does not exist: ${file.absolutePath}")
+                ScreenUtils.showToast(this, "Screenshot file not found")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "DRAG ZONE APPROACH: Error deleting screenshot", e)
+            ScreenUtils.showToast(this, "Error deleting screenshot")
+        }
+    }
+
+    /**
+     * Shares the current screenshot.
+     * DRAG ZONE APPROACH: Using the same approach as drag zones
+     */
+    fun shareScreenshot() {
+        Log.d(TAG, "DRAG ZONE APPROACH: shareScreenshot() called")
+        if (currentScreenshotPath == null) {
+            Log.d(TAG, "DRAG ZONE APPROACH: No screenshot to share - path is null")
+            ScreenUtils.showToast(this, "No screenshot to share")
+            return
+        }
+
+        try {
+            val file = File(currentScreenshotPath!!)
+            Log.d(TAG, "DRAG ZONE APPROACH: Attempting to share file: ${file.absolutePath}")
+
+            if (!file.exists()) {
+                Log.e(TAG, "DRAG ZONE APPROACH: Screenshot file does not exist: ${file.absolutePath}")
+                ScreenUtils.showToast(this, "Screenshot file not found")
+                return
+            }
+
+            Log.d(TAG, "DRAG ZONE APPROACH: File exists, creating URI")
+            val uri = FileProvider.getUriForFile(
+                this,
+                "${packageName}.fileprovider",
+                file
+            )
+            Log.d(TAG, "DRAG ZONE APPROACH: Created URI: $uri")
+
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "image/*"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            val chooser = Intent.createChooser(intent, "Share Screenshot").apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+
+            // DRAG ZONE APPROACH: Add to processed screenshots to prevent re-detection
+            processedScreenshots.add(file.name)
+            Log.d(TAG, "DRAG ZONE APPROACH: Added to processed screenshots: ${file.name}")
+
+            // DRAG ZONE APPROACH: Remove the bubble before starting the share activity
+            removeBubble()
+            hideDragZones()
+
+            Log.d(TAG, "DRAG ZONE APPROACH: Starting share activity")
+            startActivity(chooser)
+            Log.d(TAG, "DRAG ZONE APPROACH: Share activity started successfully")
+
+            // DRAG ZONE APPROACH: Clear current screenshot data
+            currentScreenshotPath = null
+            currentScreenshotBitmap = null
+        } catch (e: Exception) {
+            Log.e(TAG, "DRAG ZONE APPROACH: Error sharing screenshot", e)
+            ScreenUtils.showToast(this, "Error sharing screenshot")
+        }
+    }
+
+    /**
+     * Moves the current screenshot to the trash folder.
+     * DRAG ZONE APPROACH: Using the same approach as drag zones
+     */
+    fun moveToTrash() {
+        Log.d(TAG, "DRAG ZONE APPROACH: moveToTrash() called")
+        if (currentScreenshotPath == null) {
+            Log.d(TAG, "DRAG ZONE APPROACH: No screenshot to move - path is null")
+            ScreenUtils.showToast(this, "No screenshot to move")
+            return
+        }
+
+        try {
+            // Get the file name before moving
+            val file = File(currentScreenshotPath!!)
+            val fileName = file.name
+
+            Log.d(TAG, "DRAG ZONE APPROACH: Creating trash folder")
+            // Create a trash folder
+            val trashFolder = Folder("trash", "Trash", R.drawable.ic_folder)
+
+            Log.d(TAG, "DRAG ZONE APPROACH: Moving screenshot to trash folder: ${currentScreenshotPath}")
+            // Move the screenshot to the trash folder
+            moveScreenshotToFolder(currentScreenshotPath!!, trashFolder)
+
+            // DRAG ZONE APPROACH: Add to processed screenshots to prevent re-detection
+            processedScreenshots.add(fileName)
+            Log.d(TAG, "DRAG ZONE APPROACH: Added to processed screenshots: $fileName")
+
+            // Remove the bubble
+            Log.d(TAG, "DRAG ZONE APPROACH: Removing bubble after moving to trash")
+            removeBubble()
+            hideDragZones()
+            currentScreenshotPath = null
+            currentScreenshotBitmap = null
+
+            Log.d(TAG, "DRAG ZONE APPROACH: Screenshot successfully moved to trash")
+            ScreenUtils.showToast(this, "Screenshot moved to trash")
+        } catch (e: Exception) {
+            Log.e(TAG, "DRAG ZONE APPROACH: Error moving screenshot to trash", e)
+            ScreenUtils.showToast(this, "Error moving screenshot to trash")
+        }
     }
 
     /**
@@ -1087,6 +1605,89 @@ class ViewBasedFloatingBubbleService : Service() {
             Log.e(TAG, "Error launching Google Lens", e)
             ScreenUtils.showToast(this, "Error launching Google Lens")
         }
+    }
+
+    // calculateDistance method is already defined elsewhere in this class
+
+    /**
+     * Calculates the position of the delete button based on the bubble position.
+     * Returns a Pair of (x, y) coordinates.
+     */
+    private fun calculateDeleteButtonPosition(): Pair<Float, Float> {
+        val bubbleView = this.bubbleView ?: return Pair(0f, 0f)
+        val bubbleParams = bubbleView.layoutParams as WindowManager.LayoutParams
+        val bubbleSize = bubbleView.width
+        val bubbleCenterX = bubbleParams.x + bubbleSize / 2f
+        val bubbleCenterY = bubbleParams.y + bubbleSize / 2f
+
+        // Calculate the orbit radius based on bubble size
+        val orbitRadius = bubbleSize * 1.5f
+
+        // Determine which side of the screen the bubble is closer to
+        val isNearRight = bubbleCenterX > width / 2
+
+        // Calculate the angle for the delete button (top position)
+        val angle = if (isNearRight) Math.toRadians(225.0) else Math.toRadians(315.0)
+
+        // Calculate the position using standard parametric circle equations
+        val x = bubbleCenterX + orbitRadius * cos(angle).toFloat()
+        val y = bubbleCenterY + orbitRadius * sin(angle).toFloat()
+
+        return Pair(x, y)
+    }
+
+    /**
+     * Calculates the position of the share button based on the bubble position.
+     * Returns a Pair of (x, y) coordinates.
+     */
+    private fun calculateShareButtonPosition(): Pair<Float, Float> {
+        val bubbleView = this.bubbleView ?: return Pair(0f, 0f)
+        val bubbleParams = bubbleView.layoutParams as WindowManager.LayoutParams
+        val bubbleSize = bubbleView.width
+        val bubbleCenterX = bubbleParams.x + bubbleSize / 2f
+        val bubbleCenterY = bubbleParams.y + bubbleSize / 2f
+
+        // Calculate the orbit radius based on bubble size
+        val orbitRadius = bubbleSize * 1.5f
+
+        // Determine which side of the screen the bubble is closer to
+        val isNearRight = bubbleCenterX > width / 2
+
+        // Calculate the angle for the share button (middle position)
+        val angle = if (isNearRight) Math.toRadians(180.0) else Math.toRadians(0.0)
+
+        // Calculate the position using standard parametric circle equations
+        val x = bubbleCenterX + orbitRadius * cos(angle).toFloat()
+        val y = bubbleCenterY + orbitRadius * sin(angle).toFloat()
+
+        return Pair(x, y)
+    }
+
+    /**
+     * Calculates the position of the trash button based on the bubble position.
+     * Returns a Pair of (x, y) coordinates.
+     */
+    private fun calculateTrashButtonPosition(): Pair<Float, Float> {
+        val bubbleView = this.bubbleView ?: return Pair(0f, 0f)
+        val bubbleParams = bubbleView.layoutParams as WindowManager.LayoutParams
+        val bubbleSize = bubbleView.width
+        val bubbleCenterX = bubbleParams.x + bubbleSize / 2f
+        val bubbleCenterY = bubbleParams.y + bubbleSize / 2f
+
+        // Calculate the orbit radius based on bubble size
+        val orbitRadius = bubbleSize * 1.5f
+
+        // Determine which side of the screen the bubble is closer to
+        val isNearRight = bubbleCenterX > width / 2
+
+        // Calculate the angle for the trash button (bottom position)
+        val angle = if (isNearRight) Math.toRadians(135.0) else Math.toRadians(45.0)
+
+        // Calculate the position using standard parametric circle equations
+        val x = bubbleCenterX + orbitRadius * cos(angle).toFloat()
+        val y = bubbleCenterY + orbitRadius * sin(angle).toFloat()
+
+        return Pair(x, y)
     }
 
     /**

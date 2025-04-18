@@ -40,6 +40,16 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         private const val WAVE_COUNT = 12 // Number of waves around the perimeter
         private const val WAVE_AMPLITUDE = 5f // Amplitude of the waves (how pronounced they are)
         private const val VIBRATION_DURATION = 20L // Duration of vibration feedback in milliseconds
+
+        // Action zones constants
+        private const val ACTION_ZONE_RADIUS = 80f // Base radius of each action zone
+        private const val ACTION_ZONE_RADIUS_HIGHLIGHTED = 90f // Radius when highlighted
+        private const val ACTION_SEMI_CIRCLE_RADIUS_RATIO = 0.25f // Ratio of screen height for action semi-circle radius
+
+        // Action types
+        const val ACTION_DELETE = 0
+        const val ACTION_SHARE = 1
+        const val ACTION_TRASH = 2
     }
 
     // Folders to display
@@ -48,8 +58,17 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
     // Zone positions
     private val zonePositions = mutableListOf<ZonePosition>()
 
+    // Action zone positions
+    private val actionZonePositions = mutableListOf<ActionZonePosition>()
+
     // Currently highlighted zone
     private var highlightedZoneIndex = -1
+
+    // Currently highlighted action zone
+    private var highlightedActionZoneIndex = -1
+
+    // Flag to indicate if action zones are visible
+    private var showActionZones = false
 
     // Paint objects
     private val zonePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -73,8 +92,32 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         isFakeBoldText = true
     }
 
+    // Action zone paint objects
+    private val actionZonePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        isAntiAlias = true
+    }
+
+    private val actionZoneStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.DKGRAY
+        style = Paint.Style.STROKE
+        strokeWidth = 1.5f
+        isAntiAlias = true
+    }
+
+    private val actionIconPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.WHITE
+        textSize = 18f * resources.displayMetrics.density // 18sp
+        textAlign = Paint.Align.CENTER
+        isAntiAlias = true
+        isFakeBoldText = true
+    }
+
     // Callback for folder selection
     private var onFolderSelectedListener: ((String) -> Unit)? = null
+
+    // Callback for action selection
+    private var onActionSelectedListener: ((Int) -> Unit)? = null
 
     /**
      * Sets the folders to display.
@@ -94,13 +137,101 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
     }
 
     /**
+     * Sets the listener for action selection.
+     */
+    fun setOnActionSelectedListener(listener: (Int) -> Unit) {
+        onActionSelectedListener = listener
+    }
+
+    /**
+     * Shows the action zones.
+     */
+    fun showActionZones() {
+        showActionZones = true
+        calculateActionZonePositions()
+        invalidate()
+    }
+
+    /**
+     * Hides the action zones.
+     */
+    fun hideActionZones() {
+        showActionZones = false
+        highlightedActionZoneIndex = -1
+        invalidate()
+    }
+
+    /**
+     * Toggles the visibility of action zones.
+     */
+    fun toggleActionZones() {
+        if (showActionZones) {
+            hideActionZones()
+        } else {
+            showActionZones()
+        }
+    }
+
+    /**
      * Updates the highlighted zone based on the given coordinates.
      * Returns the adjusted position with magnetic attraction if applicable.
      */
     fun updateHighlight(x: Float, y: Float): Pair<Float, Float> {
         val oldHighlightedZoneIndex = highlightedZoneIndex
+        val oldHighlightedActionZoneIndex = highlightedActionZoneIndex
         highlightedZoneIndex = -1
+        highlightedActionZoneIndex = -1
 
+        // Check action zones first if they're visible
+        if (showActionZones) {
+            var closestActionZoneIndex = -1
+            var closestActionDistance = Float.MAX_VALUE
+
+            // Find the closest action zone and check if we're inside any action zone
+            for (i in actionZonePositions.indices) {
+                val zone = actionZonePositions[i]
+                val distance = calculateDistance(x, y, zone.x, zone.y)
+
+                if (distance < closestActionDistance) {
+                    closestActionDistance = distance
+                    closestActionZoneIndex = i
+                }
+
+                if (distance <= ACTION_ZONE_RADIUS) {
+                    highlightedActionZoneIndex = i
+                    // If we're inside an action zone, don't check regular zones
+                    if (oldHighlightedActionZoneIndex != highlightedActionZoneIndex) {
+                        vibrateDevice()
+                        invalidate()
+                    }
+                    return Pair(x, y)
+                }
+            }
+
+            // Apply magnetic attraction for action zones
+            if (highlightedActionZoneIndex == -1 && closestActionZoneIndex != -1 &&
+                closestActionDistance <= MAGNETIC_ATTRACTION_DISTANCE) {
+                val zone = actionZonePositions[closestActionZoneIndex]
+                val attractionStrength = MAGNETIC_ATTRACTION_STRENGTH *
+                    (1 - closestActionDistance / MAGNETIC_ATTRACTION_DISTANCE)
+                val dirX = zone.x - x
+                val dirY = zone.y - y
+                val newX = x + dirX * attractionStrength
+                val newY = y + dirY * attractionStrength
+                val newDistance = calculateDistance(newX, newY, zone.x, zone.y)
+
+                if (newDistance <= ACTION_ZONE_RADIUS) {
+                    highlightedActionZoneIndex = closestActionZoneIndex
+                    if (oldHighlightedActionZoneIndex != highlightedActionZoneIndex) {
+                        vibrateDevice()
+                        invalidate()
+                    }
+                    return Pair(newX, newY)
+                }
+            }
+        }
+
+        // If no action zone is highlighted, check regular zones
         var closestZoneIndex = -1
         var closestDistance = Float.MAX_VALUE
 
@@ -151,9 +282,10 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
             return Pair(newX, newY)
         }
 
-        if (oldHighlightedZoneIndex != highlightedZoneIndex) {
+        if (oldHighlightedZoneIndex != highlightedZoneIndex ||
+            oldHighlightedActionZoneIndex != highlightedActionZoneIndex) {
             // If we entered a new zone (not just exited one), provide haptic feedback
-            if (highlightedZoneIndex != -1) {
+            if (highlightedZoneIndex != -1 || highlightedActionZoneIndex != -1) {
                 vibrateDevice()
             }
             invalidate()
@@ -176,6 +308,24 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         }
 
         return null
+    }
+
+    /**
+     * Gets the action type at the given coordinates, or -1 if none.
+     */
+    fun getActionAt(x: Float, y: Float): Int {
+        if (!showActionZones) return -1
+
+        for (i in actionZonePositions.indices) {
+            val zone = actionZonePositions[i]
+            val distance = calculateDistance(x, y, zone.x, zone.y)
+
+            if (distance <= ACTION_ZONE_RADIUS) {
+                return zone.actionType
+            }
+        }
+
+        return -1
     }
 
     /**
@@ -256,9 +406,67 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         return kotlin.math.sqrt(dx * dx + dy * dy)
     }
 
+    /**
+     * Calculates the positions of the action zones in a small concentric arc.
+     */
+    private fun calculateActionZonePositions() {
+        actionZonePositions.clear()
+
+        val centerX = width / 2f
+        val centerY = height - ACTION_ZONE_RADIUS_HIGHLIGHTED - 40f // Position at the bottom with padding
+
+        // We always have 3 action zones: Delete, Share, Trash
+        val actionCount = 3
+
+        // Calculate the arc radius based on screen size
+        val actionArcRadius = width * ACTION_SEMI_CIRCLE_RADIUS_RATIO
+
+        // Use a fixed angle range for the action zones (90 degrees)
+        val angleRange = PI / 2
+
+        // Center the arrangement by adjusting the starting angle
+        val startAngle = (PI - angleRange) / 2
+
+        // Calculate the angle step between each action zone
+        val angleStep = angleRange / (actionCount - 1)
+
+        // Action types and colors
+        val actionTypes = intArrayOf(ACTION_DELETE, ACTION_SHARE, ACTION_TRASH)
+        val actionColors = intArrayOf(
+            Color.rgb(244, 67, 54),  // Red for delete
+            Color.rgb(33, 150, 243), // Blue for share
+            Color.rgb(76, 175, 80)   // Green for trash
+        )
+
+        for (i in 0 until actionCount) {
+            // Calculate the angle for this action zone
+            val angle = startAngle + (i * angleStep)
+
+            // Calculate the position - note we're using a semi-circle at the bottom of the screen
+            // so we use sin for X and cos for Y (with cos inverted to point upward)
+            val x = centerX + actionArcRadius * sin(angle - PI/2).toFloat()
+            val y = centerY - actionArcRadius * cos(angle - PI/2).toFloat()
+
+            // Ensure the zone is fully visible on screen
+            val minX = ACTION_ZONE_RADIUS_HIGHLIGHTED + 20f
+            val maxX = width - ACTION_ZONE_RADIUS_HIGHLIGHTED - 20f
+            val minY = 100f // Allow some space at the top
+            val maxY = height - ACTION_ZONE_RADIUS_HIGHLIGHTED - 20f
+
+            // Make sure min is less than max
+            val adjustedX = if (minX < maxX) x.coerceIn(minX, maxX) else x
+            val adjustedY = if (minY < maxY) y.coerceIn(minY, maxY) else y
+
+            actionZonePositions.add(ActionZonePosition(adjustedX, adjustedY, actionTypes[i], actionColors[i]))
+        }
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         calculateZonePositions()
+        if (showActionZones) {
+            calculateActionZonePositions()
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -309,6 +517,53 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
                 // The Paint.Align.CENTER handles horizontal centering, but we need to adjust vertical position
                 // The baseline is at y position, so we need to offset by half the text height
                 canvas.drawText(folder.name, zone.x, zone.y + textHeight / 3, textPaint)
+            }
+        }
+
+        // Draw action zones if visible
+        if (showActionZones) {
+            for (i in actionZonePositions.indices) {
+                val zone = actionZonePositions[i]
+                val isHighlighted = i == highlightedActionZoneIndex
+
+                // Determine the radius based on highlight state
+                val radius = if (isHighlighted) ACTION_ZONE_RADIUS_HIGHLIGHTED else ACTION_ZONE_RADIUS
+
+                // Set the zone color based on action type
+                actionZonePaint.color = zone.color
+
+                // Create the wavy-edged circular path
+                val path = createFlowerPath(zone.x, zone.y, radius)
+
+                // Draw the zone with a subtle shadow for depth
+                actionZonePaint.setShadowLayer(8f, 0f, 2f, Color.argb(60, 0, 0, 0))
+                canvas.drawPath(path, actionZonePaint)
+
+                // Draw a very subtle stroke
+                actionZoneStrokePaint.color = Color.argb(30, 0, 0, 0) // Very transparent black
+                actionZoneStrokePaint.strokeWidth = 1f
+                canvas.drawPath(path, actionZoneStrokePaint)
+
+                // Draw the action icon/text
+                actionIconPaint.color = Color.WHITE
+                actionIconPaint.textSize = 18f * resources.displayMetrics.density // 18sp
+                actionIconPaint.isFakeBoldText = true
+
+                // Get the icon text based on action type
+                val iconText = when (zone.actionType) {
+                    ACTION_DELETE -> "🗑️"
+                    ACTION_SHARE -> "📤"
+                    ACTION_TRASH -> "🗄️"
+                    else -> ""
+                }
+
+                // Get text height metrics for vertical centering
+                val textBounds = Rect()
+                actionIconPaint.getTextBounds(iconText, 0, iconText.length, textBounds)
+                val textHeight = textBounds.height()
+
+                // Draw text centered both horizontally and vertically
+                canvas.drawText(iconText, zone.x, zone.y + textHeight / 3, actionIconPaint)
             }
         }
     }
@@ -380,4 +635,9 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
      * Data class to hold the position of a zone.
      */
     private data class ZonePosition(val x: Float, val y: Float)
+
+    /**
+     * Data class to hold the position and properties of an action zone.
+     */
+    private data class ActionZonePosition(val x: Float, val y: Float, val actionType: Int, val color: Int)
 }
