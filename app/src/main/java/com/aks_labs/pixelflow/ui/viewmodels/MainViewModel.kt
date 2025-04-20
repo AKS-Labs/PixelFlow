@@ -150,6 +150,32 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * Get the number of screenshots in a folder
+     */
+    fun getScreenshotCountForFolder(folderId: Long): Int {
+        return sharedPrefsManager.getScreenshotsByFolder(folderId).size
+    }
+
+    /**
+     * Get the thumbnail paths for screenshots in a folder (limited to the most recent 3)
+     */
+    fun getScreenshotThumbnailsForFolder(folderId: Long, limit: Int = 3): List<String> {
+        val screenshots = sharedPrefsManager.getScreenshotsByFolder(folderId)
+            .sortedByDescending { it.savedTimestamp }
+            .take(limit)
+
+        // Log the thumbnails for debugging
+        screenshots.forEachIndexed { index, screenshot ->
+            android.util.Log.d("PixelFlow", "Thumbnail $index for folder $folderId: ${screenshot.thumbnailPath}")
+            // Check if file exists
+            val file = java.io.File(screenshot.thumbnailPath)
+            android.util.Log.d("PixelFlow", "File exists: ${file.exists()}, size: ${file.length()}")
+        }
+
+        return screenshots.map { it.thumbnailPath }
+    }
+
+    /**
      * Delete a screenshot
      */
     fun deleteScreenshot(screenshot: SimpleScreenshot) {
