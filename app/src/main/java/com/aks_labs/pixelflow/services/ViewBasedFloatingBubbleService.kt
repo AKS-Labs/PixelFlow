@@ -913,6 +913,8 @@ class ViewBasedFloatingBubbleService : Service() {
                     Log.d(TAG, "Long press detected")
                     // Show action buttons around the bubble
                     showActionButtons()
+                    // Set isDragging to true to allow immediate dragging after long press
+                    isDragging = true
                 }
             })
 
@@ -982,11 +984,8 @@ class ViewBasedFloatingBubbleService : Service() {
                             val actionType = actionButtonsView?.getActionAt(centerX.toFloat(), centerY.toFloat()) ?: -1
                             Log.d(TAG, "Hovering over action button at ($centerX, $centerY) with type: $actionType")
 
-                            // Provide haptic feedback when hovering over a button
-                            if (System.currentTimeMillis() - lastVibrationTime > 500) { // Limit vibration frequency
-                                vibrateDevice()
-                                lastVibrationTime = System.currentTimeMillis()
-                            }
+                            // We no longer need to provide haptic feedback here
+                            // The FloatingActionButtons class handles this when the highlighted button changes
 
                             // Scale the bubble slightly to indicate it can be dropped
                             view.animate()
@@ -1031,23 +1030,26 @@ class ViewBasedFloatingBubbleService : Service() {
                 }
 
                 MotionEvent.ACTION_UP -> {
-                    // Hide action buttons when touch ends
-                    if (showingActionButtons) {
-                        // Get the center of the bubble
-                        val centerX = params.x + view.width / 2f
-                        val centerY = params.y + view.height / 2f
+                    // Get the center of the bubble
+                    val centerX = params.x + view.width / 2f
+                    val centerY = params.y + view.height / 2f
 
-                        // ULTRA SIMPLE APPROACH: Use the existing executeActionAt method
-                        if (actionButtonsView != null) {
-                            Log.d(TAG, "ULTRA SIMPLE: Checking if dropped on action button at ($centerX, $centerY)")
+                    // Check if we were showing action buttons
+                    if (showingActionButtons && actionButtonsView != null) {
+                        // Only execute action if we were actually dragging
+                        if (isDragging) {
+                            // Check if we're over an action button
+                            val actionType = actionButtonsView!!.getActionAt(centerX, centerY)
 
-                            // Try to execute an action at the current position
-                            val actionExecuted = actionButtonsView!!.executeActionAt(centerX, centerY)
-                            Log.d(TAG, "ULTRA SIMPLE: Action executed: $actionExecuted")
+                            if (actionType != -1) {
+                                // We're over an action button, execute the action
+                                Log.d(TAG, "Dropped on action button at ($centerX, $centerY) with action type $actionType")
 
-                            if (actionExecuted) {
-                                // Animate the bubble disappearing AFTER executing the action
-                                Log.d(TAG, "ULTRA SIMPLE: Starting disappear animation")
+                                // Handle the action
+                                handleAction(actionType)
+
+                                // Animate the bubble disappearing
+                                Log.d(TAG, "Starting disappear animation")
                                 view.animate()
                                     .alpha(0f)
                                     .scaleX(0f)
@@ -1057,7 +1059,7 @@ class ViewBasedFloatingBubbleService : Service() {
 
                                 // Remove the bubble after a delay to ensure animation completes
                                 Handler(Looper.getMainLooper()).postDelayed({
-                                    Log.d(TAG, "ULTRA SIMPLE: Removing bubble after delay")
+                                    Log.d(TAG, "Removing bubble after delay")
                                     removeBubble()
                                 }, 350)
 
@@ -1065,7 +1067,8 @@ class ViewBasedFloatingBubbleService : Service() {
                             }
                         }
 
-                        // Hide action buttons if no action was executed
+                        // Always hide action buttons when touch ends, regardless of whether we were dragging
+                        Log.d(TAG, "Hiding action buttons on touch release")
                         hideActionButtons()
                     }
 

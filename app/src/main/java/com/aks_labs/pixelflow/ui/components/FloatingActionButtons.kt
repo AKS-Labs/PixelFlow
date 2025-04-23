@@ -183,22 +183,25 @@ class FloatingActionButtons(
         val oldHighlightedButtonIndex = highlightedButtonIndex
         highlightedButtonIndex = -1
 
+        // Use the same threshold as in getActionAt for consistency
+        val HIGHLIGHT_THRESHOLD = BUTTON_RADIUS_HIGHLIGHTED
+
         for (i in buttonPositions.indices) {
             val button = buttonPositions[i]
             val distance = calculateDistance(x, y, button.x, button.y)
 
-            // Use a much larger detection radius to make it easier to hit
-            // This is especially important for drag and drop operations
-            if (distance <= BUTTON_RADIUS + 100f) { // Greatly increased detection radius for better hit detection
+            if (distance <= HIGHLIGHT_THRESHOLD) {
                 highlightedButtonIndex = i
                 Log.d(TAG, "Highlighting button $i (type=${button.actionType}) at distance $distance")
                 break
             }
         }
 
+        // Only invalidate if the highlighted button changed
         if (oldHighlightedButtonIndex != highlightedButtonIndex) {
             // If we entered a new button (not just exited one), provide haptic feedback
-            if (highlightedButtonIndex != -1) {
+            if (highlightedButtonIndex != -1 && oldHighlightedButtonIndex == -1) {
+                // Only vibrate when first entering a button, not when moving between buttons
                 vibrateDevice()
             }
             invalidate()
@@ -207,46 +210,7 @@ class FloatingActionButtons(
         return highlightedButtonIndex != -1
     }
 
-    /**
-     * Gets the action type at the given coordinates, or -1 if none.
-     * DRAG ZONE APPROACH: Using the same approach as drag zones
-     */
-    fun getActionAt(x: Float, y: Float): Int {
-        Log.d(TAG, "DRAG ZONE APPROACH: Checking for action at coordinates: ($x, $y)")
 
-        // Use an INSANELY generous detection radius for drag and drop
-        // This is the key to making it work like drag zones
-        val INSANELY_GENEROUS_RADIUS = 1000f
-
-        // Find the closest button
-        var closestButton: ActionButtonPosition? = null
-        var closestDistance = Float.MAX_VALUE
-
-        for (button in buttonPositions) {
-            val distance = calculateDistance(x, y, button.x, button.y)
-            Log.d(TAG, "DRAG ZONE APPROACH: Button type=${button.actionType} at distance $distance")
-
-            if (distance < closestDistance) {
-                closestDistance = distance
-                closestButton = button
-            }
-        }
-
-        // DRAG ZONE APPROACH: Always return the closest button if any exist
-        // This ensures we always get a result, just like drag zones
-        if (closestButton != null) {
-            // Even with an insanely generous radius, log the distance for debugging
-            if (closestDistance <= INSANELY_GENEROUS_RADIUS) {
-                Log.d(TAG, "DRAG ZONE APPROACH: Found action ${closestButton.actionType} at distance $closestDistance")
-                return closestButton.actionType
-            } else {
-                Log.d(TAG, "DRAG ZONE APPROACH: Closest action ${closestButton.actionType} at distance $closestDistance is beyond radius")
-            }
-        }
-
-        Log.d(TAG, "DRAG ZONE APPROACH: No action found at coordinates: ($x, $y)")
-        return -1
-    }
 
     /**
      * Gets the position of a specific action button.
@@ -261,20 +225,19 @@ class FloatingActionButtons(
     }
 
     /**
-     * Executes the action at the given coordinates directly.
-     * Returns true if an action was executed, false otherwise.
-     * ULTRA SIMPLE APPROACH: Direct execution with extremely generous detection
+     * Checks if the given coordinates are over a button and returns the button's action type.
+     * Returns -1 if no button is found at the coordinates.
      */
-    fun executeActionAt(x: Float, y: Float): Boolean {
-        Log.d(TAG, "ULTRA SIMPLE: Attempting to execute action at coordinates: ($x, $y)")
+    fun getActionAt(x: Float, y: Float): Int {
+        Log.d(TAG, "Checking for action at coordinates: ($x, $y)")
 
-        // Find the closest button regardless of distance
+        // Find the closest button
         var closestButton: ActionButtonPosition? = null
         var closestDistance = Float.MAX_VALUE
 
         for (button in buttonPositions) {
             val distance = calculateDistance(x, y, button.x, button.y)
-            Log.d(TAG, "ULTRA SIMPLE: Button type=${button.actionType} at distance $distance")
+            Log.d(TAG, "Button type=${button.actionType} at distance $distance")
 
             if (distance < closestDistance) {
                 closestDistance = distance
@@ -282,36 +245,55 @@ class FloatingActionButtons(
             }
         }
 
-        // Use an extremely generous threshold
-        val ULTRA_GENEROUS_THRESHOLD = 1000f
+        // Use a reasonable threshold for action detection
+        // This should match the visual size of the button for intuitive interaction
+        val ACTION_THRESHOLD = BUTTON_RADIUS * 1.5f
 
-        // If we found a button and it's within our generous threshold
-        if (closestButton != null && closestDistance <= ULTRA_GENEROUS_THRESHOLD) {
+        // If we found a button and it's within our threshold
+        if (closestButton != null && closestDistance <= ACTION_THRESHOLD) {
             val actionType = closestButton.actionType
-            Log.d(TAG, "ULTRA SIMPLE: Found action $actionType at distance $closestDistance")
+            Log.d(TAG, "Found action $actionType at distance $closestDistance")
+            return actionType
+        }
 
+        Log.d(TAG, "No action found at coordinates: ($x, $y)")
+        return -1
+    }
+
+    /**
+     * Executes the action at the given coordinates directly.
+     * Returns true if an action was executed, false otherwise.
+     */
+    fun executeActionAt(x: Float, y: Float): Boolean {
+        Log.d(TAG, "Attempting to execute action at coordinates: ($x, $y)")
+
+        // Get the action at the coordinates
+        val actionType = getActionAt(x, y)
+
+        // If we found an action, execute it
+        if (actionType != -1) {
             // Provide haptic feedback
             vibrateDevice()
 
             // Invoke the action listener directly
             onActionSelectedListener?.let { listener ->
-                Log.d(TAG, "ULTRA SIMPLE: Invoking action listener for action $actionType")
+                Log.d(TAG, "Invoking action listener for action $actionType")
                 try {
                     // Execute the action in a try-catch block
                     listener(actionType)
-                    Log.d(TAG, "ULTRA SIMPLE: Action listener executed successfully")
+                    Log.d(TAG, "Action listener executed successfully")
                     return true
                 } catch (e: Exception) {
-                    Log.e(TAG, "ULTRA SIMPLE: Error executing action listener", e)
+                    Log.e(TAG, "Error executing action listener", e)
                     return false
                 }
             } ?: run {
-                Log.e(TAG, "ULTRA SIMPLE: Action listener is null for action $actionType")
+                Log.e(TAG, "Action listener is null for action $actionType")
                 return false
             }
         }
 
-        Log.d(TAG, "ULTRA SIMPLE: No action found at coordinates: ($x, $y)")
+        Log.d(TAG, "No action found at coordinates: ($x, $y)")
         return false
     }
 
@@ -429,7 +411,7 @@ class FloatingActionButtons(
 
                         // Set icon bounds and color
                         icon.setBounds(left, top, right, bottom)
-                        icon.setTint(ContextCompat.getColor(context, R.color.colorAccent))
+                        icon.setTint(Color.BLACK)
 
                         // Draw the icon
                         icon.draw(canvas)
@@ -447,7 +429,7 @@ class FloatingActionButtons(
 
                         // Set icon bounds and color
                         icon.setBounds(left, top, right, bottom)
-                        icon.setTint(ContextCompat.getColor(context, R.color.colorAccent))
+                        icon.setTint(Color.BLACK)
 
                         // Draw the icon
                         icon.draw(canvas)
@@ -455,7 +437,7 @@ class FloatingActionButtons(
                 }
                 ACTION_TRASH -> {
                     // Draw "Trash" text
-                    textPaint.color = ContextCompat.getColor(context, R.color.colorAccent)
+                    textPaint.color = Color.BLACK
                     textPaint.textSize = 16f * resources.displayMetrics.density
                     textPaint.isFakeBoldText = true
 
