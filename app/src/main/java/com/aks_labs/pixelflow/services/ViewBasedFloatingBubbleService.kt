@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import com.aks_labs.pixelflow.R
 import com.aks_labs.pixelflow.data.models.Folder
+import com.aks_labs.pixelflow.receivers.ScreenshotBroadcastReceiver
 import com.aks_labs.pixelflow.ui.components.DirectActionExecutor
 import com.aks_labs.pixelflow.ui.components.ViewBasedCircularDragZones
 import com.aks_labs.pixelflow.ui.components.FloatingActionButtons
@@ -284,6 +285,13 @@ class ViewBasedFloatingBubbleService : Service() {
 
             // Load the bitmap
             currentScreenshotBitmap = BitmapUtils.loadBitmapFromFile(screenshotPath)
+
+            // Broadcast the screenshot detection event
+            val intent = Intent(ScreenshotBroadcastReceiver.ACTION_SCREENSHOT_DETECTED).apply {
+                putExtra(ScreenshotBroadcastReceiver.EXTRA_SCREENSHOT_PATH, screenshotPath)
+            }
+            sendBroadcast(intent)
+            Log.d(TAG, "Broadcast sent for screenshot detection: $screenshotPath")
 
             // Show the floating bubble
             showFloatingBubble(currentScreenshotBitmap)
@@ -638,6 +646,14 @@ class ViewBasedFloatingBubbleService : Service() {
                         null,
                         null
                     )
+
+                    // Broadcast the screenshot moved event
+                    val intent = Intent(ScreenshotBroadcastReceiver.ACTION_SCREENSHOT_MOVED).apply {
+                        putExtra(ScreenshotBroadcastReceiver.EXTRA_SCREENSHOT_PATH, destFile.absolutePath)
+                        putExtra(ScreenshotBroadcastReceiver.EXTRA_FOLDER_ID, folder.id.toLongOrNull() ?: -1L)
+                    }
+                    sendBroadcast(intent)
+                    Log.d(TAG, "Broadcast sent for screenshot moved: ${destFile.absolutePath} to folder: ${folder.name}")
                 } else {
                     Log.e(TAG, "Failed to delete original screenshot")
                 }

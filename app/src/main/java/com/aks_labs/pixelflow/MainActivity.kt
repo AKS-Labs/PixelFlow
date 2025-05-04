@@ -37,7 +37,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
 import com.aks_labs.pixelflow.ui.screens.FolderManagementScreen
-import com.aks_labs.pixelflow.ui.screens.HomeScreen
+import com.aks_labs.pixelflow.ui.screens.ImprovedHomeScreen
 import com.aks_labs.pixelflow.ui.screens.PermissionSetupScreen
 import com.aks_labs.pixelflow.ui.screens.ScreenshotHistoryScreen
 import com.aks_labs.pixelflow.ui.screens.SettingsScreen
@@ -69,9 +69,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // enableEdgeToEdge()
 
+        // Check and request permissions
+        checkAndRequestPermissions()
+
         setContent {
             val viewModel: MainViewModel = viewModel()
             val navController = rememberNavController()
+
+            // Store the MainViewModel in the application for access by other components
+            application.pixelFlowApp.mainViewModel = viewModel
 
             PixelFlowTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -238,7 +244,7 @@ fun PixelFlowApp(
                 PermissionSetupScreen(navController, sharedPrefsManager)
             }
             composable("home") {
-                HomeScreen(navController, viewModel)
+                ImprovedHomeScreen(navController, viewModel)
             }
             composable("settings") {
                 SettingsScreen(navController, viewModel, isBubbleEnabled)

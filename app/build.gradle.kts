@@ -58,6 +58,9 @@ dependencies {
     // Material Design components - keeping for backward compatibility during migration
     implementation("com.google.android.material:material:1.9.0")
 
+    // Material for pull-to-refresh
+    implementation("androidx.compose.material:material:1.4.3")
+
     // We'll use SharedPreferences instead of Room
 
     // DataStore Preferences
