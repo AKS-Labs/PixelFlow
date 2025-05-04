@@ -15,12 +15,13 @@ val ErrorRed = Color(0xFFF44336)
 val WarningAmber = Color(0xFFFFB300)
 val InfoBlue = Color(0xFF2196F3)
 
-// Light theme colors (not used in the reference, but good to have)
-val LightBackground = Color(0xFFF5F5F5)
+// Light theme colors (based on the Collections screen reference)
+val LightBackground = Color(0xFFEAEFF6) // Light greyish-blue background
 val LightSurface = Color(0xFFFFFFFF)
 val LightCardBackground = Color(0xFFF0F0F0)
-val LightAccent = Color(0xFF00897B)
+val LightAccent = Color(0xFF7FE0FF) // Light cyan accent for buttons
 val LightSecondary = Color(0xFF26A69A)
+val CollectionsItemBackground = Color(0xFFF0F4F8) // Light gray for collection items
 
 // Legacy colors (keeping for backward compatibility)
 val Purple80 = Color(0xFFD0BCFF)

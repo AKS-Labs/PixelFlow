@@ -79,12 +79,108 @@ fun CircularDragZone(
             if (folders.isEmpty()) return@Canvas
 
             val centerX = size.width / 2f
-            val centerY = size.height - 200.dp.toPx()
-            val centerDistance = minOf(size.width, size.height) * 0.4f
+            val centerY = size.height - size.height / 4f // Position the center point at 3/4 of the screen height
+            val centerDistance = size.width * 0.4f // 40% of screen width
 
             val folderCount = folders.size
-            val angleRange = if (folderCount <= 5) 180f else 270f
-            val startAngle = if (folderCount <= 5) 180f else 135f
+
+            // For a single folder, place it at the bottom center
+            if (folderCount == 1) {
+                val folder = folders[0]
+                val x = centerX
+                val y = size.height - 200.dp.toPx() // Place at the bottom with padding
+
+                // Calculate radius with animation if needed
+                val radius = with(density) {
+                    var r = zoneRadius.toPx()
+                    if (0 == highlightedIndex) {
+                        r += highlightExtraRadius.toPx()
+                        r *= pulseScale // Apply pulse animation
+                    }
+                    r
+                }
+
+                // Create flower/gear path
+                val path = createFlowerPath(x, y, radius, petalCount, petalDepth)
+
+                // Draw shadow for highlighted zone
+                if (0 == highlightedIndex) {
+                    translate(2f, 4f) {
+                        drawPath(
+                            path = path,
+                            color = Color.Black.copy(alpha = 0.16f),
+                            style = Stroke(width = 3f)
+                        )
+                    }
+                }
+
+                // Draw zone background (white with 100% opacity)
+                drawPath(
+                    path = path,
+                    color = Color.White,
+                    style = Fill
+                )
+
+                // Draw border
+                drawPath(
+                    path = path,
+                    color = Color.White,
+                    style = Stroke(width = 3f)
+                )
+
+                // Draw highlight ring for highlighted zone
+                if (0 == highlightedIndex) {
+                    val highlightPath = createFlowerPath(x, y, radius * 1.05f, petalCount, petalDepth)
+                    drawPath(
+                        path = highlightPath,
+                        color = Color.White,
+                        style = Stroke(width = 6f)
+                    )
+                }
+
+                // Draw folder name with black text for better contrast
+                drawContext.canvas.nativeCanvas.drawText(
+                    folder.name,
+                    x,
+                    y + 15f,
+                    Paint().apply {
+                        color = android.graphics.Color.BLACK
+                        textSize = 40f
+                        textAlign = Paint.Align.CENTER
+                    }
+                )
+
+                return@Canvas
+            }
+
+            // Calculate the angle range based on folder count
+            // For few folders (2-8), use a bottom arc (150 degrees)
+            // For more folders (9+), gradually expand to a full circle (360 degrees)
+            val minFolders = 2
+            val maxFolders = 16 // At this point, we'll have a full circle
+
+            // Start with a bottom arc (150 degrees)
+            val minAngleRange = 150f // About 150 degrees
+            val maxAngleRange = 360f // 360 degrees (full circle)
+
+            // Calculate the transition factor (0 to 1) based on folder count
+            val transitionFactor = if (folderCount <= 8) {
+                0f // Use the minimum arc for 2-8 folders
+            } else {
+                kotlin.math.min(1f, (folderCount - 8f) / (maxFolders - 8f))
+            }
+
+            // Calculate the actual angle range using the transition factor
+            val angleRange = minAngleRange + (maxAngleRange - minAngleRange) * transitionFactor
+
+            // For few folders, center the arc at the bottom (90 degrees)
+            val arcCenterAngle = 90f // Bottom center (90 degrees)
+
+            // Calculate the start and end angles to center the arc
+            val startAngle = arcCenterAngle - angleRange / 2
+            val endAngle = arcCenterAngle + angleRange / 2
+
+            // Calculate the angle step between each zone
             val angleStep = angleRange / folderCount
 
             folders.forEachIndexed { index, folder ->

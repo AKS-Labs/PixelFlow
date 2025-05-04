@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -25,8 +27,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +36,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.graphics.painter.Painter
@@ -51,10 +56,21 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import java.io.File
 import com.aks_labs.pixelflow.R
 import com.aks_labs.pixelflow.data.models.SimpleFolder
+import com.aks_labs.pixelflow.ui.theme.CollectionsItemBackground
+import com.aks_labs.pixelflow.ui.theme.LightAccent
+import com.aks_labs.pixelflow.ui.theme.LightBackground
 import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,46 +85,86 @@ fun FolderManagementScreen(
     var folderToDelete by remember { mutableStateOf<SimpleFolder?>(null) }
 
     Scaffold(
+        containerColor = LightBackground,
         topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(id = R.string.manage_folders)) },
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Collections",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp,
+                        color = Color.Black
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = LightBackground,
+                    titleContentColor = Color.Black
+                ),
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(LightAccent)
+                            .clickable { navController.navigateUp() },
+                        contentAlignment = Alignment.Center
+                    ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
+                            tint = Color.Black,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                },
+                actions = {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(LightAccent)
+                            .clickable { showAddDialog = true },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(id = R.string.add_folder),
+                            tint = Color.Black,
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 }
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { showAddDialog = true }) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(id = R.string.add_folder)
-                )
-            }
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
         ) {
+            Text(
+                text = "My collections",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.DarkGray,
+                modifier = Modifier.padding(top = 16.dp, bottom = 12.dp)
+            )
+
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(folders) { folder ->
-                    FolderItem(
+                    CollectionItem(
                         folder = folder,
                         onEdit = { editingFolder = folder },
-                        onDelete = {
-                            folderToDelete = folder
-                        }
+                        onDelete = { folderToDelete = folder },
+                        screenshotCount = viewModel.getScreenshotCountForFolder(folder.id),
+                        viewModel = viewModel
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
@@ -164,65 +220,215 @@ fun FolderManagementScreen(
 }
 
 @Composable
-fun FolderItem(
+fun CollectionItem(
     folder: SimpleFolder,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onEdit: () -> Unit = {},  // Not used in current UI but kept for future use
+    onDelete: () -> Unit = {},  // Not used in current UI but kept for future use
+    screenshotCount: Int,
+    viewModel: MainViewModel
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .height(72.dp)
+            .clickable { /* Handle click on collection item */ },
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = CollectionsItemBackground
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 0.dp
+        )
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Folder icon
+            // Folder icon or stacked screenshots preview
             Box(
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary),
-                contentAlignment = Alignment.Center
+                    .size(width = 60.dp, height = 50.dp)
             ) {
-                // Use the same custom icon approach
-                CustomIcon(
-                    iconName = folder.iconName,
-                    isSelected = true // Always white in this context
-                )
+                // Get thumbnail paths for this folder
+                val thumbnailPaths = viewModel.getScreenshotThumbnailsForFolder(folder.id)
+                val context = LocalContext.current
+
+                // Create stacked effect with actual thumbnails
+                if (screenshotCount > 0 && thumbnailPaths.isNotEmpty()) {
+                    // Determine how many thumbnails we have (up to 3)
+                    val thumbnailCount = thumbnailPaths.size
+
+                    // If we have at least 1 thumbnail, show it as the bottom/left card
+                    if (thumbnailCount >= 1) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .offset(x = 0.dp, y = 0.dp)
+                                .shadow(1.dp, RoundedCornerShape(8.dp))
+                                .clip(RoundedCornerShape(8.dp))
+                        ) {
+                            // Check if file exists before loading
+                            val file = File(thumbnailPaths[0])
+                            if (file.exists() && file.length() > 0) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(context)
+                                        .data(file)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = "Screenshot 1",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            } else {
+                                // Show folder icon if file doesn't exist
+                                val iconResId = when (folder.iconName) {
+                                    "ic_quotes" -> R.drawable.ic_quotes
+                                    "ic_tricks" -> R.drawable.ic_tricks
+                                    "ic_images" -> R.drawable.ic_images
+                                    "ic_posts" -> R.drawable.ic_posts
+                                    "ic_trash" -> R.drawable.ic_trash
+                                    else -> R.drawable.ic_images
+                                }
+                                Icon(
+                                    painter = painterResource(id = iconResId),
+                                    contentDescription = folder.name,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // If we have at least 2 thumbnails, show the second as the middle card
+                    if (thumbnailCount >= 2) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .offset(x = 8.dp, y = 0.dp)
+                                .shadow(1.dp, RoundedCornerShape(8.dp))
+                                .clip(RoundedCornerShape(8.dp))
+                        ) {
+                            // Check if file exists before loading
+                            val file = File(thumbnailPaths[1])
+                            if (file.exists() && file.length() > 0) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(context)
+                                        .data(file)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = "Screenshot 2",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            } else {
+                                // Show folder icon if file doesn't exist
+                                val iconResId = when (folder.iconName) {
+                                    "ic_quotes" -> R.drawable.ic_quotes
+                                    "ic_tricks" -> R.drawable.ic_tricks
+                                    "ic_images" -> R.drawable.ic_images
+                                    "ic_posts" -> R.drawable.ic_posts
+                                    "ic_trash" -> R.drawable.ic_trash
+                                    else -> R.drawable.ic_images
+                                }
+                                Icon(
+                                    painter = painterResource(id = iconResId),
+                                    contentDescription = folder.name,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // If we have 3 thumbnails, show the third as the top/right card
+                    if (thumbnailCount >= 3) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .offset(x = 16.dp, y = 0.dp)
+                                .shadow(1.dp, RoundedCornerShape(8.dp))
+                                .clip(RoundedCornerShape(8.dp))
+                        ) {
+                            // Check if file exists before loading
+                            val file = File(thumbnailPaths[2])
+                            if (file.exists() && file.length() > 0) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(context)
+                                        .data(file)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = "Screenshot 3",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            } else {
+                                // Show folder icon if file doesn't exist
+                                val iconResId = when (folder.iconName) {
+                                    "ic_quotes" -> R.drawable.ic_quotes
+                                    "ic_tricks" -> R.drawable.ic_tricks
+                                    "ic_images" -> R.drawable.ic_images
+                                    "ic_posts" -> R.drawable.ic_posts
+                                    "ic_trash" -> R.drawable.ic_trash
+                                    else -> R.drawable.ic_images
+                                }
+                                Icon(
+                                    painter = painterResource(id = iconResId),
+                                    contentDescription = folder.name,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    // Empty state - show folder icon in a gray box
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .shadow(1.dp, RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color.LightGray),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        // Get icon resource ID from name
+                        val iconResId = when (folder.iconName) {
+                            "ic_quotes" -> R.drawable.ic_quotes
+                            "ic_tricks" -> R.drawable.ic_tricks
+                            "ic_images" -> R.drawable.ic_images
+                            "ic_posts" -> R.drawable.ic_posts
+                            "ic_trash" -> R.drawable.ic_trash
+                            else -> R.drawable.ic_images
+                        }
+
+                        Icon(
+                            painter = painterResource(id = iconResId),
+                            contentDescription = folder.name,
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Folder name
-            Text(
-                text = folder.name,
-                style = MaterialTheme.typography.titleMedium,
+            // Collection info
+            Column(
                 modifier = Modifier.weight(1f)
-            )
-
-            // Edit button
-            IconButton(
-                onClick = onEdit
             ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = stringResource(id = R.string.edit_folder),
-                    tint = MaterialTheme.colorScheme.primary
+                Text(
+                    text = folder.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Black
                 )
-            }
 
-            // Delete button
-            IconButton(
-                onClick = onDelete
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(id = R.string.delete_folder),
-                    tint = MaterialTheme.colorScheme.error
+                Text(
+                    text = "$screenshotCount screenshots",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
                 )
             }
         }
