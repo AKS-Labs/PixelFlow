@@ -45,6 +45,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -183,21 +188,10 @@ fun FolderItem(
                     .background(MaterialTheme.colorScheme.primary),
                 contentAlignment = Alignment.Center
             ) {
-                // Get icon resource ID from name
-                val iconResId = when (folder.iconName) {
-                    "ic_quotes" -> R.drawable.ic_quotes
-                    "ic_tricks" -> R.drawable.ic_tricks
-                    "ic_images" -> R.drawable.ic_images
-                    "ic_posts" -> R.drawable.ic_posts
-                    "ic_trash" -> R.drawable.ic_trash
-                    else -> R.drawable.ic_images
-                }
-
-                Icon(
-                    painter = painterResource(id = iconResId),
-                    contentDescription = folder.name,
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
+                // Use the same custom icon approach
+                CustomIcon(
+                    iconName = folder.iconName,
+                    isSelected = true // Always white in this context
                 )
             }
 
@@ -417,11 +411,32 @@ fun FolderIconOption(
             .clickable(enabled = enabled) { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Icon(
-            painter = painterResource(id = iconResId),
-            contentDescription = iconName,
-            tint = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(24.dp)
-        )
+        // Use a safer approach with custom drawable loading
+        when (iconName) {
+            "ic_quotes" -> CustomIcon(iconName = iconName, isSelected = isSelected)
+            "ic_tricks" -> CustomIcon(iconName = iconName, isSelected = isSelected)
+            "ic_images" -> CustomIcon(iconName = iconName, isSelected = isSelected)
+            "ic_posts" -> CustomIcon(iconName = iconName, isSelected = isSelected)
+            "ic_trash" -> CustomIcon(iconName = iconName, isSelected = isSelected)
+            else -> CustomIcon(iconName = "ic_images", isSelected = isSelected)
+        }
     }
+}
+
+@Composable
+fun CustomIcon(iconName: String, isSelected: Boolean) {
+    val iconText = when (iconName) {
+        "ic_quotes" -> "Q"
+        "ic_tricks" -> "T"
+        "ic_images" -> "I"
+        "ic_posts" -> "P"
+        "ic_trash" -> "D"
+        else -> "F"
+    }
+
+    Text(
+        text = iconText,
+        color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.titleMedium
+    )
 }

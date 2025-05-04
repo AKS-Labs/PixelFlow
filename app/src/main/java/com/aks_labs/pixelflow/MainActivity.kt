@@ -13,7 +13,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-// import androidx.activity.enableEdgeToEdge
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -67,7 +68,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // enableEdgeToEdge()
+        // Set up back press handling
+        setupBackPressHandling()
 
         // Check and request permissions
         checkAndRequestPermissions()
@@ -85,6 +87,23 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun setupBackPressHandling() {
+        // Add a callback to handle back presses
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // If we're on the home screen, finish the activity
+                // Otherwise, let the NavController handle back navigation
+                if (isTaskRoot) {
+                    finish()
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
     }
 
     private fun checkAndRequestPermissions() {
@@ -203,6 +222,17 @@ fun PixelFlowApp(
     val activity = context as MainActivity
     val sharedPrefsManager = remember { (context.applicationContext as PixelFlowApplication).sharedPrefsManager }
     val onboardingCompleted = remember { sharedPrefsManager.isOnboardingCompleted() }
+
+    // Handle back navigation properly
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+
+    // Handle system back button
+    LaunchedEffect(currentRoute) {
+        if (currentRoute != "home" && currentRoute != "permission_setup") {
+            // We're on a sub-screen, let the system back button navigate back
+            // The back button will automatically navigate back
+        }
+    }
 
     // Start service if permissions are granted and onboarding is completed
     LaunchedEffect(onboardingCompleted) {

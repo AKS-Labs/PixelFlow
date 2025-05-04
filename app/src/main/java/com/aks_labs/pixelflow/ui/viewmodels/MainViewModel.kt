@@ -5,7 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
+import androidx.core.content.FileProvider
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.AndroidViewModel
@@ -15,6 +18,7 @@ import com.aks_labs.pixelflow.data.models.SimpleScreenshot
 import com.aks_labs.pixelflow.pixelFlowApp
 import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
 import com.aks_labs.pixelflow.data.SharedPrefsManager.ThemeMode
+import java.io.File
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -38,6 +42,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     // Screenshots
     val allScreenshots: Flow<List<SimpleScreenshot>> = sharedPrefsManager.screenshots
+
+    // Filtered screenshots for UI display
+    private val _filteredScreenshots = MutableStateFlow<List<SimpleScreenshot>>(emptyList())
+    val filteredScreenshots = _filteredScreenshots.asStateFlow()
+
+    // Grid columns for screenshot display
+    private val _gridColumns = MutableStateFlow(3) // Set to 3 columns by default
+    val gridColumns = _gridColumns.asStateFlow()
 
     // Bubble enabled preference
     val isBubbleEnabled = application.pixelFlowApp.dataStore.data
@@ -169,5 +181,151 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setThemeMode(themeMode: ThemeMode) {
         sharedPrefsManager.setThemeMode(themeMode)
         _themeMode.value = themeMode
+    }
+
+    /**
+     * Load screenshots from the device
+     */
+    fun loadDeviceScreenshots() {
+        viewModelScope.launch {
+            try {
+                val screenshots = loadScreenshotsFromMediaStore()
+                // Always sort by newest first (highest timestamp first)
+                // Use originalTimestamp for consistent sorting
+                val sortedScreenshots = screenshots.sortedByDescending { it.originalTimestamp }
+                _filteredScreenshots.value = sortedScreenshots
+                Log.d("MainViewModel", "Loaded ${sortedScreenshots.size} screenshots")
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "Error loading screenshots", e)
+                _filteredScreenshots.value = emptyList()
+            }
+        }
+    }
+
+    /**
+     * Refresh screenshots immediately - used when a new screenshot is detected
+     * This is a more aggressive refresh that ensures new screenshots appear immediately
+     */
+    fun refreshScreenshotsImmediately() {
+        viewModelScope.launch {
+            try {
+                // Force a refresh from MediaStore
+                val screenshots = loadScreenshotsFromMediaStore(forceRefresh = true)
+                val sortedScreenshots = screenshots.sortedByDescending { it.originalTimestamp }
+                _filteredScreenshots.value = sortedScreenshots
+                Log.d("MainViewModel", "Immediately refreshed ${sortedScreenshots.size} screenshots")
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "Error refreshing screenshots immediately", e)
+                // Don't clear the list on error, keep the existing screenshots
+            }
+        }
+    }
+
+    /**
+     * Load screenshots from the MediaStore
+     *
+     * @param forceRefresh If true, forces a refresh of the media store cache
+     */
+    private fun loadScreenshotsFromMediaStore(forceRefresh: Boolean = false): List<SimpleScreenshot> {
+        val screenshots = mutableListOf<SimpleScreenshot>()
+        val context = getApplication<Application>()
+
+        try {
+            // If forceRefresh is true, trigger a media scan to ensure we have the latest data
+            if (forceRefresh) {
+                Log.d("MainViewModel", "Forcing media store refresh")
+                // This will help ensure the MediaStore is up-to-date
+                context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE))
+            }
+
+            // Query the media store for screenshots
+            val projection = arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATA,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.DATE_MODIFIED
+            )
+
+            // Look for files in the Screenshots directory
+            val selection = "${MediaStore.Images.Media.DATA} LIKE ?"
+            val selectionArgs = arrayOf("%/Screenshots/%")
+            val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} DESC"
+
+            context.contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                sortOrder
+            )?.use { cursor ->
+                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+                val dateModifiedColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)
+
+                while (cursor.moveToNext()) {
+                    val id = cursor.getLong(idColumn)
+                    val filePath = cursor.getString(dataColumn)
+                    val dateAdded = cursor.getLong(dateAddedColumn)
+                    val dateModified = cursor.getLong(dateModifiedColumn)
+
+                    val file = File(filePath)
+                    if (file.exists() && file.name.contains("screenshot", ignoreCase = true)) {
+                        val screenshot = SimpleScreenshot(
+                            id = id,
+                            filePath = filePath,
+                            thumbnailPath = filePath, // Use the same path for thumbnail for now
+                            folderId = 0, // Default folder
+                            originalTimestamp = dateModified * 1000, // Use modified date for better sorting
+                            savedTimestamp = dateModified * 1000 // Use the same timestamp for consistency
+                        )
+                        screenshots.add(screenshot)
+                    }
+                }
+            }
+
+            Log.d("MainViewModel", "Loaded ${screenshots.size} screenshots from device")
+            return screenshots
+        } catch (e: Exception) {
+            Log.e("MainViewModel", "Error loading screenshots from device", e)
+            return emptyList()
+        }
+    }
+
+    /**
+     * Share a screenshot
+     */
+    fun shareScreenshot(context: Context, screenshot: SimpleScreenshot) {
+        try {
+            val file = File(screenshot.filePath)
+            if (!file.exists()) {
+                Log.e("MainViewModel", "Screenshot file does not exist: ${file.absolutePath}")
+                return
+            }
+
+            val uri = FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                file
+            )
+
+            val shareIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, uri)
+                type = "image/png"
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            context.startActivity(Intent.createChooser(shareIntent, "Share Screenshot"))
+        } catch (e: Exception) {
+            Log.e("MainViewModel", "Error sharing screenshot", e)
+        }
+    }
+
+    /**
+     * Set the number of grid columns for screenshot display
+     */
+    fun setGridColumns(columns: Int) {
+        _gridColumns.value = columns
     }
 }
