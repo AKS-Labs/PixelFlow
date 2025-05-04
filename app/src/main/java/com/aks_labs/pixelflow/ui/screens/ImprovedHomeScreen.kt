@@ -60,7 +60,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -98,6 +101,9 @@ fun ImprovedHomeScreen(
     // Track drag selection state
     var isDragging by remember { mutableStateOf(false) }
     var lastDraggedIndex by remember { mutableStateOf(-1) }
+
+    // Track touch position for drag selection
+    var currentDragPosition by remember { mutableStateOf(Offset.Zero) }
 
     // Refresh function
     val onRefresh = {
@@ -175,9 +181,8 @@ fun ImprovedHomeScreen(
                                 // Share selected screenshots
                                 val selectedScreenshots = selectionManager.getSelectedScreenshots(screenshots)
                                 if (selectedScreenshots.isNotEmpty()) {
-                                    // For now, just share the first one as an example
-                                    viewModel.shareScreenshot(context, selectedScreenshots.first())
-                                    // In a real implementation, you'd want to share multiple screenshots
+                                    // Use the new method to share multiple screenshots
+                                    viewModel.shareMultipleScreenshots(context, selectedScreenshots)
                                 }
                             }) {
                                 Icon(
@@ -247,6 +252,7 @@ fun ImprovedHomeScreen(
                         onDragStart = { isDragging = true },
                         onDragEnd = { isDragging = false },
                         onDraggedIndexChanged = { index -> lastDraggedIndex = index },
+                        onDragPositionChanged = { position -> currentDragPosition = position },
                         onScreenshotClick = { screenshot ->
                             if (selectionManager.selectionMode) {
                                 selectionManager.toggleSelection(screenshot)
@@ -281,6 +287,7 @@ fun ScreenshotsSection(
     onDragStart: () -> Unit,
     onDragEnd: () -> Unit,
     onDraggedIndexChanged: (Int) -> Unit,
+    onDragPositionChanged: (Offset) -> Unit, // Keep this for future improvements
     onScreenshotClick: (SimpleScreenshot) -> Unit
 ) {
     Column(
@@ -321,6 +328,7 @@ fun ScreenshotsSection(
                         detectDragGestures(
                             onDragStart = { offset ->
                                 onDragStart()
+                                onDragPositionChanged(offset)
                             },
                             onDragEnd = {
                                 onDragEnd()
@@ -330,8 +338,8 @@ fun ScreenshotsSection(
                             },
                             onDrag = { change, dragAmount ->
                                 change.consume()
-                                // This will be used for drag selection in the grid
-                                // The actual selection is handled in the grid items
+                                // Update the current drag position
+                                onDragPositionChanged(change.position)
                             }
                         )
                     }
@@ -349,6 +357,11 @@ fun ScreenshotsSection(
                     items(screenshots) { screenshot ->
                         val isSelected = selectionManager.isSelected(screenshot)
 
+                        val itemIndex = screenshots.indexOf(screenshot)
+
+                        // Create a reference to track this item's position
+                        val itemPositionRef = remember { mutableStateOf(Rect.Zero) }
+
                         ScreenshotGridItem(
                             screenshot = screenshot,
                             isSelected = isSelected,
@@ -359,20 +372,25 @@ fun ScreenshotsSection(
                                 }
                                 selectionManager.toggleSelection(screenshot)
                             },
-                            modifier = Modifier.pointerInput(isDragging, screenshot.id) {
-                                if (isDragging) {
-                                    detectTapGestures { offset ->
-                                        // When dragging over an item, select it
-                                        if (!selectionManager.selectionMode) {
-                                            selectionManager.toggleSelectionMode()
+                            modifier = Modifier
+                                .onGloballyPositioned { coordinates ->
+                                    // Store this item's position on screen
+                                    itemPositionRef.value = coordinates.boundsInWindow()
+                                }
+                                .pointerInput(isDragging, screenshot.id) {
+                                    if (isDragging) {
+                                        detectTapGestures { offset ->
+                                            // When dragging over an item, select it
+                                            if (!selectionManager.selectionMode) {
+                                                selectionManager.toggleSelectionMode()
+                                            }
+                                            if (!selectionManager.isSelected(screenshot)) {
+                                                selectionManager.toggleSelection(screenshot)
+                                                onDraggedIndexChanged(itemIndex)
+                                            }
                                         }
-                                        if (!selectionManager.isSelected(screenshot)) {
-                                            selectionManager.toggleSelection(screenshot)
-                                        }
-                                        onDraggedIndexChanged(screenshots.indexOf(screenshot))
                                     }
                                 }
-                            }
                         )
                     }
                 }

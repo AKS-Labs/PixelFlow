@@ -349,6 +349,58 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * Share multiple screenshots
+     */
+    fun shareMultipleScreenshots(context: Context, screenshots: List<SimpleScreenshot>) {
+        if (screenshots.isEmpty()) {
+            Log.d("MainViewModel", "No screenshots to share")
+            return
+        }
+
+        try {
+            // If there's only one screenshot, use the single share method
+            if (screenshots.size == 1) {
+                shareScreenshot(context, screenshots.first())
+                return
+            }
+
+            // For multiple screenshots, create a list of URIs
+            val uriList = ArrayList<Uri>()
+
+            for (screenshot in screenshots) {
+                val file = File(screenshot.filePath)
+                if (!file.exists()) {
+                    Log.e("MainViewModel", "Screenshot file does not exist: ${file.absolutePath}")
+                    continue
+                }
+
+                val uri = FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.fileprovider",
+                    file
+                )
+                uriList.add(uri)
+            }
+
+            if (uriList.isEmpty()) {
+                Log.e("MainViewModel", "No valid screenshots to share")
+                return
+            }
+
+            val shareIntent = Intent().apply {
+                action = Intent.ACTION_SEND_MULTIPLE
+                putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriList)
+                type = "image/*"
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            context.startActivity(Intent.createChooser(shareIntent, "Share ${uriList.size} Screenshots"))
+        } catch (e: Exception) {
+            Log.e("MainViewModel", "Error sharing multiple screenshots", e)
+        }
+    }
+
+    /**
      * Set the number of grid columns for screenshot display
      */
     fun setGridColumns(columns: Int) {
