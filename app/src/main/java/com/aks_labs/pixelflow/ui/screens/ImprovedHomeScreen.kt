@@ -232,6 +232,7 @@ fun ImprovedHomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
+                    .background(Color(0xFFF5F7FA)) // Light grayish-blue background
                     .pullRefresh(pullRefreshState)
             ) {
                 Column(

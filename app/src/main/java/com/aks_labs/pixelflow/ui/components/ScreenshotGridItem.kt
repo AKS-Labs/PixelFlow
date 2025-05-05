@@ -69,8 +69,8 @@ fun ScreenshotGridItem(
             .scale(scale)
             .aspectRatio(0.5625f) // 9:16 aspect ratio for screenshots
             .border(
-                width = if (isSelected) 2.dp else 1.dp,
-                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                width = if (isSelected) 2.dp else 0.dp,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
                 shape = MaterialTheme.shapes.medium
             )
             .clip(MaterialTheme.shapes.medium),
@@ -79,7 +79,7 @@ fun ScreenshotGridItem(
             pressedElevation = 0.dp
         ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = Color.White // Pure white to contrast with the tinted background
         )
     ) {
         Box(
