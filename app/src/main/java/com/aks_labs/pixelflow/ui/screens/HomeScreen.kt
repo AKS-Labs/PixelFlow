@@ -70,7 +70,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -378,21 +377,14 @@ fun PermissionStatusCard() {
         val activity = context as? ComponentActivity
         val lifecycleObserver = object : DefaultLifecycleObserver {
             override fun onResume(owner: LifecycleOwner) {
-                updatePermissionStatus(context, setStoragePermission, setOverlayPermission, setManageStoragePermission)
+                updatePermissionStatus(
+                    context,
+                    setStoragePermission,
+                    setOverlayPermission,
+                    setManageStoragePermission
+                )
             }
         }
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
- val context = LocalContext.current
-    // Create a dummy NavController for the preview
- val navController = remember { NavController(context) }
-    // Create a dummy MainViewModel for the preview
- val viewModel = remember { MainViewModel(context.applicationContext as Application) }
-
- HomeScreen(navController = navController, viewModel = viewModel)
-}
 
         activity?.lifecycle?.addObserver(lifecycleObserver)
 
