@@ -3,14 +3,21 @@ package com.aks_labs.pixelflow.ui.components
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,12 +25,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
@@ -60,10 +69,19 @@ fun ScreenshotGridItem(
             .padding(4.dp)
             .scale(scale)
             .aspectRatio(0.5625f) // 9:16 aspect ratio for screenshots
+            .shadow(
+                elevation = if (isSelected) 8.dp else 4.dp,
+                shape = MaterialTheme.shapes.medium
+            )
+            .border(
+                width = if (isSelected) 2.dp else 0.dp,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                shape = MaterialTheme.shapes.medium
+            )
             .clip(MaterialTheme.shapes.medium),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) 12.dp else 6.dp, // Increased shadow
-            pressedElevation = 8.dp // Shadow when pressed
+            defaultElevation = 0.dp, // Shadow is handled by the modifier
+            pressedElevation = 0.dp
         ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -88,16 +106,35 @@ fun ScreenshotGridItem(
                 modifier = Modifier.fillMaxSize()
             )
 
-            // Selection overlay
+            // Selection overlay with semi-transparent tint
             if (isSelected) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
                 )
-            }
 
-            // No date overlay - removed as requested
+                // Checkmark in top-right corner
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .size(24.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = CircleShape
+                        )
+                        .align(Alignment.TopEnd)
+                        .zIndex(2f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Selected",
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
         }
     }
 }
