@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -69,18 +68,14 @@ fun ScreenshotGridItem(
             .padding(4.dp)
             .scale(scale)
             .aspectRatio(0.5625f) // 9:16 aspect ratio for screenshots
-            .shadow(
-                elevation = if (isSelected) 8.dp else 4.dp,
-                shape = MaterialTheme.shapes.medium
-            )
             .border(
-                width = if (isSelected) 2.dp else 0.dp,
-                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                width = if (isSelected) 2.dp else 1.dp,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
                 shape = MaterialTheme.shapes.medium
             )
             .clip(MaterialTheme.shapes.medium),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 0.dp, // Shadow is handled by the modifier
+            defaultElevation = 0.dp, // No shadow
             pressedElevation = 0.dp
         ),
         colors = CardDefaults.cardColors(
