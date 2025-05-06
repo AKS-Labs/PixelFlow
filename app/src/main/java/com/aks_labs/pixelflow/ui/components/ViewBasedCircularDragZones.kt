@@ -331,14 +331,13 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
     }
 
     /**
-     * Calculates the positions of the zones in a circular layout that starts as an arc
-     * and expands to a full circle as more folders are added, with equal spacing between zones.
+     * Calculates the positions of the zones in a perfect semi-circular arc layout.
      */
     private fun calculateZonePositions() {
         zonePositions.clear()
 
         val centerX = width / 2f
-        val centerY = height - height / 4f // Position the center point at 3/4 of the screen height
+        val centerY = height - 200f // Position near bottom of screen with fixed padding
 
         val folderCount = folders.size
         if (folderCount == 0) return
@@ -354,42 +353,20 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
         // Calculate the arc radius based on screen width
         val arcRadius = width * 0.4f // 40% of screen width
 
-        // Calculate the angle range based on folder count
-        // For few folders (2-8), use a bottom arc (180-220 degrees)
-        // For more folders (9+), gradually expand to a full circle (360 degrees)
-        val minFolders = 2
-        val maxFolders = 16 // At this point, we'll have a full circle
-
-        // Start with a bottom arc (180-220 degrees)
-        val minAngleRange = 5 * PI / 6 // About 150 degrees
-        val maxAngleRange = 2 * PI // 360 degrees (full circle)
-
-        // Calculate the transition factor (0 to 1) based on folder count
-        val transitionFactor = if (folderCount <= 8) {
-            0.0 // Use the minimum arc for 2-8 folders
-        } else {
-            min(1.0, (folderCount - 8) / (maxFolders - 8).toDouble())
-        }
-
-        // Calculate the actual angle range using the transition factor
-        val angleRange = minAngleRange + (maxAngleRange - minAngleRange) * transitionFactor
-
-        // For few folders, center the arc at the bottom (PI/2 or 90 degrees)
-        // For many folders, use a full circle starting from the top (-PI/2 or 270 degrees)
-        val arcCenterAngle = PI / 2 // Bottom center (90 degrees)
-
-        // Calculate the start and end angles to center the arc
-        val startAngle = arcCenterAngle - angleRange / 2
-        val endAngle = arcCenterAngle + angleRange / 2
+        // Use a fixed semi-circular arc (180 degrees) for all folder counts
+        // This creates a perfect sunrise/sunset arc at the bottom of the screen
+        val startAngle = PI // 180 degrees (left side)
+        val endAngle = 2 * PI // 360 degrees (right side)
 
         // Calculate the angle step between each zone
-        val angleStep = angleRange / folderCount
+        val angleStep = (endAngle - startAngle) / (folderCount - 1) // -1 to include both endpoints
 
         for (i in 0 until folderCount) {
             // Calculate the angle for this zone
             val angle = startAngle + i * angleStep
 
             // Calculate the position using standard parametric circle equations
+            // We're using a semi-circle at the bottom, so we need to adjust the angle
             val x = centerX + arcRadius * cos(angle).toFloat()
             val y = centerY + arcRadius * sin(angle).toFloat()
 
