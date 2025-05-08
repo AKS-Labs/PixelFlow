@@ -1,6 +1,9 @@
 package com.aks_labs.pixelflow.ui.screens
 
 import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -60,6 +63,18 @@ import androidx.navigation.NavController
 import com.aks_labs.pixelflow.R
 import com.aks_labs.pixelflow.data.SharedPrefsManager
 
+/**
+ * Extension function to find the Activity from a Context
+ */
+fun Context.findActivity(): Activity? {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+    return null
+}
+
 enum class PermissionSetupStep {
     STORAGE_PERMISSION,
     OVERLAY_PERMISSION,
@@ -80,9 +95,8 @@ fun PermissionSetupScreen(
     var hasOverlayPermission by remember { mutableStateOf(false) }
     var hasManageFilesPermission by remember { mutableStateOf(false) }
 
-    // Check current permission states
-    LaunchedEffect(Unit) {
-        // Initial check of all permissions
+    // Function to check all permission states
+    fun checkAllPermissions() {
         // Check storage permission
         hasStoragePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) ==
@@ -100,6 +114,44 @@ fun PermissionSetupScreen(
             Environment.isExternalStorageManager()
         } else {
             true // Not needed for Android < 11
+        }
+
+        // Automatically advance to next screen if permission was granted
+        when (currentStep) {
+            PermissionSetupStep.STORAGE_PERMISSION -> {
+                if (hasStoragePermission) {
+                    currentStep = PermissionSetupStep.OVERLAY_PERMISSION
+                }
+            }
+            PermissionSetupStep.OVERLAY_PERMISSION -> {
+                if (hasOverlayPermission) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        currentStep = PermissionSetupStep.MANAGE_FILES_PERMISSION
+                    } else {
+                        currentStep = PermissionSetupStep.PERMISSION_SUMMARY
+                    }
+                }
+            }
+            PermissionSetupStep.MANAGE_FILES_PERMISSION -> {
+                if (hasManageFilesPermission) {
+                    currentStep = PermissionSetupStep.PERMISSION_SUMMARY
+                }
+            }
+            else -> { /* No action needed for summary screen */ }
+        }
+    }
+
+    // Initial check of all permissions
+    LaunchedEffect(Unit) {
+        checkAllPermissions()
+    }
+
+    // Check permissions periodically to detect changes
+    LaunchedEffect(Unit) {
+        // Check permissions every 500ms to detect when they change
+        while (true) {
+            kotlinx.coroutines.delay(500)
+            checkAllPermissions()
         }
     }
 
@@ -159,10 +211,19 @@ fun PermissionSetupScreen(
                     description = "To detect and organize screenshots, we need permission to access your media.",
                     buttonText = "Grant Permission",
                     onButtonClick = {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            storagePermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                        // Use MainActivity's method to request storage permissions
+                        // This ensures permissions are only requested when the user clicks the button
+                        val activity = context.findActivity()
+                        if (activity is com.aks_labs.pixelflow.MainActivity) {
+                            activity.requestStoragePermissions()
+                            // Permission state will be checked in the lifecycle observer when activity resumes
                         } else {
-                            storagePermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                            // Fallback to direct permission request if activity reference is not available
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                storagePermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                            } else {
+                                storagePermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                            }
                         }
                     }
                 )
@@ -174,11 +235,19 @@ fun PermissionSetupScreen(
                     description = "To show floating bubbles for screenshots, we need permission to draw over other apps.",
                     buttonText = "Grant Permission",
                     onButtonClick = {
-                        val intent = Intent(
-                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                            Uri.parse("package:${context.packageName}")
-                        )
-                        overlayPermissionLauncher.launch(intent)
+                        // Use MainActivity's method to request overlay permission
+                        val activity = context.findActivity()
+                        if (activity is com.aks_labs.pixelflow.MainActivity) {
+                            activity.requestOverlayPermission()
+                            // Permission state will be checked in the lifecycle observer when activity resumes
+                        } else {
+                            // Fallback to direct permission request
+                            val intent = Intent(
+                                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                Uri.parse("package:${context.packageName}")
+                            )
+                            overlayPermissionLauncher.launch(intent)
+                        }
                     }
                 )
             }
@@ -189,10 +258,18 @@ fun PermissionSetupScreen(
                     description = "To organize screenshots into folders, we need permission to manage all files.",
                     buttonText = "Grant Permission",
                     onButtonClick = {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                            intent.data = Uri.parse("package:${context.packageName}")
-                            manageFilesPermissionLauncher.launch(intent)
+                        // Use MainActivity's method to request manage files permission
+                        val activity = context.findActivity()
+                        if (activity is com.aks_labs.pixelflow.MainActivity) {
+                            activity.requestManageExternalStoragePermission()
+                            // Permission state will be checked in the lifecycle observer when activity resumes
+                        } else {
+                            // Fallback to direct permission request
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                                intent.data = Uri.parse("package:${context.packageName}")
+                                manageFilesPermissionLauncher.launch(intent)
+                            }
                         }
                     }
                 )
@@ -209,6 +286,13 @@ fun PermissionSetupScreen(
                             (hasManageFilesPermission || Build.VERSION.SDK_INT < Build.VERSION_CODES.R)) {
                             // All permissions granted, mark onboarding as completed and navigate to home
                             sharedPrefsManager.setOnboardingCompleted(true)
+
+                            // Use MainActivity's method to check permissions and start service
+                            val activity = context.findActivity()
+                            if (activity is com.aks_labs.pixelflow.MainActivity) {
+                                activity.checkPermissionsAndStartService()
+                            }
+
                             navController.navigate("home") {
                                 popUpTo("permission_setup") { inclusive = true }
                             }

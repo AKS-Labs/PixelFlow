@@ -56,7 +56,8 @@ class MainActivity : ComponentActivity() {
     ) { permissions ->
         val allGranted = permissions.entries.all { it.value }
         if (allGranted) {
-            checkOverlayPermission()
+            // Check permissions and start service if all are granted
+            checkPermissionsAndStartService()
         } else {
             Toast.makeText(
                 this,
@@ -71,8 +72,8 @@ class MainActivity : ComponentActivity() {
         // Set up back press handling
         setupBackPressHandling()
 
-        // Check and request permissions
-        checkAndRequestPermissions()
+        // Don't automatically check and request permissions here
+        // Let the user initiate permission requests by clicking grant buttons
 
         setContent {
             val viewModel: MainViewModel = viewModel()
@@ -106,19 +107,16 @@ class MainActivity : ComponentActivity() {
         })
     }
 
-    private fun checkAndRequestPermissions() {
+    /**
+     * Request storage permissions when explicitly called by user action
+     */
+    fun requestStoragePermissions() {
         val permissions = mutableListOf<String>()
 
         // Storage permissions
         if (Build.VERSION.SDK_INT >= 33) { // TIRAMISU is API 33
             permissions.add(Manifest.permission.READ_MEDIA_IMAGES)
-        } else if (Build.VERSION.SDK_INT >= 30) { // Android 11+ (R)
-            // For Android 11+, we need to use the Storage Access Framework
-            // or request MANAGE_EXTERNAL_STORAGE permission
-            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-            intent.data = Uri.parse("package:$packageName")
-            startActivity(intent)
-        } else {
+        } else if (Build.VERSION.SDK_INT < 30) { // Below Android 11
             permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
             permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
@@ -126,40 +124,59 @@ class MainActivity : ComponentActivity() {
         // Request permissions
         if (permissions.isNotEmpty()) {
             requestPermissionLauncher.launch(permissions.toTypedArray())
-        } else {
-            checkOverlayPermission()
         }
     }
 
-    private fun checkOverlayPermission() {
-        if (!Settings.canDrawOverlays(this)) {
-            Toast.makeText(
-                this,
-                getString(R.string.overlay_permission_rationale),
-                Toast.LENGTH_LONG
-            ).show()
+    /**
+     * Request all files access permission for Android 11+
+     * This will be called only when user clicks the grant button
+     */
+    fun requestManageExternalStoragePermission() {
+        if (Build.VERSION.SDK_INT >= 30) { // Android 11+ (R)
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            intent.data = Uri.parse("package:$packageName")
+            startActivity(intent)
+        }
+    }
 
+    /**
+     * Request overlay permission when explicitly called by user action
+     */
+    fun requestOverlayPermission() {
+        if (!Settings.canDrawOverlays(this)) {
             val intent = Intent(
                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                 Uri.parse("package:$packageName")
             )
             startActivity(intent)
-        } else {
-            // Check for MANAGE_EXTERNAL_STORAGE permission on Android 11+
-            if (Build.VERSION.SDK_INT >= 30 && !Environment.isExternalStorageManager()) {
-                Toast.makeText(
-                    this,
-                    "Please grant all files access permission to save screenshots in folders",
-                    Toast.LENGTH_LONG
-                ).show()
+        }
+    }
 
-                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                intent.data = Uri.parse("package:$packageName")
-                startActivity(intent)
-            } else {
-                // All permissions granted, start the service
-                startFloatingBubbleService()
-            }
+    /**
+     * Check all permissions and start service if all are granted
+     * This should be called after permission checks, not to request permissions
+     */
+    fun checkPermissionsAndStartService() {
+        val hasStoragePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) ==
+                    android.content.pm.PackageManager.PERMISSION_GRANTED
+        } else {
+            checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                    android.content.pm.PackageManager.PERMISSION_GRANTED
+        }
+
+        val hasOverlayPermission = Settings.canDrawOverlays(this)
+
+        val hasManageFilesPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Environment.isExternalStorageManager()
+        } else {
+            true // Not needed for Android < 11
+        }
+
+        if (hasStoragePermission && hasOverlayPermission &&
+            (hasManageFilesPermission || Build.VERSION.SDK_INT < Build.VERSION_CODES.R)) {
+            // All permissions granted, start the service
+            startFloatingBubbleService()
         }
     }
 
@@ -237,27 +254,9 @@ fun PixelFlowApp(
     // Start service if permissions are granted and onboarding is completed
     LaunchedEffect(onboardingCompleted) {
         if (onboardingCompleted) {
-            // Check if all permissions are granted before starting service
-            val hasStoragePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) ==
-                        android.content.pm.PackageManager.PERMISSION_GRANTED
-            } else {
-                context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
-                        android.content.pm.PackageManager.PERMISSION_GRANTED
-            }
-
-            val hasOverlayPermission = Settings.canDrawOverlays(context)
-
-            val hasManageFilesPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                Environment.isExternalStorageManager()
-            } else {
-                true // Not needed for Android < 11
-            }
-
-            if (hasStoragePermission && hasOverlayPermission &&
-                (hasManageFilesPermission || Build.VERSION.SDK_INT < Build.VERSION_CODES.R)) {
-                activity.startFloatingBubbleService()
-            }
+            // Only check permissions and start service if onboarding is completed
+            // This doesn't request any permissions, just checks if they're already granted
+            activity.checkPermissionsAndStartService()
         }
     }
 
