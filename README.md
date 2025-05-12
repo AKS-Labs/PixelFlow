@@ -1,7 +1,7 @@
 # PixelFlow: Intelligent Screenshot Management
 
 <p align="center">
-  <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" alt="PixelFlow Logo" width="120"/>
+  <img src="https://raw.githubusercontent.com/AKS-Labs/PixelFlow/main/app/src/main/ic_launcher-playstore.png" alt="PixelFlow Logo" width="120"/>
 </p>
 
 PixelFlow is an innovative Android application that revolutionizes how you capture, organize, and access screenshots on your device. With its intelligent detection system, intuitive floating bubbles, and customizable organization features, PixelFlow transforms the screenshot experience from chaotic to streamlined.
