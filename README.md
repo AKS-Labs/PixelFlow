@@ -1,48 +1,98 @@
-# PixelFlow
+# PixelFlow: Intelligent Screenshot Management
 
-PixelFlow is an Android app that enhances your screenshot management experience. It detects screenshots, creates draggable floating bubbles with the screenshot as a thumbnail, and allows organizing screenshots into customizable folders displayed as circular zones in a semi-circular pattern.
+<p align="center">
+  <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" alt="PixelFlow Logo" width="120"/>
+</p>
 
-## Features
+PixelFlow is an innovative Android application that revolutionizes how you capture, organize, and access screenshots on your device. With its intelligent detection system, intuitive floating bubbles, and customizable organization features, PixelFlow transforms the screenshot experience from chaotic to streamlined.
 
-- **Screenshot Detection**: Automatically detects when you take a screenshot
-- **Floating Bubbles**: Creates a draggable floating bubble with the screenshot thumbnail
+## 🌟 Key Features
+
+### Intelligent Screenshot Management
+- **Automatic Detection**: Reliably detects screenshots in real-time, even when the app is closed
+- **Background Monitoring**: Continuously monitors for new screenshots without draining battery
+- **Persistent Operation**: Maintains functionality through device reboots and app closures
+
+### Intuitive User Interface
+- **Floating Bubbles**: Creates draggable floating bubbles with screenshot thumbnails for quick access
 - **Circular Drag Zones**: Organize screenshots by dragging bubbles to folder zones arranged in a semi-circular pattern
-- **Customizable Folders**: Create, edit, and delete custom folders for organizing screenshots
-- **Screenshot History**: View and manage all your screenshots in one place
+- **Material Design 3**: Modern, clean interface following latest Material Design guidelines
+- **Dynamic Theming**: Adapts to your system colors with Material You support
+- **Fullscreen Viewer**: Immersive screenshot viewing experience with gesture controls
 
-## Default Folders
+### Smart Organization
+- **Customizable Folders**: Create, rename, and manage folders for different screenshot categories
+- **Physical Storage**: Creates organized folders in your file manager within the PixelFlow directory
+- **Screenshot Search**: Find screenshots with OCR text search, date filters, and app filters
+- **Advanced Sorting**: Organize screenshots by date, app, or custom criteria
+- **Google Lens Integration**: Search screenshots with Google Lens on double-tap
 
-The app comes with five default folders:
-- Quotes
-- Tricks
-- Images
-- Posts
-- Trash
+## 📁 Default Folders
 
-## Technical Details
+PixelFlow comes with several default folders to help you get started:
+- **Posts**: Social media content and shareable images
+- **Docs**: Document screenshots and important information
+- **Chats**: Conversation screenshots from messaging apps
+- **Images**: General images and visual content
+- **Trash**: Temporary storage for screenshots you may want to delete
 
-- Built with Kotlin and Jetpack Compose
-- Uses SharedPreferences for data persistence
-- Implements foreground service for screenshot detection
-- Supports Android 8.0 (API 26) and above
+## 🔍 Search Capabilities
 
-## Getting Started
+Find your screenshots quickly with powerful search features:
+- **Text Search**: OCR-powered search finds text within your screenshots
+- **Date Filters**: Filter screenshots by date taken
+- **App Filters**: Find screenshots from specific applications
+- **Tag Search**: Add and search by custom tags
 
-1. Clone the repository
+## 🛠️ Technical Details
+
+- **100% Kotlin**: Built entirely with Kotlin for modern Android development
+- **Jetpack Compose**: UI constructed with declarative Compose components
+- **Lazy Loading**: Efficiently loads screenshots as you scroll for optimal performance
+- **Background Services**: Reliable screenshot detection even when app is closed
+- **Material You**: Dynamic color theming based on your wallpaper (Android 12+)
+- **Supports Android 8.0+**: Compatible with Android Oreo (API 26) and above
+
+## 🚀 Getting Started
+
+### Installation
+1. Download the latest APK from the [Releases](https://github.com/AKS-Labs/PixelFlow/releases) page
+2. Install the APK on your Android device
+3. Follow the onboarding process to grant necessary permissions
+
+### Building from Source
+1. Clone the repository: `git clone https://github.com/AKS-Labs/PixelFlow.git`
 2. Open the project in Android Studio
 3. Build and run the app on your device
 
-## Permissions
+## 🔒 Permissions
 
-The app requires the following permissions:
-- Storage access (to detect and manage screenshots)
-- Draw over other apps (to display the floating bubble)
-- Foreground service (to run in the background)
+PixelFlow requires the following permissions to function properly:
+- **Storage Access**: To detect and manage screenshots in your device storage
+- **Draw Over Other Apps**: To display the floating bubble interface
+- **Foreground Service**: To run reliably in the background
+- **Notification Access**: To display service notifications and status updates
 
-## License
+## 🔮 Future Enhancements
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+We're continuously working to improve PixelFlow with new features:
+- Enhanced OCR capabilities for better text recognition
+- Cloud backup and sync options
+- Additional customization options for folders and bubbles
+- Integration with more third-party apps and services
+- Performance optimizations for devices with limited resources
 
-## Acknowledgments
+## 📄 License
 
-- Developed by AKS Labs
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+
+## 👏 Acknowledgments
+
+- Developed by [AKS Labs](https://github.com/AKS-Labs)
+- Special thanks to all contributors and testers
+
+---
+
+<p align="center">
+  <b>Organize your visual thoughts with PixelFlow</b>
+</p>
