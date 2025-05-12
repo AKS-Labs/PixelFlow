@@ -90,7 +90,10 @@ fun OnboardingScreen(
     )
 
     // Pager state
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        pageCount = { pages.size }
+    )
 
     // Permission request launchers
     val storagePermissionLauncher = rememberLauncherForActivityResult(
@@ -128,7 +131,6 @@ fun OnboardingScreen(
             // Pager for onboarding pages
             HorizontalPager(
                 state = pagerState,
-                pageCount = pages.size,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)

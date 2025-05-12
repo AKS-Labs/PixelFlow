@@ -1,5 +1,9 @@
 package com.aks_labs.pixelflow.ui.components
 
+import android.app.Activity
+import android.os.Build
+import android.view.View
+import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -18,7 +22,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -31,6 +34,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,9 +46,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -79,6 +88,74 @@ fun ScreenshotFullscreenViewer(
     val currentScreenshot = screenshots.getOrNull(currentIndex) ?: return
     val scope = rememberCoroutineScope()
 
+    // Get the window to hide system UI
+    val view = LocalView.current
+    val context = LocalContext.current
+
+    // Hide system UI when entering fullscreen viewer
+    DisposableEffect(Unit) {
+        if (!view.isInEditMode) {
+            val window = (context as Activity).window
+            val originalSystemUiVisibility = window.decorView.systemUiVisibility
+            val originalFlags = window.attributes.flags
+
+            // Set window to be fullscreen and extend into the cutout area
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                window.attributes.layoutInDisplayCutoutMode =
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            }
+
+            // Make sure the window background is transparent to avoid black bars
+            window.setBackgroundDrawableResource(android.R.color.transparent)
+
+            // Set the status bar and navigation bar to be fully transparent
+            window.statusBarColor = Color.Transparent.toArgb()
+            window.navigationBarColor = Color.Transparent.toArgb()
+
+            // Add flags to make the app truly fullscreen
+            window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+            window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+
+            // Set system UI flags for true fullscreen
+            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+
+            // Make content draw behind system bars
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+
+            // Hide system UI completely for fullscreen experience
+            WindowInsetsControllerCompat(window, view).let { controller ->
+                // Hide both status bar and navigation bar
+                controller.hide(WindowInsetsCompat.Type.systemBars())
+                // Allow showing bars with swipe
+                controller.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        }
+
+        onDispose {
+            if (!view.isInEditMode) {
+                val window = (context as Activity).window
+
+                // Remove fullscreen flags
+                window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+                window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+
+                // Reset cutout mode
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    window.attributes.layoutInDisplayCutoutMode =
+                        WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
+                }
+
+                // Restore system UI when leaving fullscreen
+                WindowCompat.setDecorFitsSystemWindows(window, false)
+                WindowInsetsControllerCompat(window, view).show(WindowInsetsCompat.Type.systemBars())
+            }
+        }
+    }
+
     // Auto-hide controls after a delay
     LaunchedEffect(showControls) {
         if (showControls) {
@@ -96,6 +173,7 @@ fun ScreenshotFullscreenViewer(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
+            // Ensure the box takes up the entire screen including status bar area
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { showControls = !showControls }
@@ -152,7 +230,6 @@ fun ScreenshotFullscreenViewer(
             exit = fadeOut(),
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .statusBarsPadding()
                 .padding(16.dp)
         ) {
             IconButton(
@@ -242,6 +319,8 @@ fun ZoomableScreenshot(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            // Ensure the box takes up the entire screen including status bar area
+            .background(Color.Black) // Set background to black to avoid any transparent areas
             .pointerInput(Unit) {
                 detectTransformGestures { _, pan, zoom, _ ->
                     scale = (scale * zoom).coerceIn(1f, 3f)
@@ -278,14 +357,20 @@ fun ZoomableScreenshot(
                 .crossfade(true)
                 .build(),
             contentDescription = "Screenshot",
-            contentScale = ContentScale.Fit,
+            contentScale = ContentScale.FillBounds, // Use FillBounds to ensure the image covers the entire screen
             modifier = Modifier
                 .fillMaxSize()
+                // Add a black background to the image itself to ensure no transparent areas
+                .background(Color.Black)
                 .graphicsLayer {
                     scaleX = scale
                     scaleY = scale
                     translationX = offsetX
                     translationY = offsetY
+                    // Ensure the image is rendered at the highest level
+                    alpha = 1f
+                    // Disable clipping to allow content to extend beyond bounds if needed
+                    clip = false
                 }
         )
     }

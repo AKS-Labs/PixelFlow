@@ -82,7 +82,8 @@ class MainActivity : ComponentActivity() {
             // Store the MainViewModel in the application for access by other components
             application.pixelFlowApp.mainViewModel = viewModel
 
-            PixelFlowTheme {
+            // Use Material 3's dynamic color system with secondary color for background
+            PixelFlowTheme(dynamicColor = true) {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     PixelFlowApp(navController, viewModel)
                 }
@@ -263,7 +264,9 @@ fun PixelFlowApp(
     // Set the start destination based on onboarding status
     val startDestination = if (onboardingCompleted) "home" else "permission_setup"
 
-    Scaffold { innerPadding ->
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background
+    ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = startDestination,

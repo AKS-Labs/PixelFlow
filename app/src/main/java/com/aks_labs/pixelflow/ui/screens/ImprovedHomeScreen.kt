@@ -34,19 +34,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -76,7 +78,9 @@ import com.aks_labs.pixelflow.ui.components.ScreenshotFullscreenViewer
 import com.aks_labs.pixelflow.ui.components.ScreenshotGridItem
 import com.aks_labs.pixelflow.ui.components.SelectionManager
 import com.aks_labs.pixelflow.ui.components.rememberSelectionManager
+import com.aks_labs.pixelflow.ui.components.compose.SearchBar
 import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
+import com.aks_labs.pixelflow.data.SharedPrefsManager.ThemeMode
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -88,6 +92,15 @@ fun ImprovedHomeScreen(
     val screenshots by viewModel.filteredScreenshots.collectAsState()
     val gridColumns by viewModel.gridColumns.collectAsState()
     val context = LocalContext.current
+
+    // Get the current theme mode
+    val currentThemeMode by viewModel.themeMode.collectAsState()
+
+    // State for the theme dropdown menu
+    var showThemeMenu by remember { mutableStateOf(false) }
+
+    // Search state
+    var searchQuery by remember { mutableStateOf("") }
 
     // Refresh state
     var refreshing by remember { mutableStateOf(false) }
@@ -138,27 +151,41 @@ fun ImprovedHomeScreen(
     } else {
         // Only show the normal UI if fullscreen viewer is not active
         Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        if (selectionManager.selectionMode) {
-                            Text("${selectionManager.getSelectionCount()} Selected")
-                        } else {
-                            Text("Pixel Screenshots")
-                        }
-                    },
-                    navigationIcon = {
-                        if (selectionManager.selectionMode) {
+            // No topBar parameter - we'll create our own custom top section
+        ) { innerPadding ->
+            // Custom top section with padding to account for status bar
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                // Custom top section with title and menu
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp)
+                ) {
+                    if (selectionManager.selectionMode) {
+                        // Selection mode header
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             IconButton(onClick = { selectionManager.toggleSelectionMode() }) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "Exit Selection Mode"
                                 )
                             }
-                        }
-                    },
-                    actions = {
-                        if (selectionManager.selectionMode) {
+
+                            Text(
+                                text = "${selectionManager.getSelectionCount()} Selected",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
                             // Selection mode actions
                             IconButton(onClick = {
                                 // Select all screenshots
@@ -203,69 +230,149 @@ fun ImprovedHomeScreen(
                                     contentDescription = "Delete"
                                 )
                             }
-                        } else {
-                            // Normal mode actions
-                            IconButton(onClick = { /* TODO: Implement search */ }) {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = "Search"
-                                )
-                            }
-                            IconButton(onClick = { /* TODO: Implement notifications */ }) {
-                                Icon(
-                                    imageVector = Icons.Default.Notifications,
-                                    contentDescription = "Notifications"
-                                )
-                            }
-                            IconButton(onClick = { navController.navigate("settings") }) {
-                                Icon(
-                                    imageVector = Icons.Default.Settings,
-                                    contentDescription = "Settings"
-                                )
+                        }
+                    } else {
+                        // Normal mode header with title and menu
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "PixelFlow",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            // Three-dot menu for theme/settings
+                            Box {
+                                IconButton(onClick = { showThemeMenu = true }) {
+                                    Icon(
+                                        imageVector = Icons.Default.MoreVert,
+                                        contentDescription = "More options"
+                                    )
+                                }
+
+                                // Theme dropdown menu
+                                DropdownMenu(
+                                    expanded = showThemeMenu,
+                                    onDismissRequest = { showThemeMenu = false }
+                                ) {
+                                    // Theme menu header
+                                    DropdownMenuItem(
+                                        text = { Text("Change Theme") },
+                                        onClick = { /* Just a header */ },
+                                        enabled = false
+                                    )
+
+                                    // System theme option
+                                    DropdownMenuItem(
+                                        text = { Text("System theme") },
+                                        onClick = {
+                                            viewModel.setThemeMode(ThemeMode.SYSTEM)
+                                            showThemeMenu = false
+                                        },
+                                        trailingIcon = if (currentThemeMode == ThemeMode.SYSTEM) {
+                                            { Icon(Icons.Default.Done, contentDescription = "Selected") }
+                                        } else null
+                                    )
+
+                                    // Light theme option
+                                    DropdownMenuItem(
+                                        text = { Text("Light theme") },
+                                        onClick = {
+                                            viewModel.setThemeMode(ThemeMode.LIGHT)
+                                            showThemeMenu = false
+                                        },
+                                        trailingIcon = if (currentThemeMode == ThemeMode.LIGHT) {
+                                            { Icon(Icons.Default.Done, contentDescription = "Selected") }
+                                        } else null
+                                    )
+
+                                    // Dark theme option
+                                    DropdownMenuItem(
+                                        text = { Text("Dark theme") },
+                                        onClick = {
+                                            viewModel.setThemeMode(ThemeMode.DARK)
+                                            showThemeMenu = false
+                                        },
+                                        trailingIcon = if (currentThemeMode == ThemeMode.DARK) {
+                                            { Icon(Icons.Default.Done, contentDescription = "Selected") }
+                                        } else null
+                                    )
+
+                                    // Settings option
+                                    DropdownMenuItem(
+                                        text = { Text("Settings") },
+                                        onClick = {
+                                            navController.navigate("settings")
+                                            showThemeMenu = false
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                imageVector = Icons.Default.Settings,
+                                                contentDescription = "Settings"
+                                            )
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
-                )
-            }
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .pullRefresh(pullRefreshState)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 0.dp)
-                ) {
-                    // Screenshots Section
-                    ScreenshotsSection(
-                        screenshots = screenshots,
-                        gridColumns = gridColumns,
-                        selectionManager = selectionManager,
-                        gridState = gridState,
-                        isDragging = isDragging,
-                        onDragStart = { isDragging = true },
-                        onDragEnd = { isDragging = false },
-                        onDraggedIndexChanged = { index -> lastDraggedIndex = index },
-                        onScreenshotClick = { screenshot ->
-                            if (selectionManager.selectionMode) {
-                                selectionManager.toggleSelection(screenshot)
-                            } else {
-                                selectedScreenshotIndex = screenshots.indexOf(screenshot)
-                                showFullscreenViewer = true
-                            }
+                }
+
+                // Search bar from Search.kt
+                if (!selectionManager.selectionMode) {
+                    SearchBar(
+                        query = searchQuery,
+                        onQueryChange = { newQuery ->
+                            searchQuery = newQuery
+                            // TODO: Implement search functionality
                         }
                     )
                 }
 
-                // Pull to refresh indicator
-                PullRefreshIndicator(
-                    refreshing = refreshing,
-                    state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
+                // Main content area with pull-to-refresh
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                        .pullRefresh(pullRefreshState)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 0.dp)
+                    ) {
+                        // Screenshots Section
+                        ScreenshotsSection(
+                            screenshots = screenshots,
+                            gridColumns = gridColumns,
+                            selectionManager = selectionManager,
+                            gridState = gridState,
+                            isDragging = isDragging,
+                            onDragStart = { isDragging = true },
+                            onDragEnd = { isDragging = false },
+                            onDraggedIndexChanged = { index: Int -> lastDraggedIndex = index },
+                            onScreenshotClick = { screenshot: SimpleScreenshot ->
+                                if (selectionManager.selectionMode) {
+                                    selectionManager.toggleSelection(screenshot)
+                                } else {
+                                    selectedScreenshotIndex = screenshots.indexOf(screenshot)
+                                    showFullscreenViewer = true
+                                }
+                            }
+                        )
+                    }
+
+                    // Pull to refresh indicator
+                    PullRefreshIndicator(
+                        refreshing = refreshing,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )
+                }
             }
         }
     }

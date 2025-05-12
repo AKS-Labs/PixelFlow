@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.aks_labs.pixelflow"
-    compileSdk = 33
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.aks_labs.pixelflow"
@@ -38,7 +38,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.0"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
 }
 
@@ -49,19 +49,19 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+
+    // Use a consistent version of Compose libraries
+    val composeBomVersion = "2023.10.01"
+    implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material")
+    implementation("androidx.compose.foundation:foundation")
 
     // Material Design components - keeping for backward compatibility during migration
     implementation("com.google.android.material:material:1.9.0")
-
-    // Material for pull-to-refresh
-    implementation("androidx.compose.material:material:1.4.3")
-
-    // We'll use SharedPreferences instead of Room
 
     // DataStore Preferences
     implementation(libs.androidx.datastore.preferences)
@@ -77,14 +77,11 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:0.30.1")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.30.1")
 
-    // Compose Window Insets
-    implementation("androidx.compose.foundation:foundation:1.4.3")
-
     // Compose ConstraintLayout
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     // Compose Animation
-    implementation("androidx.compose.animation:animation:1.4.3")
+    implementation("androidx.compose.animation:animation")
 
     // Lifecycle components
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -99,8 +96,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
