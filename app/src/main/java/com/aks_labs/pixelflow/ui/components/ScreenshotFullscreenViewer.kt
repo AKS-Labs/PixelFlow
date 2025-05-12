@@ -6,12 +6,15 @@ import android.view.View
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,6 +69,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.abs
 
 /**
  * A full-screen viewer for screenshots with zoom and swipe gestures.
@@ -87,6 +92,36 @@ fun ScreenshotFullscreenViewer(
     var showControls by remember { mutableStateOf(true) }
     val currentScreenshot = screenshots.getOrNull(currentIndex) ?: return
     val scope = rememberCoroutineScope()
+
+    // State for swipe animation
+    var swipeOffset by remember { mutableStateOf(0f) }
+    var isAnimating by remember { mutableStateOf(false) }
+    var swipeDirection by remember { mutableStateOf(0) } // -1 for left, 1 for right, 0 for none
+
+    // Animate the swipe offset
+    val animatedSwipeOffset by animateFloatAsState(
+        targetValue = swipeOffset,
+        animationSpec = tween(durationMillis = 250),
+        finishedListener = {
+            // Reset the offset after animation completes
+            if (isAnimating) {
+                // Change the index based on swipe direction
+                if (swipeDirection < 0 && currentIndex < screenshots.size - 1) {
+                    currentIndex++
+                } else if (swipeDirection > 0 && currentIndex > 0) {
+                    currentIndex--
+                }
+
+                // Reset state
+                swipeOffset = 0f
+                isAnimating = false
+                swipeDirection = 0
+            }
+        }
+    )
+
+    // Track whether the image is zoomed in
+    val isZoomed = remember { mutableStateOf(false) }
 
     // Get the window to hide system UI
     val view = LocalView.current
@@ -180,48 +215,74 @@ fun ScreenshotFullscreenViewer(
                 )
             }
     ) {
+        // Add a transparent overlay for horizontal swipe detection
+        // This is placed before the ZoomableScreenshot so it doesn't interfere with zoom gestures
+        if (!isAnimating && !isZoomed.value) { // Only enable swipe when not animating and not zoomed
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectHorizontalDragGestures(
+                            onDragStart = { /* No action needed */ },
+                            onDragEnd = {
+                                // Determine if the swipe was significant enough to change the image
+                                val swipeThreshold = size.width / 6 // More reasonable threshold (1/6 of screen width)
+
+                                if (abs(swipeOffset) > swipeThreshold) {
+                                    // Determine swipe direction
+                                    if (swipeOffset < 0 && currentIndex < screenshots.size - 1) {
+                                        // Swipe right-to-left (next image)
+                                        isAnimating = true
+                                        swipeDirection = -1
+                                        swipeOffset = -size.width.toFloat() // Animate to full screen width
+                                    } else if (swipeOffset > 0 && currentIndex > 0) {
+                                        // Swipe left-to-right (previous image)
+                                        isAnimating = true
+                                        swipeDirection = 1
+                                        swipeOffset = size.width.toFloat() // Animate to full screen width
+                                    } else {
+                                        // Can't swipe in this direction, animate back
+                                        swipeOffset = 0f
+                                    }
+                                } else {
+                                    // Not enough swipe distance, reset position
+                                    swipeOffset = 0f
+                                }
+                            },
+                            onDragCancel = {
+                                // Reset position on cancel
+                                swipeOffset = 0f
+                            },
+                            onHorizontalDrag = { change, dragAmount ->
+                                change.consume()
+
+                                // Only allow swiping in valid directions
+                                val canSwipeLeft = currentIndex < screenshots.size - 1
+                                val canSwipeRight = currentIndex > 0
+
+                                // Apply resistance at the edges
+                                val newOffset = swipeOffset + dragAmount
+                                swipeOffset = when {
+                                    // Swiping right-to-left but at the last image
+                                    newOffset < 0 && !canSwipeLeft -> 0f
+                                    // Swiping left-to-right but at the first image
+                                    newOffset > 0 && !canSwipeRight -> 0f
+                                    // Normal swipe within bounds, but limit to screen width
+                                    else -> newOffset.coerceIn(-size.width.toFloat(), size.width.toFloat())
+                                }
+                            }
+                        )
+                    }
+            )
+        }
+
         // Current screenshot - truly fullscreen without app bar
         ZoomableScreenshot(
             screenshot = currentScreenshot,
-            onTap = { showControls = !showControls }
+            onTap = { showControls = !showControls },
+            offsetX = animatedSwipeOffset, // Apply the swipe animation offset
+            isZoomed = isZoomed // Pass the zoom state
         )
-
-        // Minimal navigation controls - just swipe indicators at the edges
-        if (currentIndex > 0) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(40.dp)
-                    .align(Alignment.CenterStart)
-                    .pointerInput(Unit) {
-                        detectTapGestures {
-                            scope.launch {
-                                if (currentIndex > 0) {
-                                    currentIndex--
-                                }
-                            }
-                        }
-                    }
-            )
-        }
-
-        if (currentIndex < screenshots.size - 1) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(40.dp)
-                    .align(Alignment.CenterEnd)
-                    .pointerInput(Unit) {
-                        detectTapGestures {
-                            scope.launch {
-                                if (currentIndex < screenshots.size - 1) {
-                                    currentIndex++
-                                }
-                            }
-                        }
-                    }
-            )
-        }
 
         // Close button - minimal and transparent
         AnimatedVisibility(
@@ -309,12 +370,19 @@ fun ScreenshotFullscreenViewer(
 @Composable
 fun ZoomableScreenshot(
     screenshot: SimpleScreenshot,
-    onTap: () -> Unit
+    onTap: () -> Unit,
+    offsetX: Float = 0f, // Add parameter for swipe animation
+    isZoomed: MutableState<Boolean> = remember { mutableStateOf(false) } // Add parameter to communicate zoom state
 ) {
     val context = LocalContext.current
     var scale by remember { mutableStateOf(1f) }
-    var offsetX by remember { mutableStateOf(0f) }
+    var zoomOffsetX by remember { mutableStateOf(0f) } // Renamed to avoid conflict
     var offsetY by remember { mutableStateOf(0f) }
+
+    // Update the isZoomed state whenever scale changes
+    LaunchedEffect(scale) {
+        isZoomed.value = scale > 1f
+    }
 
     Box(
         modifier = Modifier
@@ -330,11 +398,11 @@ fun ZoomableScreenshot(
                         val maxX = (scale - 1) * size.width / 2
                         val maxY = (scale - 1) * size.height / 2
 
-                        offsetX = (offsetX + pan.x).coerceIn(-maxX, maxX)
+                        zoomOffsetX = (zoomOffsetX + pan.x).coerceIn(-maxX, maxX)
                         offsetY = (offsetY + pan.y).coerceIn(-maxY, maxY)
                     } else {
                         // Reset offset when zoomed out
-                        offsetX = 0f
+                        zoomOffsetX = 0f
                         offsetY = 0f
                     }
                 }
@@ -344,7 +412,7 @@ fun ZoomableScreenshot(
                     onDoubleTap = {
                         // Reset zoom on double tap
                         scale = if (scale > 1f) 1f else 2f
-                        offsetX = 0f
+                        zoomOffsetX = 0f
                         offsetY = 0f
                     },
                     onTap = { onTap() }
@@ -365,7 +433,7 @@ fun ZoomableScreenshot(
                 .graphicsLayer {
                     scaleX = scale
                     scaleY = scale
-                    translationX = offsetX
+                    translationX = zoomOffsetX + offsetX // Combine zoom offset with swipe offset
                     translationY = offsetY
                     // Ensure the image is rendered at the highest level
                     alpha = 1f
