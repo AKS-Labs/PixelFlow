@@ -58,7 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aks_labs.pixelflow.data.models.SimpleFolder
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
-import com.aks_labs.pixelflow.ui.components.ScreenshotFullscreenViewer
+//import com.aks_labs.pixelflow.ui.components.ScreenshotFullscreenViewer
 import com.aks_labs.pixelflow.ui.components.ScreenshotGridItem
 import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
 

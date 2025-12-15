@@ -10,23 +10,16 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -34,8 +27,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +38,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
@@ -55,24 +45,24 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.toSize
+import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import kotlin.math.abs
 
 /**
  * A full-screen viewer for screenshots with zoom and swipe gestures.
+ * Renamed from ScreenshotFullscreenViewer.
  *
  * @param screenshots The list of screenshots to display
  * @param initialIndex The initial index to display
@@ -81,7 +71,7 @@ import kotlin.math.abs
  * @param onDelete Callback when a screenshot is deleted
  */
 @Composable
-fun ScreenshotFullscreenViewer(
+fun ImmersiveImageViewer(
     screenshots: List<SimpleScreenshot>,
     initialIndex: Int,
     onClose: () -> Unit,
@@ -91,8 +81,7 @@ fun ScreenshotFullscreenViewer(
     var currentIndex by remember { mutableStateOf(initialIndex) }
     var showControls by remember { mutableStateOf(true) }
     val currentScreenshot = screenshots.getOrNull(currentIndex) ?: return
-    val scope = rememberCoroutineScope()
-
+    
     // State for swipe animation
     var swipeOffset by remember { mutableStateOf(0f) }
     var isAnimating by remember { mutableStateOf(false) }
@@ -131,9 +120,7 @@ fun ScreenshotFullscreenViewer(
     DisposableEffect(Unit) {
         if (!view.isInEditMode) {
             val window = (context as Activity).window
-            val originalSystemUiVisibility = window.decorView.systemUiVisibility
-            val originalFlags = window.attributes.flags
-
+            
             // Set window to be fullscreen and extend into the cutout area
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 window.attributes.layoutInDisplayCutoutMode =
@@ -378,6 +365,7 @@ fun ZoomableScreenshot(
     var scale by remember { mutableStateOf(1f) }
     var zoomOffsetX by remember { mutableStateOf(0f) } // Renamed to avoid conflict
     var offsetY by remember { mutableStateOf(0f) }
+    var size by remember { mutableStateOf(androidx.compose.ui.geometry.Size.Zero) }
 
     // Update the isZoomed state whenever scale changes
     LaunchedEffect(scale) {
@@ -389,6 +377,12 @@ fun ZoomableScreenshot(
             .fillMaxSize()
             // Ensure the box takes up the entire screen including status bar area
             .background(Color.Black) // Set background to black to avoid any transparent areas
+            .onGloballyPositioned { coordinates ->
+                size = androidx.compose.ui.geometry.Size(
+                    coordinates.size.width.toFloat(),
+                    coordinates.size.height.toFloat()
+                )
+            }
             .pointerInput(Unit) {
                 detectTransformGestures { _, pan, zoom, _ ->
                     scale = (scale * zoom).coerceIn(1f, 3f)

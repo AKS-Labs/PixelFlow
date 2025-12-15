@@ -76,8 +76,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aks_labs.pixelflow.data.models.SimpleFolder
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
-import com.aks_labs.pixelflow.ui.components.ScreenshotFullscreenViewer
+//import com.aks_labs.pixelflow.ui.components.ScreenshotFullscreenViewer
 import com.aks_labs.pixelflow.ui.components.ScreenshotGridItem
+import com.aks_labs.pixelflow.ui.components.ScreenshotCarousel
+import com.aks_labs.pixelflow.ui.components.ImmersiveImageViewer
 import com.aks_labs.pixelflow.ui.components.SelectionManager
 import com.aks_labs.pixelflow.ui.components.rememberSelectionManager
 import com.aks_labs.pixelflow.ui.components.compose.SearchBar
@@ -125,29 +127,73 @@ fun ImprovedHomeScreen(
     // Initial load handled by Paging 3 automatic collection
 
     // State for fullscreen viewer
-    var showFullscreenViewer by remember { mutableStateOf(false) }
+    // State for viewers
+    var showCarousel by remember { mutableStateOf(false) }
+    var showImmersiveViewer by remember { mutableStateOf(false) }
     var selectedScreenshotIndex by remember { mutableStateOf(0) }
     
     // We need to pass the list to fullscreen viewer. 
     // Since fullscreen viewer expects a List, we can pass the snapshot of loaded items.
     val loadedScreenshots = screenshots.itemSnapshotList.items
 
-    // If fullscreen viewer is shown, display it outside the Scaffold
-    if (showFullscreenViewer && loadedScreenshots.isNotEmpty()) {
-        ScreenshotFullscreenViewer(
+    // Handle back press for viewers
+    if (showCarousel || showImmersiveViewer) {
+        androidx.activity.compose.BackHandler {
+            if (showImmersiveViewer) {
+                showImmersiveViewer = false
+                showCarousel = true
+            } else {
+                showCarousel = false
+            }
+        }
+    }
+
+    if (showImmersiveViewer && loadedScreenshots.isNotEmpty()) {
+        ImmersiveImageViewer(
             screenshots = loadedScreenshots,
             initialIndex = selectedScreenshotIndex,
-            onClose = { showFullscreenViewer = false },
+            onClose = { 
+                showImmersiveViewer = false 
+                showCarousel = true
+            },
             onShare = { screenshot ->
                 viewModel.shareScreenshot(context, screenshot)
             },
             onDelete = { screenshot ->
                 viewModel.deleteScreenshot(screenshot)
-                // We might need to refresh paging if item deleted externally or just locally?
-                // Deleting via VM usually updates file system. Paging might not auto-update unless invalidated.
-                // We can call screenshots.refresh() or rely on invalidation if VM handles it.
-                // For now, simpler to refresh.
                 screenshots.refresh()
+            }
+        )
+    } else if (showCarousel && loadedScreenshots.isNotEmpty()) {
+        ScreenshotCarousel(
+            screenshots = loadedScreenshots,
+            initialIndex = selectedScreenshotIndex,
+            onClose = { showCarousel = false },
+            onScreenshotClick = {
+                // Determine current index from carousel? 
+                // Currently ScreenshotCarousel doesn't pass back current index on click, 
+                // but we can assume the user wants to see the one they are looking at.
+                // However, Pager state is internal to Carousel. 
+                // We should pass the initial index as the clicked one if we haven't updated it.
+                // Ideally Carousel should report current page.
+                // For simplicity, we just open ImmersiveViewer. 
+                // Note: If user swiped in Carousel, we need to know the new index.
+                // We'll trust the Carousel kept initialIndex or need to update logic to track it.
+                // Updating ScreenshotCarousel to expose tracking might be needed, 
+                // but for now let's assume index is handled if we pass state.
+                showImmersiveViewer = true
+                showCarousel = false
+            },
+            onShare = { screenshot -> viewModel.shareScreenshot(context, screenshot) },
+            onDelete = { screenshot ->
+                viewModel.deleteScreenshot(screenshot)
+                screenshots.refresh()
+            },
+            onEdit = { /* TODO */ },
+            onMove = { /* TODO */ },
+            onAddNote = { /* TODO */ },
+            onPageChanged = { index ->
+                selectedScreenshotIndex = index
             }
         )
     } else {
@@ -365,7 +411,7 @@ fun ImprovedHomeScreen(
                                     val index = loadedScreenshots.indexOfFirst { item -> item.id == screenshot.id }
                                     if (index != -1) {
                                         selectedScreenshotIndex = index
-                                        showFullscreenViewer = true
+                                        showCarousel = true
                                     }
                                 }
                             }

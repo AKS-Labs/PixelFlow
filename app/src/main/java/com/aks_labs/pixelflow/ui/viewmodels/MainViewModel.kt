@@ -65,7 +65,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val filteredScreenshots = _filteredScreenshots.asStateFlow()
 
     // Grid columns for screenshot display
-    private val _gridColumns = MutableStateFlow(3) // Set to 3 columns by default
+    private val _gridColumns = MutableStateFlow(4) // Set to 3 columns by default
     val gridColumns = _gridColumns.asStateFlow()
 
     // Bubble enabled preference
