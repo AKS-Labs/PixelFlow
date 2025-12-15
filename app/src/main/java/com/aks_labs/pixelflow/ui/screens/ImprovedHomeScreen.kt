@@ -16,16 +16,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -88,8 +90,10 @@ fun ImprovedHomeScreen(
     navController: NavController,
     viewModel: MainViewModel
 ) {
-    // Get the current screenshots
-    val screenshots by viewModel.filteredScreenshots.collectAsState()
+    // Get the current screenshots as PagingItems
+    // We strictly use the new pager
+    val screenshots = viewModel.screenshotPager.collectAsLazyPagingItems()
+    
     val gridColumns by viewModel.gridColumns.collectAsState()
     val context = LocalContext.current
 
@@ -102,9 +106,6 @@ fun ImprovedHomeScreen(
     // Search state
     var searchQuery by remember { mutableStateOf("") }
 
-    // Refresh state
-    var refreshing by remember { mutableStateOf(false) }
-
     // Selection manager for multi-select functionality
     val selectionManager = rememberSelectionManager()
 
@@ -115,30 +116,26 @@ fun ImprovedHomeScreen(
     var isDragging by remember { mutableStateOf(false) }
     var lastDraggedIndex by remember { mutableStateOf(-1) }
 
-    // Refresh function
-    val onRefresh = {
-        refreshing = true
-        viewModel.refreshScreenshotsImmediately()
-        refreshing = false
-        Unit
-    }
+    // Refresh function using Paging 3
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = screenshots.loadState.refresh is androidx.paging.LoadState.Loading,
+        onRefresh = { screenshots.refresh() }
+    )
 
-    // Pull-to-refresh state
-    val pullRefreshState = rememberPullRefreshState(refreshing, onRefresh)
-
-    // Refresh screenshots when the screen is shown or becomes active
-    LaunchedEffect(Unit) {
-        viewModel.refreshScreenshotsImmediately()
-    }
+    // Initial load handled by Paging 3 automatic collection
 
     // State for fullscreen viewer
     var showFullscreenViewer by remember { mutableStateOf(false) }
     var selectedScreenshotIndex by remember { mutableStateOf(0) }
+    
+    // We need to pass the list to fullscreen viewer. 
+    // Since fullscreen viewer expects a List, we can pass the snapshot of loaded items.
+    val loadedScreenshots = screenshots.itemSnapshotList.items
 
     // If fullscreen viewer is shown, display it outside the Scaffold
-    if (showFullscreenViewer && screenshots.isNotEmpty()) {
+    if (showFullscreenViewer && loadedScreenshots.isNotEmpty()) {
         ScreenshotFullscreenViewer(
-            screenshots = screenshots,
+            screenshots = loadedScreenshots,
             initialIndex = selectedScreenshotIndex,
             onClose = { showFullscreenViewer = false },
             onShare = { screenshot ->
@@ -146,6 +143,11 @@ fun ImprovedHomeScreen(
             },
             onDelete = { screenshot ->
                 viewModel.deleteScreenshot(screenshot)
+                // We might need to refresh paging if item deleted externally or just locally?
+                // Deleting via VM usually updates file system. Paging might not auto-update unless invalidated.
+                // We can call screenshots.refresh() or rely on invalidation if VM handles it.
+                // For now, simpler to refresh.
+                screenshots.refresh()
             }
         )
     } else {
@@ -188,8 +190,8 @@ fun ImprovedHomeScreen(
 
                             // Selection mode actions
                             IconButton(onClick = {
-                                // Select all screenshots
-                                screenshots.forEach { screenshot ->
+                                // Select all currently loaded screenshots
+                                for (screenshot in loadedScreenshots) {
                                     if (!selectionManager.isSelected(screenshot)) {
                                         selectionManager.toggleSelection(screenshot)
                                     }
@@ -203,7 +205,7 @@ fun ImprovedHomeScreen(
 
                             IconButton(onClick = {
                                 // Share selected screenshots
-                                val selectedScreenshots = selectionManager.getSelectedScreenshots(screenshots)
+                                val selectedScreenshots = selectionManager.getSelectedScreenshots()
                                 if (selectedScreenshots.isNotEmpty()) {
                                     // Use the new method to share multiple screenshots
                                     viewModel.shareMultipleScreenshots(context, selectedScreenshots)
@@ -217,13 +219,13 @@ fun ImprovedHomeScreen(
 
                             IconButton(onClick = {
                                 // Delete selected screenshots
-                                val selectedScreenshots = selectionManager.getSelectedScreenshots(screenshots)
+                                val selectedScreenshots = selectionManager.getSelectedScreenshots()
                                 selectedScreenshots.forEach { screenshot ->
                                     viewModel.deleteScreenshot(screenshot)
                                 }
                                 selectionManager.toggleSelectionMode()
                                 // Refresh the list
-                                viewModel.refreshScreenshotsImmediately()
+                                screenshots.refresh()
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
@@ -359,8 +361,12 @@ fun ImprovedHomeScreen(
                                 if (selectionManager.selectionMode) {
                                     selectionManager.toggleSelection(screenshot)
                                 } else {
-                                    selectedScreenshotIndex = screenshots.indexOf(screenshot)
-                                    showFullscreenViewer = true
+                                    // We need to find the index of this screenshot in the loaded list
+                                    val index = loadedScreenshots.indexOfFirst { item -> item.id == screenshot.id }
+                                    if (index != -1) {
+                                        selectedScreenshotIndex = index
+                                        showFullscreenViewer = true
+                                    }
                                 }
                             }
                         )
@@ -368,7 +374,7 @@ fun ImprovedHomeScreen(
 
                     // Pull to refresh indicator
                     PullRefreshIndicator(
-                        refreshing = refreshing,
+                        refreshing = screenshots.loadState.refresh is androidx.paging.LoadState.Loading,
                         state = pullRefreshState,
                         modifier = Modifier.align(Alignment.TopCenter)
                     )
@@ -382,7 +388,7 @@ fun ImprovedHomeScreen(
 
 @Composable
 fun ScreenshotsSection(
-    screenshots: List<SimpleScreenshot>,
+    screenshots: androidx.paging.compose.LazyPagingItems<SimpleScreenshot>,
     gridColumns: Int,
     selectionManager: SelectionManager,
     gridState: LazyGridState,
@@ -405,7 +411,7 @@ fun ScreenshotsSection(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         )
 
-        if (screenshots.isEmpty()) {
+        if (screenshots.itemCount == 0 && screenshots.loadState.refresh !is androidx.paging.LoadState.Loading) {
             // Empty state
             Box(
                 modifier = Modifier
@@ -460,37 +466,52 @@ fun ScreenshotsSection(
                         .fillMaxWidth()
                         .fillMaxHeight()
                 ) {
-                    items(screenshots) { screenshot ->
-                        val isSelected = selectionManager.isSelected(screenshot)
-
-                        val itemIndex = screenshots.indexOf(screenshot)
-
-                        // Create a reference to track this item's position
-                        val itemPositionRef = remember { mutableStateOf(Rect.Zero) }
-
-                        // Use a simpler approach for drag selection
-                        if (isDragging && selectionManager.isDragSelecting) {
-                            // If we're in drag selection mode, select this item when it's rendered
-                            selectionManager.selectDuringDrag(screenshot)
-                            onDraggedIndexChanged(itemIndex)
+                    items(
+                        count = screenshots.itemCount,
+                        key = { index -> 
+                            val item = screenshots[index]
+                            item?.id ?: index 
                         }
+                    ) { index ->
+                        val screenshot = screenshots[index]
+                        
+                        if (screenshot != null) {
+                            val isSelected = selectionManager.isSelected(screenshot)
 
-                        ScreenshotGridItem(
-                            screenshot = screenshot,
-                            isSelected = isSelected,
-                            onClick = { onScreenshotClick(screenshot) },
-                            onLongClick = {
-                                if (!selectionManager.selectionMode) {
-                                    selectionManager.toggleSelectionMode()
-                                }
-                                selectionManager.toggleSelection(screenshot)
-                            },
-                            modifier = Modifier
-                                .onGloballyPositioned { coordinates ->
-                                    // Store this item's position on screen
-                                    itemPositionRef.value = coordinates.boundsInWindow()
-                                }
-                        )
+                            // Create a reference to track this item's position
+                            val itemPositionRef = remember { mutableStateOf(Rect.Zero) }
+
+                            // Use a simpler approach for drag selection
+                            if (isDragging && selectionManager.isDragSelecting) {
+                                // If we're in drag selection mode, select this item when it's rendered
+                                selectionManager.selectDuringDrag(screenshot)
+                                onDraggedIndexChanged(index)
+                            }
+
+                            ScreenshotGridItem(
+                                screenshot = screenshot,
+                                isSelected = isSelected,
+                                onClick = { onScreenshotClick(screenshot) },
+                                onLongClick = {
+                                    if (!selectionManager.selectionMode) {
+                                        selectionManager.toggleSelectionMode()
+                                    }
+                                    selectionManager.toggleSelection(screenshot)
+                                },
+                                modifier = Modifier
+                                    .onGloballyPositioned { coordinates ->
+                                        // Store this item's position on screen
+                                        itemPositionRef.value = coordinates.boundsInWindow()
+                                    }
+                            )
+                        } else {
+                            // Placeholder if null (loading)
+                             Box(
+                                modifier = Modifier
+                                    .aspectRatio(0.5625f)
+                                    .background(Color.LightGray.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
+                            )
+                        }
                     }
                 }
             }

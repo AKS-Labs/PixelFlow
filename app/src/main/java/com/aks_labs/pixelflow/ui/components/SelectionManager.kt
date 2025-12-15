@@ -24,9 +24,9 @@ class SelectionManager {
     var lastDragSelectedId by mutableStateOf<Long?>(null)
         private set
 
-    // List of selected screenshot IDs
-    private val _selectedIds = mutableStateListOf<Long>()
-    val selectedIds: List<Long> get() = _selectedIds
+    // Map of selected screenshots (ID -> Screenshot)
+    private val _selectedItems = mutableStateListOf<SimpleScreenshot>()
+    val selectedItems: List<SimpleScreenshot> get() = _selectedItems
 
     /**
      * Toggle selection mode.
@@ -64,14 +64,15 @@ class SelectionManager {
      * @return True if the screenshot is now selected, false otherwise
      */
     fun toggleSelection(screenshot: SimpleScreenshot): Boolean {
-        return if (_selectedIds.contains(screenshot.id)) {
-            _selectedIds.remove(screenshot.id)
-            if (_selectedIds.isEmpty()) {
+        val existing = _selectedItems.find { it.id == screenshot.id }
+        return if (existing != null) {
+            _selectedItems.remove(existing)
+            if (_selectedItems.isEmpty()) {
                 selectionMode = false
             }
             false
         } else {
-            _selectedIds.add(screenshot.id)
+            _selectedItems.add(screenshot)
             true
         }
     }
@@ -82,8 +83,8 @@ class SelectionManager {
      * @param screenshot The screenshot to select
      */
     fun selectDuringDrag(screenshot: SimpleScreenshot) {
-        if (isDragSelecting && !_selectedIds.contains(screenshot.id)) {
-            _selectedIds.add(screenshot.id)
+        if (isDragSelecting && _selectedItems.none { it.id == screenshot.id }) {
+            _selectedItems.add(screenshot)
             lastDragSelectedId = screenshot.id
         }
     }
@@ -95,14 +96,14 @@ class SelectionManager {
      * @return True if the screenshot is selected, false otherwise
      */
     fun isSelected(screenshot: SimpleScreenshot): Boolean {
-        return _selectedIds.contains(screenshot.id)
+        return _selectedItems.any { it.id == screenshot.id }
     }
 
     /**
      * Clear all selections.
      */
     fun clearSelection() {
-        _selectedIds.clear()
+        _selectedItems.clear()
     }
 
     /**
@@ -111,17 +112,16 @@ class SelectionManager {
      * @return The number of selected screenshots
      */
     fun getSelectionCount(): Int {
-        return _selectedIds.size
+        return _selectedItems.size
     }
 
     /**
-     * Get the selected screenshots from a list of all screenshots.
+     * Get the selected screenshots.
      *
-     * @param allScreenshots The list of all screenshots
      * @return The list of selected screenshots
      */
-    fun getSelectedScreenshots(allScreenshots: List<SimpleScreenshot>): List<SimpleScreenshot> {
-        return allScreenshots.filter { _selectedIds.contains(it.id) }
+    fun getSelectedScreenshots(): List<SimpleScreenshot> {
+        return _selectedItems.toList()
     }
 
     /**
@@ -133,8 +133,8 @@ class SelectionManager {
         if (screenshots.isNotEmpty()) {
             selectionMode = true
             screenshots.forEach { screenshot ->
-                if (!_selectedIds.contains(screenshot.id)) {
-                    _selectedIds.add(screenshot.id)
+                if (_selectedItems.none { it.id == screenshot.id }) {
+                    _selectedItems.add(screenshot)
                 }
             }
         }

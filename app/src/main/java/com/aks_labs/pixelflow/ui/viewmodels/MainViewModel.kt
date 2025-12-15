@@ -15,8 +15,12 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.aks_labs.pixelflow.data.models.SimpleFolder
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
+import com.aks_labs.pixelflow.data.paging.ScreenshotPagingSource
 import com.aks_labs.pixelflow.pixelFlowApp
 import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
 import com.aks_labs.pixelflow.data.SharedPrefsManager.ThemeMode
@@ -45,7 +49,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // Screenshots
     val allScreenshots: Flow<List<SimpleScreenshot>> = sharedPrefsManager.screenshots
 
-    // Filtered screenshots for UI display
+    // Paging 3 for Screenshots
+    val screenshotPager = androidx.paging.Pager(
+        config = androidx.paging.PagingConfig(
+            pageSize = 20,
+            enablePlaceholders = false
+        )
+    ) {
+        com.aks_labs.pixelflow.data.paging.ScreenshotPagingSource(getApplication<Application>().contentResolver)
+    }.flow.cachedIn(viewModelScope)
+
+    // Filtered screenshots for UI display - DEPRECATED in favor of screenshotPager
+    // Keeping it as empty list to avoid immediate compilation errors in other files before they are refactored
     private val _filteredScreenshots = MutableStateFlow<List<SimpleScreenshot>>(emptyList())
     val filteredScreenshots = _filteredScreenshots.asStateFlow()
 
@@ -212,201 +227,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Load screenshots from the device
+     * Load screenshots - Deprecated, now handled by Pager
      */
     fun loadDeviceScreenshots() {
-        viewModelScope.launch {
-            try {
-                val screenshots = loadScreenshotsFromMediaStore()
-                // Always sort by newest first (highest timestamp first)
-                // Use originalTimestamp for consistent sorting
-                val sortedScreenshots = screenshots.sortedByDescending { it.originalTimestamp }
-                _filteredScreenshots.value = sortedScreenshots
-                Log.d("MainViewModel", "Loaded ${sortedScreenshots.size} screenshots")
-            } catch (e: Exception) {
-                Log.e("MainViewModel", "Error loading screenshots", e)
-                _filteredScreenshots.value = emptyList()
-            }
-        }
+        // No-op, handled by Pager
     }
 
     /**
-     * Refresh screenshots immediately - used when a new screenshot is detected
-     * This is a more aggressive refresh that ensures new screenshots appear immediately
+     * Refresh screenshots immediately
+     * Note: With Paging 3, UI should call items.refresh()
      */
     fun refreshScreenshotsImmediately() {
-        viewModelScope.launch {
-            try {
-                // Force a refresh from MediaStore
-                val screenshots = loadScreenshotsFromMediaStore(forceRefresh = true)
-                val sortedScreenshots = screenshots.sortedByDescending { it.originalTimestamp }
-                _filteredScreenshots.value = sortedScreenshots
-                Log.d("MainViewModel", "Immediately refreshed ${sortedScreenshots.size} screenshots")
-            } catch (e: Exception) {
-                Log.e("MainViewModel", "Error refreshing screenshots immediately", e)
-                // Don't clear the list on error, keep the existing screenshots
-            }
-        }
-    }
-
-    /**
-     * Load screenshots from the MediaStore
-     *
-     * @param forceRefresh If true, forces a refresh of the media store cache
-     */
-    private fun loadScreenshotsFromMediaStore(forceRefresh: Boolean = false): List<SimpleScreenshot> {
-        val screenshots = mutableListOf<SimpleScreenshot>()
-        val context = getApplication<Application>()
-        val processedPaths = HashSet<String>() // To avoid duplicates
-
-        try {
-            // If forceRefresh is true, trigger a media scan to ensure we have the latest data
-            if (forceRefresh) {
-                Log.d("MainViewModel", "Forcing media store refresh")
-                // This will help ensure the MediaStore is up-to-date
-                context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE))
-
-                // Also scan the PixelFlow directory
-                val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                val pixelFlowDir = File(picturesDir, "PixelFlow")
-                if (pixelFlowDir.exists()) {
-                    MediaScannerConnection.scanFile(
-                        context,
-                        arrayOf(pixelFlowDir.absolutePath),
-                        null,
-                        null
-                    )
-                }
-            }
-
-            // Query the media store for screenshots
-            val projection = arrayOf(
-                MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.DATA,
-                MediaStore.Images.Media.DATE_ADDED,
-                MediaStore.Images.Media.DATE_MODIFIED
-            )
-
-            // First, load screenshots from the default Screenshots directory
-            loadScreenshotsFromDirectory(
-                context,
-                projection,
-                "%/Screenshots/%",
-                screenshots,
-                processedPaths
-            )
-
-            // Then, load screenshots from the PixelFlow directory
-            loadScreenshotsFromDirectory(
-                context,
-                projection,
-                "%/PixelFlow/%",
-                screenshots,
-                processedPaths
-            )
-
-            // Also load screenshots from our app's database
-            loadScreenshotsFromAppDatabase(screenshots, processedPaths)
-
-            Log.d("MainViewModel", "Loaded ${screenshots.size} screenshots from device")
-            return screenshots
-        } catch (e: Exception) {
-            Log.e("MainViewModel", "Error loading screenshots from device", e)
-            return emptyList()
-        }
-    }
-
-    /**
-     * Load screenshots from a specific directory using MediaStore
-     */
-    private fun loadScreenshotsFromDirectory(
-        context: Context,
-        projection: Array<String>,
-        directoryPattern: String,
-        screenshots: MutableList<SimpleScreenshot>,
-        processedPaths: HashSet<String>
-    ) {
-        try {
-            // Look for files in the specified directory
-            val selection = "${MediaStore.Images.Media.DATA} LIKE ?"
-            val selectionArgs = arrayOf(directoryPattern)
-            val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} DESC"
-
-            context.contentResolver.query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                projection,
-                selection,
-                selectionArgs,
-                sortOrder
-            )?.use { cursor ->
-                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
-                val dateModifiedColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)
-
-                while (cursor.moveToNext()) {
-                    val id = cursor.getLong(idColumn)
-                    val filePath = cursor.getString(dataColumn)
-                    val dateAdded = cursor.getLong(dateAddedColumn)
-                    val dateModified = cursor.getLong(dateModifiedColumn)
-
-                    // Skip if we've already processed this path
-                    if (processedPaths.contains(filePath)) {
-                        continue
-                    }
-
-                    val file = File(filePath)
-                    if (file.exists()) {
-                        // For PixelFlow directory, include all images
-                        // For Screenshots directory, only include files with "screenshot" in the name
-                        val isInPixelFlowDir = filePath.contains("/PixelFlow/", ignoreCase = true)
-                        val isScreenshot = file.name.contains("screenshot", ignoreCase = true)
-
-                        if (isInPixelFlowDir || isScreenshot) {
-                            val screenshot = SimpleScreenshot(
-                                id = id,
-                                filePath = filePath,
-                                thumbnailPath = filePath, // Use the same path for thumbnail for now
-                                folderId = 0, // Default folder
-                                originalTimestamp = dateModified * 1000, // Use modified date for better sorting
-                                savedTimestamp = dateModified * 1000 // Use the same timestamp for consistency
-                            )
-                            screenshots.add(screenshot)
-                            processedPaths.add(filePath)
-
-                            Log.d("MainViewModel", "Added screenshot: $filePath")
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("MainViewModel", "Error loading screenshots from directory: $directoryPattern", e)
-        }
-    }
-
-    /**
-     * Load screenshots from the app's database
-     */
-    private fun loadScreenshotsFromAppDatabase(
-        screenshots: MutableList<SimpleScreenshot>,
-        processedPaths: HashSet<String>
-    ) {
-        try {
-            // Get screenshots from SharedPrefsManager
-            val appScreenshots = sharedPrefsManager.screenshotsValue
-
-            for (screenshot in appScreenshots) {
-                val file = File(screenshot.filePath)
-                if (file.exists() && !processedPaths.contains(screenshot.filePath)) {
-                    screenshots.add(screenshot)
-                    processedPaths.add(screenshot.filePath)
-
-                    Log.d("MainViewModel", "Added screenshot from app database: ${screenshot.filePath}")
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("MainViewModel", "Error loading screenshots from app database", e)
-        }
+         // This might be needed if we want to force invalidate the data source
+         // But mostly handled by UI adapter refresh.
+         // For now, we'll leave it as no-op or we could emit a signal to UI to refresh.
     }
 
     /**
