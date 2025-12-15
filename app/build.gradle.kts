@@ -61,7 +61,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation")
 
     // Material Design components - keeping for backward compatibility during migration
-    implementation("com.google.android.material:material:1.9.0")
+    implementation("com.google.android.material:material:1.11.0")
 
     // DataStore Preferences
     implementation(libs.androidx.datastore.preferences)
