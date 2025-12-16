@@ -88,6 +88,12 @@ import com.aks_labs.pixelflow.helpers.DefaultTabs
 import com.aks_labs.pixelflow.helpers.MultiScreenViewType
 import com.aks_labs.pixelflow.helpers.PhotoGridConstants
 import com.aks_labs.pixelflow.helpers.Screens
+import com.aks_labs.pixelflow.ui.components.AddFolderDialog
+import java.io.File
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.ui.res.stringResource
+import com.aks_labs.pixelflow.R
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -137,6 +143,8 @@ fun FolderScreen(
 
     val albumToThumbnailMapping = mainViewModel.albumsThumbnailsMap
     val mediaSortMode by mainViewModel.sortMode.collectAsState()
+    
+    var showAddDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(listOfDirs, normalAlbums, sortMode, sortByDescending, albumToThumbnailMapping, mediaSortMode) {
         if (listOfDirs.isEmpty()) return@LaunchedEffect
@@ -387,24 +395,27 @@ fun FolderScreen(
 
             items(
                 count = albums.value.size,
-                key = { key ->
-                    albums.value[key].id
-                },
+                key = { index -> 
+                    // Use a composite key or just the ID if unique. 
+                    // Fallback to index if ID is duplicate (though strictly IDs should be unique)
+                    val album = albums.value[index]
+                    "${album.id}_$index" 
+                }
             ) { index ->
-                val albumInfo = albums.value[index]
-                val mediaItem = albumToThumbnailMapping[albumInfo.id] ?: dummyScreenshot
+                val album = albums.value[index]
+                val mediaItem = albumToThumbnailMapping[album.id] ?: dummyScreenshot
 
                 AlbumGridItem(
-                    album = albumInfo,
+                    album = album,
                     item = mediaItem,
-                    isSelected = selectedItem == albumInfo,
+                    isSelected = selectedItem == album,
                     modifier = Modifier
                         .zIndex(
-                            if (selectedItem == albumInfo) 1f
+                            if (selectedItem == album) 1f
                             else 0f
                         )
                         .graphicsLayer {
-                            if (selectedItem == albumInfo) {
+                            if (selectedItem == album) {
                                 translationX = itemOffset.x
                                 translationY = itemOffset.y
                             }
@@ -414,7 +425,7 @@ fun FolderScreen(
                 ) {
                     navController.navigate(
                         Screens.SingleAlbumView(
-                            albumInfo = albumInfo
+                            albumInfo = album
                         )
                     )
                 }
@@ -433,6 +444,32 @@ fun FolderScreen(
                 )
             }
         }
+    }
+
+    // Floating Action Button
+    Box(
+        modifier = Modifier
+            .fillMaxSize(1f)
+            .padding(16.dp),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        FloatingActionButton(
+            onClick = { showAddDialog = true },
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ) {
+            Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.add_folder))
+        }
+    }
+
+    if (showAddDialog) {
+        AddFolderDialog(
+            onDismiss = { showAddDialog = false },
+            onAddFolder = { name, iconName ->
+                mainViewModel.addFolder(name, iconName)
+                showAddDialog = false
+            }
+        )
     }
 }
 
@@ -504,8 +541,9 @@ private fun AlbumGridItem(
                     .clip(RoundedCornerShape(16.dp))
             ) { state ->
                 if (state) {
+                    val model = if (item.thumbnailPath.isNotEmpty()) File(item.thumbnailPath) else File(item.filePath)
                     GlideImage(
-                        model = item.filePath, // Use filePath instead of uri
+                        model = model,
                         contentDescription = item.id.toString(), // Use id as desc
                         contentScale = ContentScale.Crop,
                         // failure = placeholder(R.drawable.broken_image), // Commented out

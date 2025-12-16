@@ -33,11 +33,30 @@ class SharedPrefsManager(context: Context) {
     // App directory
     private val appDirectory: File
 
+    // Listener for SharedPreferences changes
+    private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        when (key) {
+            KEY_FOLDERS -> loadFolders()
+            KEY_SCREENSHOTS -> loadScreenshots()
+        }
+    }
+
     init {
         // Create app directory
         appDirectory = createAppDirectory()
 
         // Load initial data
+        loadFolders()
+        loadScreenshots()
+        
+        // Register listener for external updates (e.g. from Service)
+        sharedPreferences.registerOnSharedPreferenceChangeListener(prefsListener)
+    }
+
+    /**
+     * Force refresh data from SharedPreferences
+     */
+    fun refresh() {
         loadFolders()
         loadScreenshots()
     }
@@ -300,6 +319,25 @@ class SharedPrefsManager(context: Context) {
             currentScreenshots[index] = screenshot.copy(folderId = newFolderId)
             _screenshots.value = currentScreenshots
             saveScreenshots()
+        }
+    }
+
+    /**
+     * Create 'Unsorted' folder if it doesn't exist
+     */
+    fun createUnsortedFolderIfMissing() {
+        val unsortedFolder = getFolderByName("Unsorted")
+        if (unsortedFolder == null) {
+            val newFolder = SimpleFolder(
+                id = generateFolderId(),
+                name = "Unsorted",
+                iconName = "ic_images",
+                position = -1,
+                isDefault = false,
+                isEditable = false,
+                isRemovable = false
+            )
+            addFolder(newFolder)
         }
     }
 

@@ -100,7 +100,7 @@ fun ScreenshotGridItem(
             // Screenshot image
             AsyncImage(
                 model = ImageRequest.Builder(context)
-                    .data(File(screenshot.thumbnailPath))
+                    .data(if (screenshot.thumbnailPath.isNotEmpty()) File(screenshot.thumbnailPath) else File(screenshot.filePath))
                     .crossfade(true)
                     .build(),
                 contentDescription = "Screenshot",

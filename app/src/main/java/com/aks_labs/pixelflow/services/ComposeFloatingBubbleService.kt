@@ -287,6 +287,16 @@ class ComposeFloatingBubbleService : Service() {
 
         Log.d(TAG, "Screenshot file exists, size: ${screenshotFile.length()} bytes")
 
+        // Save the screenshot to the 'Unsorted' folder
+        serviceScope.launch(Dispatchers.IO) {
+            val unsortedFolder = sharedPrefsManager.getFolderByName("Unsorted")
+            if (unsortedFolder != null) {
+                saveScreenshotToFolder(screenshotPath, unsortedFolder)
+            } else {
+                Log.e(TAG, "Unsorted folder not found, cannot save screenshot")
+            }
+        }
+
         // Create and show the floating bubble with the screenshot
         serviceScope.launch(Dispatchers.Main) {
             try {
@@ -885,92 +895,93 @@ class ComposeFloatingBubbleService : Service() {
      */
     private fun handleScreenshotDrop(folderId: Long) {
         val screenshotPath = currentScreenshotPath ?: return
+        val folder = sharedPrefsManager.getFolder(folderId) ?: return
 
         serviceScope.launch(Dispatchers.IO) {
-            try {
-                // Get the folder
-                val folder = sharedPrefsManager.getFolder(folderId)
-                if (folder == null) {
-                    Log.e(TAG, "Folder not found with ID: $folderId")
-                    return@launch
-                }
+            saveScreenshotToFolder(screenshotPath, folder)
+        }
+    }
 
-                // Check if the screenshot file exists
-                val screenshotFile = File(screenshotPath)
-                if (!screenshotFile.exists()) {
-                    Log.e(TAG, "Screenshot file does not exist: $screenshotPath")
-                    return@launch
-                }
-
-                val timestamp = System.currentTimeMillis()
-                val newFileName = "screenshot_${timestamp}.jpg"
-
-                // Get the folder directory in external storage
-                val folderDir = sharedPrefsManager.getFolderDirectory(folder.name)
-                if (!folderDir.exists() && !folderDir.mkdirs()) {
-                    Log.e(TAG, "Failed to create folder directory: ${folderDir.absolutePath}")
-                    return@launch
-                }
-
-                val newFile = File(folderDir, newFileName)
-
-                try {
-                    // Move the file (copy then delete original)
-                    screenshotFile.inputStream().use { input ->
-                        FileOutputStream(newFile).use { output ->
-                            input.copyTo(output)
-                        }
-                    }
-
-                    // Verify the copy was successful
-                    if (newFile.exists() && newFile.length() > 0) {
-                        // Delete the original file
-                        if (!screenshotFile.delete()) {
-                            Log.w(TAG, "Failed to delete original screenshot: $screenshotPath")
-                        }
-                    } else {
-                        Log.e(TAG, "Failed to copy screenshot to: ${newFile.absolutePath}")
-                    }
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error copying screenshot", e)
-                }
-
-                try {
-                    // Create thumbnail directory if it doesn't exist
-                    val thumbnailDir = File(folderDir, "thumbnails")
-                    if (!thumbnailDir.exists() && !thumbnailDir.mkdirs()) {
-                        Log.e(TAG, "Failed to create thumbnail directory: ${thumbnailDir.absolutePath}")
-                    }
-
-                    val thumbnailFile = File(thumbnailDir, "thumb_$newFileName")
-                    val thumbnailCreated = createThumbnail(newFile.absolutePath, thumbnailFile.absolutePath)
-
-                    if (thumbnailCreated) {
-                        // Save to database
-                        val screenshot = SimpleScreenshot(
-                            id = sharedPrefsManager.generateScreenshotId(),
-                            filePath = newFile.absolutePath,
-                            thumbnailPath = thumbnailFile.absolutePath,
-                            folderId = folderId,
-                            originalTimestamp = screenshotFile.lastModified()
-                        )
-
-                        sharedPrefsManager.addScreenshot(screenshot)
-                        Log.d(TAG, "Screenshot saved successfully to ${folder.name} folder")
-                    } else {
-                        Log.e(TAG, "Failed to create thumbnail for: ${newFile.absolutePath}")
-                    }
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error creating thumbnail or saving screenshot data", e)
-                }
-
-                // Vibrate to provide feedback
-                vibrateDevice()
-
-                Log.d(TAG, "Screenshot added to folder: $folderId")
-            } catch (e: Exception) {
-                Log.e(TAG, "Error handling screenshot drop", e)
+    /**
+     * Saves a screenshot to a specific folder.
+     */
+    private fun saveScreenshotToFolder(screenshotPath: String, folder: SimpleFolder) {
+        try {
+            // Check if the screenshot file exists
+            val screenshotFile = File(screenshotPath)
+            if (!screenshotFile.exists()) {
+                Log.e(TAG, "Screenshot file does not exist: $screenshotPath")
+                return
             }
+
+            val timestamp = System.currentTimeMillis()
+            val newFileName = "screenshot_${timestamp}.jpg"
+
+            // Get the folder directory in external storage
+            val folderDir = sharedPrefsManager.getFolderDirectory(folder.name)
+            if (!folderDir.exists() && !folderDir.mkdirs()) {
+                Log.e(TAG, "Failed to create folder directory: ${folderDir.absolutePath}")
+                return
+            }
+
+            val newFile = File(folderDir, newFileName)
+
+            try {
+                // Move the file (copy then delete original)
+                screenshotFile.inputStream().use { input ->
+                    FileOutputStream(newFile).use { output ->
+                        input.copyTo(output)
+                    }
+                }
+
+                // Verify the copy was successful
+                if (newFile.exists() && newFile.length() > 0) {
+                    // Delete the original file
+                    if (!screenshotFile.delete()) {
+                        Log.w(TAG, "Failed to delete original screenshot: $screenshotPath")
+                    }
+                } else {
+                    Log.e(TAG, "Failed to copy screenshot to: ${newFile.absolutePath}")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error copying screenshot", e)
+            }
+
+            try {
+                // Create thumbnail directory if it doesn't exist
+                val thumbnailDir = File(folderDir, "thumbnails")
+                if (!thumbnailDir.exists() && !thumbnailDir.mkdirs()) {
+                    Log.e(TAG, "Failed to create thumbnail directory: ${thumbnailDir.absolutePath}")
+                }
+
+                val thumbnailFile = File(thumbnailDir, "thumb_$newFileName")
+                val thumbnailCreated = createThumbnail(newFile.absolutePath, thumbnailFile.absolutePath)
+
+                if (thumbnailCreated) {
+                    // Save to database
+                    val screenshot = SimpleScreenshot(
+                        id = sharedPrefsManager.generateScreenshotId(),
+                        filePath = newFile.absolutePath,
+                        thumbnailPath = thumbnailFile.absolutePath,
+                        folderId = folder.id,
+                        originalTimestamp = screenshotFile.lastModified()
+                    )
+
+                    sharedPrefsManager.addScreenshot(screenshot)
+                    Log.d(TAG, "Screenshot saved successfully to ${folder.name} folder")
+                } else {
+                    Log.e(TAG, "Failed to create thumbnail for: ${newFile.absolutePath}")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error creating thumbnail or saving screenshot data", e)
+            }
+
+            // Vibrate to provide feedback
+            vibrateDevice()
+
+            Log.d(TAG, "Screenshot added to folder: ${folder.id}")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error handling screenshot drop", e)
         }
     }
 

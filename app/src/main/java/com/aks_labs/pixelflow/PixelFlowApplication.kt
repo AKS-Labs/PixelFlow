@@ -40,6 +40,12 @@ class PixelFlowApplication : Application() {
         super.onCreate()
         instance = this
 
+        // Initialize SharedPrefsManager and create default folders
+        sharedPrefsManager.apply {
+            initializeDefaultFolders()
+            createUnsortedFolderIfMissing()
+        }
+
         // Register the screenshot broadcast receiver
         screenshotReceiver = ScreenshotBroadcastReceiver.register(this)
     }

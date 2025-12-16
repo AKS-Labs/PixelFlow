@@ -339,7 +339,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val sortMode = _sortMode.asStateFlow()
 
     // Album Column Size
-    val albumColumnSize = MutableStateFlow(2)
+    val albumColumnSize = MutableStateFlow(3)
     val allAvailableAlbums = folders
 
     // Thumbnails Map
