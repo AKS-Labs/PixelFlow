@@ -6,6 +6,7 @@ package com.aks_labs.pixelflow.ui.screens
 // import androidx.compose.ui.util.fastFilter // Removed
 // import androidx.compose.ui.util.fastMap // Removed
 import android.content.res.Configuration
+import android.util.Log
 import androidx.annotation.FloatRange
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
@@ -154,11 +155,15 @@ fun FolderScreen(
 
             // if the albums actually changed, not just the order then refresh
             // Simply refresh always for now or check IDs
-            mainViewModel.refreshAlbums(
-                 context = context,
-                 albums = listOfDirs,
-                 sortMode = mediaSortMode
-            )
+            // Use the async version and wait for it to complete
+            mainViewModel.refreshAlbumsAsync(listOfDirs)
+            
+            // Log the thumbnail mapping after refresh
+            Log.d("FolderScreen", "After refresh - albumToThumbnailMapping size: ${albumToThumbnailMapping.size}")
+            listOfDirs.forEach { album ->
+                val thumbnail = albumToThumbnailMapping[album.id]
+                Log.d("FolderScreen", "Album ${album.name} (id=${album.id}): thumbnail=${thumbnail?.filePath ?: "null"}")
+            }
             
             val copy = listOfDirs.toList() // Safe copy
             
@@ -482,6 +487,9 @@ private fun AlbumGridItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    // Log the item being displayed
+    Log.d("AlbumGridItem", "Rendering album: ${album.name}, itemId: ${item.id}, filePath: ${item.filePath}, thumbnailPath: ${item.thumbnailPath}")
+    
     val animatedScale by animateFloatAsState(
         targetValue = if (isSelected) 0.9f else 1f,
         animationSpec = spring(

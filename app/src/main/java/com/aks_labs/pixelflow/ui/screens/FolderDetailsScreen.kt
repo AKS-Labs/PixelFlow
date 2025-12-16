@@ -57,19 +57,18 @@ fun FolderDetailsScreen(
     folderId: Long
 ) {
     val context = LocalContext.current
-    // Retrieve folder screenshots
-    // Since getScreenshotsForFolder is not a flow, we might need a way to refresh it. 
-    // Ideally we should observe it. For now, we fetch it on composition.
-    // To make it reactive, we can convert it to flow in VM, but for now we follow simple fetch.
-    var screenshots by remember { mutableStateOf<List<SimpleScreenshot>>(emptyList()) }
-    
-    // Refresh/Fetch function
+    val screenshots by viewModel.getScreenshotsForFolderAsFlow(folderId).collectAsState(initial = emptyList())
+
+    // Refresh function (can be removed if not used elsewhere, but keeping for now)
     fun refreshScreenshots() {
-        screenshots = viewModel.getScreenshotsForFolder(folderId)
+        // The flow now handles updates automatically.
+        // This function can be kept for explicit refresh if needed, but its body might be empty
+        // or trigger a re-fetch in the ViewModel if that's ever implemented.
     }
 
     LaunchedEffect(folderId) {
-        refreshScreenshots()
+        // Data is now collected via flow, so manual refresh on launch is not strictly necessary
+        // unless there's a specific reason to force a ViewModel data refresh.
     }
     
     // Get Folder Name (Need a way to get it, or pass it from navigation? Or query VM)

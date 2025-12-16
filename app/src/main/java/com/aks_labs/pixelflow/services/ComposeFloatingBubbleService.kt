@@ -70,6 +70,7 @@ class ComposeFloatingBubbleService : Service() {
 
         // Action to restart the service
         const val ACTION_RESTART_SERVICE = "com.aks_labs.pixelflow.RESTART_SERVICE"
+        const val ACTION_START_FROM_APP = "START_FROM_APP"
 
         // Flag to track if the service is running
         @Volatile

@@ -183,7 +183,7 @@ class MainActivity : ComponentActivity() {
 
     fun startFloatingBubbleService() {
         try {
-            Log.d(TAG, "Starting ViewBasedFloatingBubbleService")
+            Log.d(TAG, "Starting ComposeFloatingBubbleService")
             val intent = Intent(this, com.aks_labs.pixelflow.services.ComposeFloatingBubbleService::class.java)
 
             // Add a specific action to indicate this is a normal start
@@ -214,7 +214,7 @@ class MainActivity : ComponentActivity() {
                 }
             }, 5000) // Check after 5 seconds
         } catch (e: Exception) {
-            Log.e(TAG, "Error starting ViewBasedFloatingBubbleService", e)
+            Log.e(TAG, "Error starting ComposeFloatingBubbleService", e)
             Toast.makeText(this, "Error starting service: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }

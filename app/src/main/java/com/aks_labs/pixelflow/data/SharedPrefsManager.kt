@@ -427,6 +427,57 @@ class SharedPrefsManager(context: Context) {
         sharedPreferences.edit().putBoolean(KEY_ONBOARDING_COMPLETED, completed).apply()
     }
 
+    /**
+     * Get images from a folder by scanning the filesystem
+     */
+    fun getImagesFromFolder(folderName: String): List<SimpleScreenshot> {
+        val folderDir = File(appDirectory, folderName)
+        val images = mutableListOf<SimpleScreenshot>()
+        
+        if (!folderDir.exists() || !folderDir.isDirectory) {
+            return images
+        }
+        
+        val imageFiles = folderDir.listFiles { file ->
+            file.isFile && (file.extension.lowercase() in listOf("jpg", "jpeg", "png", "gif", "webp"))
+        } ?: emptyArray()
+        
+        // Sort by last modified (most recent first)
+        val sortedFiles = imageFiles.sortedByDescending { it.lastModified() }
+        
+        sortedFiles.forEachIndexed { index, file ->
+            val screenshot = SimpleScreenshot(
+                id = file.absolutePath.hashCode().toLong(),
+                filePath = file.absolutePath,
+                thumbnailPath = file.absolutePath,  // Use same file as thumbnail
+                folderId = folderName.hashCode().toLong(),  // Use folder name hash as ID
+                originalTimestamp = file.lastModified(),
+                savedTimestamp = file.lastModified()
+            )
+            images.add(screenshot)
+        }
+        
+        return images
+    }
+
+    /**
+     * Get all folder names from the PixelFlow directory by scanning filesystem
+     */
+    fun getFolderNamesFromDisk(): List<String> {
+        if (!appDirectory.exists()) return emptyList()
+        
+        val folders = mutableListOf<String>()
+        val contents = appDirectory.listFiles { file ->
+            file.isDirectory
+        } ?: emptyArray()
+        
+        contents.forEach { folder ->
+            folders.add(folder.name)
+        }
+        
+        return folders.sorted()
+    }
+
     companion object {
         private const val PREFS_NAME = "pixelflow_prefs"
         private const val KEY_FOLDERS = "folders"

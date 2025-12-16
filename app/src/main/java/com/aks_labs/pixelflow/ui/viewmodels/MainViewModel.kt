@@ -22,7 +22,7 @@ import com.aks_labs.pixelflow.data.models.SimpleFolder
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
 import com.aks_labs.pixelflow.data.paging.ScreenshotPagingSource
 import com.aks_labs.pixelflow.pixelFlowApp
-import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
+import com.aks_labs.pixelflow.services.ComposeFloatingBubbleService
 import com.aks_labs.pixelflow.data.SharedPrefsManager.ThemeMode
 import java.io.File
 import kotlinx.coroutines.flow.Flow
@@ -102,8 +102,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Start the floating bubble service
      */
     fun startFloatingBubbleService(context: Context) {
-        val intent = Intent(context, ViewBasedFloatingBubbleService::class.java)
-        intent.action = ViewBasedFloatingBubbleService.ACTION_START_FROM_APP
+        val intent = Intent(context, ComposeFloatingBubbleService::class.java)
+        intent.action = ComposeFloatingBubbleService.ACTION_START_FROM_APP
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
         } else {
@@ -115,7 +115,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Stop the floating bubble service
      */
     fun stopFloatingBubbleService(context: Context) {
-        val intent = Intent(context, ViewBasedFloatingBubbleService::class.java)
+        val intent = Intent(context, ComposeFloatingBubbleService::class.java)
         context.stopService(intent)
     }
 
@@ -176,6 +176,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun getScreenshotsForFolder(folderId: Long): List<SimpleScreenshot> {
         return sharedPrefsManager.getScreenshotsByFolder(folderId)
+    }
+
+    /**
+     * Get screenshots for a specific folder as a Flow
+     */
+    fun getScreenshotsForFolderAsFlow(folderId: Long): Flow<List<SimpleScreenshot>> {
+        return allScreenshots.map { screenshots ->
+            screenshots.filter { it.folderId == folderId }
+        }
     }
 
     /**
@@ -376,16 +385,35 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // Refresh Logic
     fun refreshAlbums(context: Context, albums: List<SimpleFolder>, sortMode: com.aks_labs.pixelflow.data.models.MediaItemSortMode) {
          viewModelScope.launch {
-             albums.forEach { folder ->
-                  val thumbs = getSharedPrefsManager().getScreenshotsByFolder(folder.id)
-                      .sortedByDescending { it.savedTimestamp }
-                      .take(1)
-                  
-                  if (thumbs.isNotEmpty()) {
-                        _albumsThumbnailsMap[folder.id] = thumbs.first()
-                  }
-             }
+             refreshAlbumsAsync(albums)
          }
+    }
+
+    /**
+     * Asynchronous version of refreshAlbums that can be awaited
+     */
+    suspend fun refreshAlbumsAsync(albums: List<SimpleFolder>) {
+         android.util.Log.d("refreshAlbumsAsync", "Starting refresh for ${albums.size} albums")
+         
+         albums.forEach { folder ->
+              // Scan the actual filesystem folder for images
+              val thumbs = getSharedPrefsManager().getImagesFromFolder(folder.name)
+                  .sortedByDescending { it.savedTimestamp }
+                  .take(1)
+              
+              android.util.Log.d("refreshAlbumsAsync", "Folder '${folder.name}' (id=${folder.id}): found ${thumbs.size} thumbnails")
+              
+              if (thumbs.isNotEmpty()) {
+                    _albumsThumbnailsMap[folder.id] = thumbs.first()
+                    android.util.Log.d("refreshAlbumsAsync", "Stored thumbnail for '${folder.name}': ${thumbs.first().filePath}")
+              } else {
+                    // Remove from map if no screenshots in folder
+                    _albumsThumbnailsMap.remove(folder.id)
+                    android.util.Log.d("refreshAlbumsAsync", "No images found in folder '${folder.name}'")
+              }
+         }
+         
+         android.util.Log.d("refreshAlbumsAsync", "Refresh complete. Total thumbnails: ${_albumsThumbnailsMap.size}")
     }
     
     // Helper to expose sharedManager
