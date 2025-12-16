@@ -188,6 +188,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * Get screenshots for a specific folder by folder name (scans filesystem)
+     */
+    fun getScreenshotsForFolderByNameAsFlow(folderName: String): Flow<List<SimpleScreenshot>> {
+        return kotlinx.coroutines.flow.flowOf(
+            getSharedPrefsManager().getImagesFromFolder(folderName)
+        )
+    }
+
+    /**
      * Get the number of screenshots in a folder
      */
     fun getScreenshotCountForFolder(folderId: Long): Int {

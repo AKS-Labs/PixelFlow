@@ -57,7 +57,15 @@ fun FolderDetailsScreen(
     folderId: Long
 ) {
     val context = LocalContext.current
-    val screenshots by viewModel.getScreenshotsForFolderAsFlow(folderId).collectAsState(initial = emptyList())
+    
+    // Get Folder Name first
+    val folders by viewModel.folders.collectAsState(initial = emptyList())
+    val folderName = remember(folders, folderId) {
+        folders.find { it.id == folderId }?.name ?: "Folder"
+    }
+
+    // Get screenshots by folder name (scans filesystem)
+    val screenshots by viewModel.getScreenshotsForFolderByNameAsFlow(folderName).collectAsState(initial = emptyList())
 
     // Refresh function (can be removed if not used elsewhere, but keeping for now)
     fun refreshScreenshots() {
@@ -69,14 +77,6 @@ fun FolderDetailsScreen(
     LaunchedEffect(folderId) {
         // Data is now collected via flow, so manual refresh on launch is not strictly necessary
         // unless there's a specific reason to force a ViewModel data refresh.
-    }
-    
-    // Get Folder Name (Need a way to get it, or pass it from navigation? Or query VM)
-    // VM doesn't have getFolderById easily exposed as flow without searching list.
-    // We will just find it from folders flow for title.
-    val folders by viewModel.folders.collectAsState(initial = emptyList())
-    val folderName = remember(folders, folderId) {
-        folders.find { it.id == folderId }?.name ?: "Folder"
     }
 
     val selectionManager = rememberSelectionManager()
