@@ -331,4 +331,65 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setGridColumns(columns: Int) {
         _gridColumns.value = columns
     }
+
+    // --- Compatibility Region for FolderScreen ---
+
+    // Sort Mode
+    private val _sortMode = MutableStateFlow(com.aks_labs.pixelflow.data.models.MediaItemSortMode.DateTaken)
+    val sortMode = _sortMode.asStateFlow()
+
+    // Album Column Size
+    val albumColumnSize = MutableStateFlow(2)
+    val allAvailableAlbums = folders
+
+    // Thumbnails Map
+    private val _albumsThumbnailsMap = androidx.compose.runtime.mutableStateMapOf<Long, SimpleScreenshot>()
+    val albumsThumbnailsMap: Map<Long, SimpleScreenshot> get() = _albumsThumbnailsMap
+
+    // Settings Delegate
+    val settings = SettingsDelegate()
+
+    inner class SettingsDelegate {
+        val AlbumsList = AlbumsListDelegate()
+        val DefaultTabs = DefaultTabsDelegate()
+    }
+
+    inner class AlbumsListDelegate {
+        fun getNormalAlbums() = folders
+        fun getAlbumSortMode() = _albumSortMode.asStateFlow()
+        fun getSortByDescending() = _sortByDescending.asStateFlow()
+        suspend fun setAlbumsList(list: List<SimpleFolder>) {
+             // Logic to reorder would go here (e.g., update DB position)
+        }
+        fun setAlbumSortMode(mode: com.aks_labs.pixelflow.data.models.AlbumSortMode) { _albumSortMode.value = mode }
+        fun setSortByDescending(desc: Boolean) { _sortByDescending.value = desc }
+    }
+
+    inner class DefaultTabsDelegate {
+         fun getTabList() = kotlinx.coroutines.flow.flowOf(emptyList<String>())
+    }
+
+    // Internal state for sorting
+    private val _albumSortMode = MutableStateFlow(com.aks_labs.pixelflow.data.models.AlbumSortMode.Custom)
+    private val _sortByDescending = MutableStateFlow(true)
+
+    // Refresh Logic
+    fun refreshAlbums(context: Context, albums: List<SimpleFolder>, sortMode: com.aks_labs.pixelflow.data.models.MediaItemSortMode) {
+         viewModelScope.launch {
+             albums.forEach { folder ->
+                  val thumbs = getSharedPrefsManager().getScreenshotsByFolder(folder.id)
+                      .sortedByDescending { it.savedTimestamp }
+                      .take(1)
+                  
+                  if (thumbs.isNotEmpty()) {
+                        _albumsThumbnailsMap[folder.id] = thumbs.first()
+                  }
+             }
+         }
+    }
+    
+    // Helper to expose sharedManager
+    fun getSharedPrefsManager() = sharedPrefsManager
+
+    // --- End Compatibility Region ---
 }

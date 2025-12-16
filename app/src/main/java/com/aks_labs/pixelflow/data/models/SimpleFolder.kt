@@ -11,5 +11,9 @@ data class SimpleFolder(
     val isDefault: Boolean = false,
     val isEditable: Boolean = true,  // All folders are editable by default
     val isRemovable: Boolean = true, // All folders are removable by default
+    val isPinned: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
-)
+) {
+    val isCustomAlbum: Boolean
+        get() = !isDefault
+}

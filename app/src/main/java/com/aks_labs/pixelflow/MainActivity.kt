@@ -37,7 +37,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
-import com.aks_labs.pixelflow.ui.screens.FolderManagementScreen
+import com.aks_labs.pixelflow.ui.screens.FolderScreen
+import com.aks_labs.pixelflow.ui.screens.FolderDetailsScreen
 import com.aks_labs.pixelflow.ui.screens.ImprovedHomeScreen
 import com.aks_labs.pixelflow.ui.screens.PermissionSetupScreen
 import com.aks_labs.pixelflow.ui.screens.SettingsScreen
@@ -282,7 +283,11 @@ fun PixelFlowApp(
                 SettingsScreen(navController, viewModel, isBubbleEnabled)
             }
             composable("folders") {
-                FolderManagementScreen(navController, viewModel)
+                FolderScreen(navController, viewModel)
+            }
+            composable("folder_details/{folderId}") { backStackEntry ->
+                val folderId = backStackEntry.arguments?.getString("folderId")?.toLongOrNull() ?: 0L
+                FolderDetailsScreen(navController, viewModel, folderId)
             }
         }
     }
