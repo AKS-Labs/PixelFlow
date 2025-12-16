@@ -2,29 +2,46 @@ package com.aks_labs.pixelflow.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.outlined.CheckCircle
+//import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aks_labs.pixelflow.R
@@ -38,11 +55,19 @@ fun SettingsScreen(
     isBubbleEnabled: Boolean
 ) {
     val context = LocalContext.current
-    
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(id = R.string.settings)) },
+            LargeTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.settings),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
@@ -50,69 +75,173 @@ fun SettingsScreen(
                             contentDescription = "Back"
                         )
                     }
-                }
+                },
+                scrollBehavior = scrollBehavior,
+                colors = TopAppBarDefaults.largeTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.surface
+                )
             )
         }
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp)
+                .padding(innerPadding),
+            contentPadding = PaddingValues(bottom = 24.dp)
         ) {
-            // Floating Bubble Setting
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.enable_floating_bubble),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Switch(
+            item {
+                SettingsSectionHeader(title = "General")
+            }
+
+            item {
+                SettingsSwitchItem(
+                    title = stringResource(id = R.string.enable_floating_bubble),
+                    subtitle = "Show a floating bubble after taking a screenshot",
+                    icon = Icons.Outlined.CheckCircle,
                     checked = isBubbleEnabled,
-                    onCheckedChange = { viewModel.setBubbleEnabled(it) },
-                    modifier = Modifier.align(Alignment.Start)
+                    onCheckedChange = { viewModel.setBubbleEnabled(it) }
                 )
             }
+
+            item {
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+            }
+
+            item {
+                SettingsSectionHeader(title = "Organization")
+            }
+
+            item {
+                SettingsNavigationItem(
+                    title = stringResource(id = R.string.manage_folders),
+                    subtitle = "Create and edit your collections",
+                    icon = Icons.Default.ArrowBack,
+                    onClick = { navController.navigate("folders") }
+                )
+            }
+
+            item {
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+            }
+
+            item {
+                SettingsSectionHeader(title = "Permissions")
+            }
             
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // Overlay Permission Button (if needed)
-            if (!viewModel.hasOverlayPermission(context)) {
-                Button(
+            item {
+                val hasOverlay = viewModel.hasOverlayPermission(context)
+                SettingsNavigationItem(
+                    title = "Overlay Permission",
+                    subtitle = if (hasOverlay) "Granted" else "Tap to grant permission",
+                    icon = Icons.Default.ArrowBack, // Fallback for Layers
                     onClick = {
-                        context.startActivity(viewModel.getOverlayPermissionIntent(context))
+                         if (!hasOverlay) {
+                             context.startActivity(viewModel.getOverlayPermissionIntent(context))
+                         }
                     },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = "Grant Overlay Permission")
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
+                    trailingContent = {
+                         if (hasOverlay) {
+                             Text(
+                                 text = "On",
+                                 style = MaterialTheme.typography.bodyMedium,
+                                 color = MaterialTheme.colorScheme.primary
+                             )
+                         }
+                    }
+                )
             }
-            
-            // Folder Management Button
-            Button(
-                onClick = { navController.navigate("folders") },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = stringResource(id = R.string.manage_folders))
-            }
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // Screenshot History Button
-            Button(
-                onClick = { navController.navigate("history") },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = stringResource(id = R.string.screenshot_history))
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                 item {
+                     SettingsNavigationItem(
+                         title = "Notification Permission",
+                         subtitle = "Required for background analysis",
+                         icon = Icons.Default.ArrowBack,
+                         onClick = {
+                             val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                 putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                             }
+                             context.startActivity(intent)
+                         }
+                     )
+                 }
             }
         }
     }
+}
+
+@Composable
+fun SettingsSectionHeader(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
+    )
+}
+
+@Composable
+fun SettingsSwitchItem(
+    title: String,
+    subtitle: String? = null,
+    icon: ImageVector? = null,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    ListItem(
+        headlineContent = { Text(text = title, fontWeight = FontWeight.Medium) },
+        supportingContent = subtitle?.let { { Text(text = it) } },
+        leadingContent = icon?.let {
+            {
+                Icon(
+                    imageVector = it,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        },
+        trailingContent = {
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                    checkedTrackColor = MaterialTheme.colorScheme.primary
+                )
+            )
+        },
+        colors = ListItemDefaults.colors(
+            containerColor = Color.Transparent
+        ),
+        modifier = Modifier.clickable { onCheckedChange(!checked) }
+    )
+}
+
+@Composable
+fun SettingsNavigationItem(
+    title: String,
+    subtitle: String? = null,
+    icon: ImageVector? = null,
+    onClick: () -> Unit,
+    trailingContent: @Composable (() -> Unit)? = null
+) {
+    ListItem(
+        headlineContent = { Text(text = title, fontWeight = FontWeight.Medium) },
+        supportingContent = subtitle?.let { { Text(text = it) } },
+        leadingContent = icon?.let {
+            {
+                Icon(
+                    imageVector = it,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        },
+        trailingContent = trailingContent,
+        colors = ListItemDefaults.colors(
+            containerColor = Color.Transparent
+        ),
+        modifier = Modifier.clickable(onClick = onClick)
+    )
 }

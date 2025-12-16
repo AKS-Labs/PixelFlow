@@ -1,16 +1,16 @@
 package com.aks_labs.pixelflow.ui.screens
 
 import android.Manifest
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,9 +28,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,13 +44,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.aks_labs.pixelflow.R
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.aks_labs.pixelflow.R
 import com.aks_labs.pixelflow.data.SharedPrefsManager
 import kotlinx.coroutines.launch
 
@@ -58,49 +63,41 @@ fun OnboardingScreen(
     navController: NavController,
     sharedPrefsManager: SharedPrefsManager
 ) {
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    // Define onboarding pages
     val pages = listOf(
         OnboardingPage(
-            title = "Organize Screenshots Effortlessly",
-            description = "The app automatically organizes your screenshots & generates AI summaries. Easily search and find the right screenshot based on content.",
+            title = "Organize Screenshots\nEffortlessly",
+            description = "The app automatically organizes your screenshots & generates AI summaries. Easily search and find the right screenshot.",
             permissionType = null,
             imageResId = R.drawable.ic_onboarding_organize
         ),
         OnboardingPage(
             title = "How PixelFlow Works",
-            description = "Your screenshots never leave your device. All text extraction is done locally to ensure your privacy & none of your images are ever uploaded to the cloud.",
+            description = "Your screenshots never leave your device. All text extraction is done locally to ensure your privacy.",
             permissionType = null,
             imageResId = R.drawable.ic_onboarding_privacy
         ),
         OnboardingPage(
             title = "Storage Permission",
-            description = "To analyze your screenshots & create searchable versions, we need access to your photos. This will allow you to easily find & retrieve specific screenshots whenever you need them.",
+            description = "We need access to your photos to analyze and create searchable versions. Your data stays safe on your device.",
             permissionType = PermissionType.STORAGE,
             imageResId = R.drawable.ic_onboarding_storage
         ),
         OnboardingPage(
             title = "Notification Permission",
-            description = "To analyze your screenshots in the background, we need notification permission. This will also allow us to show you the progress of the number of screenshots analyzed.",
+            description = "Allow notifications to keep you updated on analyzing progress in the background.",
             permissionType = PermissionType.NOTIFICATION,
             imageResId = R.drawable.ic_onboarding_notification
         )
     )
 
-    // Pager state
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        pageCount = { pages.size }
-    )
+    val pagerState = rememberPagerState(pageCount = { pages.size })
 
-    // Permission request launchers
     val storagePermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            // Permission granted, move to next page
             scope.launch {
                 if (pagerState.currentPage < pages.size - 1) {
                     pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -111,71 +108,66 @@ fun OnboardingScreen(
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        // Even if not granted, we'll complete onboarding
-        // Mark onboarding as completed
+    ) {
+        // Proceed regardless of result
         sharedPrefsManager.setOnboardingCompleted(true)
-        // Navigate to home screen
         navController.navigate("home") {
             popUpTo("onboarding") { inclusive = true }
         }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background
+    ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
-            // Pager for onboarding pages
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
-                    .fillMaxWidth()
                     .weight(1f)
+                    .fillMaxWidth()
             ) { page ->
                 OnboardingPageContent(
                     page = pages[page],
-                    pageIndex = page
+                    isActive = pagerState.currentPage == page
                 )
             }
 
-            // Bottom navigation (dots and button)
-            Box(
+            // Bottom controls
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Page indicator dots
+                // Indicators
                 Row(
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(8.dp),
+                    modifier = Modifier.padding(bottom = 32.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     repeat(pages.size) { index ->
+                        val isSelected = pagerState.currentPage == index
                         Box(
                             modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
+                                .height(8.dp)
+                                .width(if (isSelected) 24.dp else 8.dp)
+                                .clip(RoundedCornerShape(4.dp))
                                 .background(
-                                    if (pagerState.currentPage == index)
-                                        MaterialTheme.colorScheme.primary
-                                    else
-                                        MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
+                                    if (isSelected) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.surfaceVariant
                                 )
                         )
                     }
                 }
 
-                // Next/Continue button
+                val currentPage = pages[pagerState.currentPage]
                 val isLastPage = pagerState.currentPage == pages.size - 1
-                val buttonText = if (isLastPage) "Continue" else "Next"
 
                 Button(
                     onClick = {
-                        val currentPage = pages[pagerState.currentPage]
                         when (currentPage.permissionType) {
                             PermissionType.STORAGE -> {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -188,7 +180,6 @@ fun OnboardingScreen(
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                     notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                                 } else {
-                                    // For older versions, just complete onboarding
                                     sharedPrefsManager.setOnboardingCompleted(true)
                                     navController.navigate("home") {
                                         popUpTo("onboarding") { inclusive = true }
@@ -196,18 +187,26 @@ fun OnboardingScreen(
                                 }
                             }
                             null -> {
-                                // Just go to next page
                                 scope.launch {
-                                    if (pagerState.currentPage < pages.size - 1) {
-                                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                                    }
+                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
                                 }
                             }
                         }
                     },
-                    modifier = Modifier.align(Alignment.CenterEnd)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 ) {
-                    Text(buttonText)
+                    Text(
+                        text = if (isLastPage) "Get Started" else "Continue",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             }
         }
@@ -217,59 +216,55 @@ fun OnboardingScreen(
 @Composable
 fun OnboardingPageContent(
     page: OnboardingPage,
-    pageIndex: Int
+    isActive: Boolean
 ) {
-    var visible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(pageIndex) {
-        visible = false
-        // Small delay before fading in
-        kotlinx.coroutines.delay(100)
-        visible = true
-    }
-
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(animationSpec = tween(300)),
-        exit = fadeOut(animationSpec = tween(300))
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        AnimatedVisibility(
+            visible = isActive,
+            enter = fadeIn() + slideInVertically(initialOffsetY = { 40 }),
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { -40 })
         ) {
-            // Illustration
-            Image(
-                painter = painterResource(id = page.imageResId),
-                contentDescription = page.title,
-                modifier = Modifier
-                    .size(240.dp)
-                    .padding(16.dp)
-            )
+             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                 Box(
+                    modifier = Modifier
+                        .size(280.dp)
+                        .clip(RoundedCornerShape(40.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)),
+                    contentAlignment = Alignment.Center
+                 ) {
+                     Image(
+                         painter = painterResource(id = page.imageResId),
+                         contentDescription = null,
+                         modifier = Modifier.size(160.dp),
+                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
+                     )
+                 }
 
-            Spacer(modifier = Modifier.height(32.dp))
+                 Spacer(modifier = Modifier.height(48.dp))
 
-            // Title
-            Text(
-                text = page.title,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onBackground
-            )
+                 Text(
+                     text = page.title,
+                     style = MaterialTheme.typography.displaySmall,
+                     fontWeight = FontWeight.Bold,
+                     textAlign = TextAlign.Center,
+                     color = MaterialTheme.colorScheme.onBackground
+                 )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                 Spacer(modifier = Modifier.height(16.dp))
 
-            // Description
-            Text(
-                text = page.description,
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+                 Text(
+                     text = page.description,
+                     style = MaterialTheme.typography.bodyLarge,
+                     textAlign = TextAlign.Center,
+                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                 )
+             }
         }
     }
 }

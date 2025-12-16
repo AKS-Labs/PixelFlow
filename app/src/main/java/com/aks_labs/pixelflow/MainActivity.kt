@@ -40,7 +40,6 @@ import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
 import com.aks_labs.pixelflow.ui.screens.FolderManagementScreen
 import com.aks_labs.pixelflow.ui.screens.ImprovedHomeScreen
 import com.aks_labs.pixelflow.ui.screens.PermissionSetupScreen
-import com.aks_labs.pixelflow.ui.screens.ScreenshotHistoryScreen
 import com.aks_labs.pixelflow.ui.screens.SettingsScreen
 import com.aks_labs.pixelflow.ui.theme.PixelFlowTheme
 import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
@@ -184,10 +183,11 @@ class MainActivity : ComponentActivity() {
     fun startFloatingBubbleService() {
         try {
             Log.d(TAG, "Starting ViewBasedFloatingBubbleService")
-            val intent = Intent(this, ViewBasedFloatingBubbleService::class.java)
+            val intent = Intent(this, com.aks_labs.pixelflow.services.ComposeFloatingBubbleService::class.java)
 
             // Add a specific action to indicate this is a normal start
-            intent.action = ViewBasedFloatingBubbleService.ACTION_START_FROM_APP
+            intent.action = com.aks_labs.pixelflow.services.ComposeFloatingBubbleService.ACTION_RESTART_SERVICE // Or START_FROM_APP if available, checking file content it accepts "START_FROM_APP"
+            intent.action = "START_FROM_APP"
 
             // For Android 8.0 (Oreo) and above, we need to start as a foreground service
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -203,7 +203,7 @@ class MainActivity : ComponentActivity() {
 
             // Schedule a check to verify the service is running
             Handler(Looper.getMainLooper()).postDelayed({
-                if (!ViewBasedFloatingBubbleService.isRunning()) {
+                if (!com.aks_labs.pixelflow.services.ComposeFloatingBubbleService.isRunning()) {
                     Log.w(TAG, "Service not running after start request, trying again")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         startForegroundService(intent)
@@ -283,9 +283,6 @@ fun PixelFlowApp(
             }
             composable("folders") {
                 FolderManagementScreen(navController, viewModel)
-            }
-            composable("history") {
-                ScreenshotHistoryScreen(navController, viewModel)
             }
         }
     }

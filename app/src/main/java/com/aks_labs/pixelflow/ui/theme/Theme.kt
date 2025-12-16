@@ -22,45 +22,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aks_labs.pixelflow.data.SharedPrefsManager.ThemeMode
 import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
 
-// Define the specific background color requested
-val SpecificBackgroundColor = Color(0xFFEAEFF5)
-
-private val DarkColorScheme = darkColorScheme(
-    primary = DarkAccent,
-    secondary = DarkSecondary,
-    tertiary = InfoBlue,
-    // Use the specific background color as requested
-    background = SpecificBackgroundColor,
-    surface = DarkSurface,
-    surfaceVariant = DarkCardBackground,
-    error = ErrorRed,
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color.Black, // Changed to black for better contrast on light background
-    onSurface = Color.White,
-    onSurfaceVariant = Color.White.copy(alpha = 0.8f),
-    onError = Color.White
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = LightAccent,
-    secondary = LightSecondary,
-    tertiary = InfoBlue,
-    // Use the specific background color as requested
-    background = SpecificBackgroundColor,
-    surface = LightSurface,
-    surfaceVariant = LightCardBackground,
-    error = ErrorRed,
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    onSurfaceVariant = Color.Black.copy(alpha = 0.8f),
-    onError = Color.White
-)
-
 @Composable
 fun PixelFlowTheme(
     // These parameters are optional and will be overridden by the viewModel's theme mode if provided
@@ -83,15 +44,27 @@ fun PixelFlowTheme(
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            // Use dynamic colors but modify the background to use our specific color
-            val dynamicScheme = if (useDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-            // Create a copy of the dynamic scheme with our specific background color
-            dynamicScheme.copy(
-                background = SpecificBackgroundColor
-            )
+            if (useDarkTheme) {
+                // For Dark Mode, we want to support AMOLED black
+                // We'll take the dynamic dark scheme but force the background to black
+                dynamicDarkColorScheme(context).copy(
+                    background = Color.Black,
+                    surface = Color.Black,
+                    // surfaceContainer not available in M3 1.1.2
+                    onBackground = Color.White,
+                    onSurface = Color.White
+                )
+            } else {
+                dynamicLightColorScheme(context)
+            }
         }
-        useDarkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        useDarkTheme -> darkColorScheme(
+             background = Color.Black,
+             surface = Color.Black,
+             onBackground = Color.White,
+             onSurface = Color.White
+        ) // Fallback if dynamic not available
+        else -> lightColorScheme()
     }
 
     // Set up transparent status bar
@@ -115,7 +88,7 @@ fun PixelFlowTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = Typography, // Assuming Typography is defined in Type.kt
         content = content
     )
 }
