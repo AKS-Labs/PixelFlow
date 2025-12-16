@@ -32,11 +32,20 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -65,18 +74,26 @@ fun ScreenshotCarousel(
     onEdit: (SimpleScreenshot) -> Unit = {},
     onMove: (SimpleScreenshot) -> Unit = {},
     onAddNote: (SimpleScreenshot) -> Unit = {},
-    onPageChanged: (Int) -> Unit = {} // Note: We might optimize this to not update on every scroll for performance
+    onPageChanged: (Int) -> Unit = {}
 ) {
-    val context = LocalContext.current
+    var currentIndex by remember { mutableStateOf(initialIndex) }
+    val currentScreenshot = screenshots.getOrNull(currentIndex)
+    
+    val metadata = remember(currentScreenshot) {
+        currentScreenshot?.let { getScreenshotMetadata(it) }
+    }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.surfaceVariant, // M3 Expressive Dynamic Color fallback
+        contentWindowInsets = WindowInsets(0, 0, 0, 0), // Handle insets manually for full control
         topBar = {
             TopAppBar(
                 title = { 
                     Text(
-                        "Carousel",
-                        style = MaterialTheme.typography.titleLarge
+                        text = metadata?.filename ?: "Carousel",
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     ) 
                 },
                 navigationIcon = {
@@ -96,115 +113,190 @@ fun ScreenshotCarousel(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant, // Match Scaffold
                     titleContentColor = MaterialTheme.colorScheme.onSurface,
                     navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
                     actionIconContentColor = MaterialTheme.colorScheme.onSurface
-                )
+                ),
+                windowInsets = WindowInsets.statusBars // Apply status bar padding correctly
             )
         }
-    ) { innerPadding ->
+    ) {
+        innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Action Buttons Row - moved above carousel as requested
+            Spacer(modifier = Modifier.size(70.dp))
+            
+            // Metadata Section
+            if (metadata != null) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                ) {
+                    // Path Display
+                    Text(
+                        text = metadata.path,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    
+                    Spacer(modifier = Modifier.size(4.dp))
+                    
+                    // Chips Row
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        MetadataChip(text = metadata.size, color = MaterialTheme.colorScheme.secondaryContainer)
+                        MetadataChip(text = metadata.resolution, color = MaterialTheme.colorScheme.tertiaryContainer)
+                        MetadataChip(text = "${metadata.megaPixels} MP", color = MaterialTheme.colorScheme.primaryContainer)
+                        MetadataChip(text = metadata.date, color = MaterialTheme.colorScheme.surfaceVariant)
+                    }
+                }
+            }
+
+            // Action Buttons Row (Right Aligned as requested, below metadata)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                    .padding(horizontal = 5.dp, vertical = 1.dp),
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                 // We need a current screenshot for these actions.
-                 // Limitation: With AndroidView RecyclerView, getting the "current" item reactively 
-                 // back to Compose state efficiently during scroll can be tricky.
-                 // However, M3 Carousel snaps to items.
-                 // For now, these buttons will act on the "centered" item.
-                 // We will need to track the current index from the RecyclerView.
-                 // But for this implementation step, let's assume valid click handling 
-                 // requires state sync.
-                 
-                 // Since tracking scroll position reactively to update these buttons 
-                 // might add complexity, and the requirement was just "move them above",
-                 // we might need to assume 'current' index is tracked via onPageChanged.
-                 // We'll trust onPageChanged updates 'initialIndex' or similar state in parent?
-                 // Wait, 'initialIndex' is just initial.
-                 // The parent keeps track of 'selectedScreenshotIndex'. 
-                 // 'onPageChanged' updates it. So we PROBABLY have the correct index 
-                 // if onPageChanged works reliably.
-                 
-                 val currentScreenshot = screenshots.getOrNull(initialIndex) // This might be stale if 'initialIndex' isn't updated by parent re-composition
-                 
                  if (currentScreenshot != null) {
-                     CarouselActionButton(Icons.Default.Add, "Add Note") { onAddNote(currentScreenshot) }
-                     CarouselActionButton(Icons.Default.Send, "Move") { onMove(currentScreenshot) }
-                     CarouselActionButton(Icons.Default.Edit, "Edit") { onEdit(currentScreenshot) }
                      CarouselActionButton(Icons.Default.Share, "Share") { onShare(currentScreenshot) }
+                     CarouselActionButton(Icons.Default.Edit, "Edit") { onEdit(currentScreenshot) }
                      CarouselActionButton(Icons.Default.Delete, "Delete") { onDelete(currentScreenshot) }
                  }
             }
 
-            Spacer(modifier = Modifier.size(8.dp))
+//            Spacer(modifier = Modifier.size(4.dp))
 
             // The View-based Carousel
-            AndroidView(
+            // We wrap it in a box to manage padding/cutout if needed
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
-                factory = { ctx ->
-                    RecyclerView(ctx).apply {
-                        layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                        )
-                        clipChildren = false
-                        clipToPadding = false
-                        
-                        // Vertical fullscreen strategy
-                        layoutManager = CarouselLayoutManager(FullScreenCarouselStrategy(), RecyclerView.VERTICAL)
-                        
-                        adapter = CarouselAdapter(screenshots) {
-                            onScreenshotClick()
-                        }
-                        
-                        val snapHelper = CarouselSnapHelper()
-                        snapHelper.attachToRecyclerView(this)
+                    .weight(1f)
+                    .padding(16.dp)
+                    // The user said "no padding for corousel" - assume they mean edge-to-edge
+                    // But standard M3 carousel usually has start/end padding for next items peeking.
+                    // If they want it like the 2nd screenshot (Fullscreen one), it might be truly full width?
+                    // "it's not looking like the 2nd screenshot their is no padding for corousel"
+                    // If 2nd screenshot IS the target, and it has padding, then we need padding.
+                    // If 2nd screenshot is the "bad" one, then we remove padding.
+                    // Ambiguous. I will add minimal horizontal padding to allow peeking, 
+                    // which is the signature Carousel look.
+            ) {
+                AndroidView(
+                    modifier = Modifier.fillMaxSize(),
+                    factory = { ctx ->
+                        RecyclerView(ctx).apply {
+                            layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            )
+                            clipChildren = false
+                            clipToPadding = false
+                            
+                            layoutManager = CarouselLayoutManager(FullScreenCarouselStrategy(), RecyclerView.VERTICAL)
+                            
+                            adapter = CarouselAdapter(screenshots) {
+                                onScreenshotClick()
+                            }
+                            
+                            val snapHelper = CarouselSnapHelper()
+                            snapHelper.attachToRecyclerView(this)
 
-                        // Scroll to initial position
-                        scrollToPosition(initialIndex)
+                            scrollToPosition(initialIndex)
 
-                        // Add scroll listener to update page
-                        addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                                super.onScrollStateChanged(recyclerView, newState)
-                                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                                    val lm = layoutManager as? CarouselLayoutManager ?: return
-                                    // Use the snap helper to find the center view
-                                    val snapView = snapHelper.findSnapView(lm)
-                                    if (snapView != null) {
-                                        val position = lm.getPosition(snapView)
-                                        if (position != RecyclerView.NO_POSITION) {
-                                            onPageChanged(position)
+                            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                                    super.onScrollStateChanged(recyclerView, newState)
+                                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                                        val lm = layoutManager as? CarouselLayoutManager ?: return
+                                        val snapView = snapHelper.findSnapView(lm)
+                                        if (snapView != null) {
+                                            val position = lm.getPosition(snapView)
+                                            if (position != RecyclerView.NO_POSITION) {
+                                                currentIndex = position
+                                                onPageChanged(position)
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        })
+                            })
+                        }
                     }
-                },
-                update = { recyclerView ->
-                    // Handle updates if list changes, etc.
-                    // For now, we assume static list for this view session.
-                    // If 'initialIndex' changes externally, we might want to scroll?
-                    // But usually that causes loop if we also report back. 
-                    // We'll ignore external index updates for now to prevent stutter.
-                }
-            )
+                )
+            }
         }
     }
 }
+
+@Composable
+fun MetadataChip(text: String, color: Color) {
+    Box(
+        modifier = Modifier
+            .background(color, MaterialTheme.shapes.small)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
+data class ScreenshotMetadata(
+    val filename: String,
+    val path: String,
+    val size: String,
+    val resolution: String,
+    val megaPixels: String,
+    val date: String
+)
+
+fun getScreenshotMetadata(screenshot: SimpleScreenshot): ScreenshotMetadata {
+    val file = File(screenshot.filePath)
+    val filename = file.name
+    val size = formatFileSize(file.length())
+    val date = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.getDefault())
+        .format(java.util.Date(screenshot.originalTimestamp))
+    
+    // Calculate resolution and MP (requires decoding bounds, done safely)
+    val options = android.graphics.BitmapFactory.Options().apply {
+        inJustDecodeBounds = true
+    }
+    android.graphics.BitmapFactory.decodeFile(screenshot.filePath, options)
+    val width = options.outWidth
+    val height = options.outHeight
+    val resolution = "$width x $height"
+    val mp = String.format("%.1f", (width * height) / 1_000_000f)
+
+    return ScreenshotMetadata(filename, screenshot.filePath, size, resolution, mp, date)
+}
+
+fun formatFileSize(size: Long): String {
+    val kb = size / 1024.0
+    val mb = kb / 1024.0
+    return when {
+        mb >= 1 -> String.format("%.2f MB", mb)
+        kb >= 1 -> String.format("%.2f KB", kb)
+        else -> "$size B"
+    }
+}
+
 
 @Composable
 fun CarouselActionButton(
@@ -241,14 +333,11 @@ private class CarouselAdapter(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             ).apply {
-                // Add some margin for the 'carousel' look if needed, 
-                // but fullscreen usually takes full width/height.
-                // FullScreenCarouselStrategy expects items to fill container.
+                val margin = (context.resources.displayMetrics.density * 4).toInt() // 4dp margin
+                setMargins(margin, 0, margin, 0)
             }
-            // Set shape appearance - likely standard or rounded
-            // We can set uniform rounded corners programmatically
             shapeAppearanceModel = ShapeAppearanceModel.builder()
-                .setAllCornerSizes(32f) // 32dp equivalent roughly or use dimension resource
+                .setAllCornerSizes(context.resources.displayMetrics.density * 28)
                 .build()
         }
 
