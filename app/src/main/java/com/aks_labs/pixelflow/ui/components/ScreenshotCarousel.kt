@@ -84,8 +84,8 @@ fun ScreenshotCarousel(
     }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.surfaceVariant, // M3 Expressive Dynamic Color fallback
-        contentWindowInsets = WindowInsets(0, 0, 0, 0), // Handle insets manually for full control
+        containerColor = MaterialTheme.colorScheme.background, // M3 Expressive Dynamic Color fallback
+//        contentWindowInsets = WindowInsets(0, 0, 0, 0), // Handle insets manually for full control
         topBar = {
             TopAppBar(
                 title = { 
@@ -113,7 +113,7 @@ fun ScreenshotCarousel(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant, // Match Scaffold
+                    containerColor = MaterialTheme.colorScheme.background, // Match Scaffold
                     titleContentColor = MaterialTheme.colorScheme.onSurface,
                     navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
                     actionIconContentColor = MaterialTheme.colorScheme.onSurface

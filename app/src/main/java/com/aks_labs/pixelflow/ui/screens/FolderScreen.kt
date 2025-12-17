@@ -271,15 +271,15 @@ fun FolderScreen(
         }
         */
 
-        SortModeHeader(
-            sortMode = sortMode,
-            currentView = currentView,
-            progress = 0f, // pullToRefreshState.distanceFraction.coerceAtMost(1f),
-            modifier = Modifier
-                .height(56.dp) // Fixed ambiguous height call
-                .zIndex(1f),
-            viewModel = mainViewModel
-        )
+//        SortModeHeader(
+//            sortMode = sortMode,
+//            currentView = currentView,
+//            progress = 0f, // pullToRefreshState.distanceFraction.coerceAtMost(1f),
+//            modifier = Modifier
+//                .height(56.dp) // Fixed ambiguous height call
+//                .zIndex(1f),
+//            viewModel = mainViewModel
+//        )
 
         val coroutineScope = rememberCoroutineScope()
         val columnSize by mainViewModel.albumColumnSize.collectAsState()
