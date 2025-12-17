@@ -428,18 +428,17 @@ fun ImprovedHomeScreen(
                                         com.aks_labs.pixelflow.ui.components.AlbumCarousel(
                                             folders = folders,
                                             onAlbumClick = { folder ->
-                                                // Navigate to folder details
-                                                // Assuming we have a route for this, or we just print for now.
-                                                // Based on FolderManagementScreen, it's not clear what the route is for folder details or if it exists.
-                                                // We will assume "folder/{folderId}" or similar if it existed. 
-                                                // For now, let's look at FolderManagementScreen... it doesn't navigate to details???
-                                                // Ah, FolderScreen.kt might have "folder_details/{folderId}". 
-                                                // Let's assume a safe generic navigation or just log.
-                                                // Using "folder_details/${folder.id}" as a likely candidate.
                                                 navController.navigate("folder_details/${folder.id}")
                                             },
-                                            getThumbnailPath = { folderId ->
-                                                viewModel.albumsThumbnailsMap[folderId]?.thumbnailPath
+                                            onSeeAllClick = {
+                                                navController.navigate("manage_folders")
+                                            },
+                                            getThumbnailPaths = { folderId ->
+                                                // Ideally ViewModel should expose this directly or we call it.
+                                                // MainViewModel has getScreenshotThumbnailsForFolder(folderId)
+                                                // We need to access it. 
+                                                // ImprovedHomeScreen has viewModel passed in.
+                                                viewModel.getScreenshotThumbnailsForFolder(folderId)
                                             }
                                         )
                                     }

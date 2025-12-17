@@ -288,6 +288,9 @@ fun PixelFlowApp(
                 val folderId = backStackEntry.arguments?.getString("folderId")?.toLongOrNull() ?: 0L
                 FolderDetailsScreen(navController, viewModel, folderId)
             }
+            composable("manage_folders") {
+                com.aks_labs.pixelflow.ui.screens.FolderManagementScreen(navController, viewModel)
+            }
         }
     }
 }
