@@ -183,13 +183,12 @@ class MainActivity : ComponentActivity() {
 
     fun startFloatingBubbleService() {
         try {
-            Log.d(TAG, "Starting ComposeFloatingBubbleService")
-            val intent = Intent(this, com.aks_labs.pixelflow.services.ComposeFloatingBubbleService::class.java)
+            Log.d(TAG, "Starting ViewBasedFloatingBubbleService")
+            val intent = Intent(this, com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService::class.java)
 
             // Add a specific action to indicate this is a normal start
-            intent.action = com.aks_labs.pixelflow.services.ComposeFloatingBubbleService.ACTION_RESTART_SERVICE // Or START_FROM_APP if available, checking file content it accepts "START_FROM_APP"
-            intent.action = "START_FROM_APP"
-
+            intent.action = com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService.ACTION_START_FROM_APP
+            
             // For Android 8.0 (Oreo) and above, we need to start as a foreground service
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Log.d(TAG, "Starting foreground service on Android O+")
@@ -204,7 +203,7 @@ class MainActivity : ComponentActivity() {
 
             // Schedule a check to verify the service is running
             Handler(Looper.getMainLooper()).postDelayed({
-                if (!com.aks_labs.pixelflow.services.ComposeFloatingBubbleService.isRunning()) {
+                if (!com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService.isRunning()) {
                     Log.w(TAG, "Service not running after start request, trying again")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         startForegroundService(intent)
@@ -214,7 +213,7 @@ class MainActivity : ComponentActivity() {
                 }
             }, 5000) // Check after 5 seconds
         } catch (e: Exception) {
-            Log.e(TAG, "Error starting ComposeFloatingBubbleService", e)
+            Log.e(TAG, "Error starting ViewBasedFloatingBubbleService", e)
             Toast.makeText(this, "Error starting service: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }

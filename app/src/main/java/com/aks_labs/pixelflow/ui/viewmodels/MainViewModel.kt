@@ -22,7 +22,7 @@ import com.aks_labs.pixelflow.data.models.SimpleFolder
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
 import com.aks_labs.pixelflow.data.paging.ScreenshotPagingSource
 import com.aks_labs.pixelflow.pixelFlowApp
-import com.aks_labs.pixelflow.services.ComposeFloatingBubbleService
+import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
 import com.aks_labs.pixelflow.data.SharedPrefsManager.ThemeMode
 import java.io.File
 import kotlinx.coroutines.flow.Flow
@@ -101,9 +101,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * Start the floating bubble service
      */
+    /**
+     * Start the floating bubble service
+     */
     fun startFloatingBubbleService(context: Context) {
-        val intent = Intent(context, ComposeFloatingBubbleService::class.java)
-        intent.action = ComposeFloatingBubbleService.ACTION_START_FROM_APP
+        val intent = Intent(context, ViewBasedFloatingBubbleService::class.java)
+        intent.action = ViewBasedFloatingBubbleService.ACTION_START_FROM_APP
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(intent)
         } else {
@@ -115,7 +118,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Stop the floating bubble service
      */
     fun stopFloatingBubbleService(context: Context) {
-        val intent = Intent(context, ComposeFloatingBubbleService::class.java)
+        val intent = Intent(context, ViewBasedFloatingBubbleService::class.java)
         context.stopService(intent)
     }
 
