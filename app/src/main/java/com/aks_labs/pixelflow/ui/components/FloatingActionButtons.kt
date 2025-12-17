@@ -388,8 +388,8 @@ class FloatingActionButtons(
             // Set the button color based on highlight state
             if (isHighlighted) {
                 if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                     // Use Primary Container for highlight as requested
-                     buttonPaint.color = getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer, Color.parseColor("#EADDFF"))
+                     // Use Primary Container for highlight as requested (fallback to strong purple for contrast)
+                     buttonPaint.color = getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer, Color.parseColor("#9647DB"))
                 } else {
                      buttonPaint.color = ContextCompat.getColor(context, R.color.colorAccent)
                 }

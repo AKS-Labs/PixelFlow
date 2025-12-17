@@ -56,6 +56,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.aks_labs.pixelflow.pixelFlowApp
+import com.google.android.material.color.DynamicColors
 
 /**
  * A service that displays a floating bubble with screenshot thumbnails
@@ -489,7 +490,20 @@ class ViewBasedFloatingBubbleService : Service() {
             hideDragZones()
 
             // Apply the app theme to the context so attributes resolve correctly
-            val themedContext = android.view.ContextThemeWrapper(this, R.style.Theme_PixelFlow)
+            val baseContext = if (isDynamicColorsEnabled) {
+                // Use M3 context for dynamic colors to ensure M3 attributes exist
+                android.view.ContextThemeWrapper(this, com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
+            } else {
+                // Use default app theme
+                android.view.ContextThemeWrapper(this, R.style.Theme_PixelFlow)
+            }
+
+            // Apply Dynamic Colors overlay if enabled
+            val themedContext = if (isDynamicColorsEnabled) {
+                DynamicColors.wrapContextIfAvailable(baseContext)
+            } else {
+                baseContext
+            }
 
             // Create a new drag zones view
             dragZonesView = ViewBasedCircularDragZones(themedContext).apply {
@@ -1256,7 +1270,20 @@ class ViewBasedFloatingBubbleService : Service() {
             val bubbleSize = bubbleView.width
 
             // Apply the app theme to the context so attributes resolve correctly
-            val themedContext = android.view.ContextThemeWrapper(this, R.style.Theme_PixelFlow)
+            val baseContext = if (isDynamicColorsEnabled) {
+                 // Use M3 context for dynamic colors
+                 android.view.ContextThemeWrapper(this, com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
+            } else {
+                 // Use default app theme
+                 android.view.ContextThemeWrapper(this, R.style.Theme_PixelFlow)
+            }
+
+             // Apply Dynamic Colors overlay if enabled
+            val themedContext = if (isDynamicColorsEnabled) {
+                DynamicColors.wrapContextIfAvailable(baseContext)
+            } else {
+                baseContext
+            }
 
             // Create a new action buttons view
             actionButtonsView = FloatingActionButtons(

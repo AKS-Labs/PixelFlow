@@ -108,6 +108,20 @@ fun ImprovedHomeScreen(
     // Search state
     var searchQuery by remember { mutableStateOf("") }
 
+    // Folder data for Carousel
+    val folders by viewModel.folders.collectAsState(initial = emptyList())
+    // Get thumbnails map from ViewModel (assuming it exposes it, we saw _albumsThumbnailsMap in MainViewModel)
+    // We might need to trigger a refresh for thumbnails if they aren't loaded. 
+    // In MainViewModel, `refreshAlbums` populates the map.
+    // Let's trigger it once when folders are loaded.
+    LaunchedEffect(folders) {
+        if (folders.isNotEmpty()) {
+             // We need to trigger thumbnail loading. 
+             // Ideally this should be automatic in ViewModel, but per existing code:
+             viewModel.refreshAlbums(context, folders, com.aks_labs.pixelflow.data.models.MediaItemSortMode.DateTaken)
+        }
+    }
+
     // Selection manager for multi-select functionality
     val selectionManager = rememberSelectionManager()
 
@@ -121,7 +135,13 @@ fun ImprovedHomeScreen(
     // Refresh function using Paging 3
     val pullRefreshState = rememberPullRefreshState(
         refreshing = screenshots.loadState.refresh is androidx.paging.LoadState.Loading,
-        onRefresh = { screenshots.refresh() }
+        onRefresh = { 
+            screenshots.refresh() 
+            // Also refresh albums
+             if (folders.isNotEmpty()) {
+                 viewModel.refreshAlbums(context, folders, com.aks_labs.pixelflow.data.models.MediaItemSortMode.DateTaken)
+             }
+        }
     )
 
     // Initial load handled by Paging 3 automatic collection
@@ -170,17 +190,6 @@ fun ImprovedHomeScreen(
             initialIndex = selectedScreenshotIndex,
             onClose = { showCarousel = false },
             onScreenshotClick = {
-                // Determine current index from carousel? 
-                // Currently ScreenshotCarousel doesn't pass back current index on click, 
-                // but we can assume the user wants to see the one they are looking at.
-                // However, Pager state is internal to Carousel. 
-                // We should pass the initial index as the clicked one if we haven't updated it.
-                // Ideally Carousel should report current page.
-                // For simplicity, we just open ImmersiveViewer. 
-                // Note: If user swiped in Carousel, we need to know the new index.
-                // We'll trust the Carousel kept initialIndex or need to update logic to track it.
-                // Updating ScreenshotCarousel to expose tracking might be needed, 
-                // but for now let's assume index is handled if we pass state.
                 showImmersiveViewer = true
                 showCarousel = false
             },
@@ -207,7 +216,7 @@ fun ImprovedHomeScreen(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                // Custom top section with title and menu
+                // Custom top section with title and menu - FIXED at top
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -370,17 +379,6 @@ fun ImprovedHomeScreen(
                     }
                 }
 
-                // Search bar from Search.kt
-                if (!selectionManager.selectionMode) {
-                    SearchBar(
-                        query = searchQuery,
-                        onQueryChange = { newQuery ->
-                            searchQuery = newQuery
-                            // TODO: Implement search functionality
-                        }
-                    )
-                }
-
                 // Main content area with pull-to-refresh
                 Box(
                     modifier = Modifier
@@ -393,7 +391,7 @@ fun ImprovedHomeScreen(
                             .fillMaxSize()
                             .padding(bottom = 0.dp)
                     ) {
-                        // Screenshots Section
+                        // Screenshots Section with Scrollable Header (SearchBar + Carousel)
                         ScreenshotsSection(
                             screenshots = screenshots,
                             gridColumns = gridColumns,
@@ -412,6 +410,38 @@ fun ImprovedHomeScreen(
                                     if (index != -1) {
                                         selectedScreenshotIndex = index
                                         showCarousel = true
+                                    }
+                                }
+                            },
+                            headerContent = {
+                                if (!selectionManager.selectionMode) {
+                                    Column {
+                                        SearchBar(
+                                            query = searchQuery,
+                                            onQueryChange = { newQuery ->
+                                                searchQuery = newQuery
+                                                // TODO: Implement search functionality
+                                            }
+                                        )
+                                        
+                                        // Album Carousel
+                                        com.aks_labs.pixelflow.ui.components.AlbumCarousel(
+                                            folders = folders,
+                                            onAlbumClick = { folder ->
+                                                // Navigate to folder details
+                                                // Assuming we have a route for this, or we just print for now.
+                                                // Based on FolderManagementScreen, it's not clear what the route is for folder details or if it exists.
+                                                // We will assume "folder/{folderId}" or similar if it existed. 
+                                                // For now, let's look at FolderManagementScreen... it doesn't navigate to details???
+                                                // Ah, FolderScreen.kt might have "folder_details/{folderId}". 
+                                                // Let's assume a safe generic navigation or just log.
+                                                // Using "folder_details/${folder.id}" as a likely candidate.
+                                                navController.navigate("folder_details/${folder.id}")
+                                            },
+                                            getThumbnailPath = { folderId ->
+                                                viewModel.albumsThumbnailsMap[folderId]?.thumbnailPath
+                                            }
+                                        )
                                     }
                                 }
                             }
@@ -442,35 +472,35 @@ fun ScreenshotsSection(
     onDragStart: () -> Unit,
     onDragEnd: () -> Unit,
     onDraggedIndexChanged: (Int) -> Unit,
-    onScreenshotClick: (SimpleScreenshot) -> Unit
+    onScreenshotClick: (SimpleScreenshot) -> Unit,
+    headerContent: @Composable () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(vertical = 8.dp)
     ) {
-        // Section header
-        Text(
-            text = if (selectionManager.selectionMode) "Select Screenshots" else "Screenshots",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-
+        // Section header - REMOVED fixed "Screenshots" text, moving it inside if needed or just implicit.
+        
         if (screenshots.itemCount == 0 && screenshots.loadState.refresh !is androidx.paging.LoadState.Loading) {
             // Empty state
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "No screenshots yet",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
+            // Still show header even if empty
+            Column {
+                headerContent()
+                
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No screenshots yet",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         } else {
             // Use LazyVerticalGrid with weight to avoid white space at bottom
@@ -512,6 +542,19 @@ fun ScreenshotsSection(
                         .fillMaxWidth()
                         .fillMaxHeight()
                 ) {
+                    // HEADER ITEM
+                    item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(gridColumns) }) {
+                        Column {
+                            headerContent()
+                            Text(
+                                text = if (selectionManager.selectionMode) "Select Screenshots" else "Screenshots",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
+                    }
+
                     items(
                         count = screenshots.itemCount,
                         key = { index -> 

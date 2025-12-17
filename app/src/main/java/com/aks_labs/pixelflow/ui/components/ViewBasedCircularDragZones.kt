@@ -477,15 +477,15 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
             // Set the zone color to match the reference image or use dynamic colors
             if (isHighlighted) {
                 if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    // Use Primary Container for highlight as requested
-                    zonePaint.color = getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer, Color.parseColor("#EADDFF"))
+                    // Use Primary Container for highlight as requested (fallback to strong purple for contrast)
+                    zonePaint.color = getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer, Color.parseColor("#9647DB"))
                 } else {
                     zonePaint.color = ContextCompat.getColor(context, R.color.colorAccent)
                 }
             } else {
                 if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     // Use Secondary Container for regular zones as requested
-                    zonePaint.color = getThemeColor(com.google.android.material.R.attr.colorSecondaryContainer, Color.parseColor("#E8DEF8"))
+                    zonePaint.color = getThemeColor(com.google.android.material.R.attr.colorPrimaryFixedDim, Color.parseColor("#E8DEF8"))
                 } else {
                     zonePaint.color = Color.rgb(240, 240, 240) // Light gray like in the reference image
                 }
@@ -539,8 +539,8 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
 
                 if (isHighlighted) {
                     if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        // Use Primary Container for highlight as requested
-                        actionZonePaint.color = getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer, Color.parseColor("#EADDFF"))
+                        // Use Primary Container for highlight as requested (fallback to strong purple for contrast)
+                        actionZonePaint.color = getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer, Color.parseColor("#9647DB"))
                     } else {
                          // Default highlight
                          actionZonePaint.color = ContextCompat.getColor(context, R.color.colorAccent)
