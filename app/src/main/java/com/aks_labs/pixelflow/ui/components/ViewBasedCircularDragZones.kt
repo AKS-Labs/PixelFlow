@@ -72,6 +72,13 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
     // Flag to indicate if action zones are visible
     private var showActionZones = false
 
+    // Flag to indicate if dynamic colors should be used
+    var useDynamicColors = false
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     // Paint objects
     private val zonePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
@@ -467,11 +474,20 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
             // Determine the radius based on highlight state
             val radius = if (isHighlighted) ZONE_RADIUS_HIGHLIGHTED else ZONE_RADIUS
 
-            // Set the zone color to match the reference image
-            zonePaint.color = if (isHighlighted)
-                ContextCompat.getColor(context, R.color.colorAccent)
-            else
-                Color.rgb(240, 240, 240) // Light gray like in the reference image
+            // Set the zone color to match the reference image or use dynamic colors
+            if (isHighlighted) {
+                if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    zonePaint.color = ContextCompat.getColor(context, android.R.color.system_accent1_100)
+                } else {
+                    zonePaint.color = ContextCompat.getColor(context, R.color.colorAccent)
+                }
+            } else {
+                if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    zonePaint.color = ContextCompat.getColor(context, android.R.color.system_accent2_100)
+                } else {
+                    zonePaint.color = Color.rgb(240, 240, 240) // Light gray like in the reference image
+                }
+            }
 
             // Create the wavy-edged circular path
             val path = createFlowerPath(zone.x, zone.y, radius)

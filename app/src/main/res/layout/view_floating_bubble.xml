@@ -8,7 +8,7 @@
         android:id="@+id/bubble_card"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        app:cardCornerRadius="45dp"
+        app:cardCornerRadius="1000dp"
         app:cardElevation="4dp"
         app:cardBackgroundColor="@android:color/white">
 

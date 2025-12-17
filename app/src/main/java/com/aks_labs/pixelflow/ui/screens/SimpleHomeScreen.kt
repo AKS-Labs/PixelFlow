@@ -52,6 +52,8 @@ fun SimpleHomeScreen(
     val screenshots by viewModel.filteredScreenshots.collectAsState()
     
     Scaffold(
+
+//        containerColor = MaterialTheme.colorScheme.surfaceVariant,
         topBar = {
             TopAppBar(
                 title = { Text("Pixel Screenshots") },

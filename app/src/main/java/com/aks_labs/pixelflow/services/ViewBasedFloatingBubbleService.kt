@@ -48,6 +48,20 @@ import kotlin.math.sqrt
  * and allows dragging them to different folders.
  * This implementation uses traditional Views instead of Compose.
  */
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import com.aks_labs.pixelflow.pixelFlowApp
+
+/**
+ * A service that displays a floating bubble with screenshot thumbnails
+ * and allows dragging them to different folders.
+ * This implementation uses traditional Views instead of Compose.
+ */
 class ViewBasedFloatingBubbleService : Service() {
 
     companion object {
@@ -72,6 +86,12 @@ class ViewBasedFloatingBubbleService : Service() {
 
     // Window manager for adding and removing views
     private lateinit var windowManager: WindowManager
+
+    // Coroutine scope for the service
+    private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    // Dynamic color preference
+    private var isDynamicColorsEnabled = false
 
     // Screen dimensions
     private var width = 0
@@ -146,6 +166,9 @@ class ViewBasedFloatingBubbleService : Service() {
 
         // Initialize folders
         initFolders()
+
+        // Observe dynamic color preference
+        observeDynamicColorPreference()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -228,7 +251,28 @@ class ViewBasedFloatingBubbleService : Service() {
         // Reset the running flag
         isServiceRunning = false
 
+        // Reset the running flag
+        isServiceRunning = false
+
+        // Cancel coroutine scope
+        serviceScope.cancel()
+
         super.onDestroy()
+    }
+
+    private fun observeDynamicColorPreference() {
+        val DYNAMIC_COLORS_ENABLED_KEY = booleanPreferencesKey("dynamic_colors_enabled")
+        serviceScope.launch {
+            application.pixelFlowApp.dataStore.data
+                .map { preferences ->
+                    preferences[DYNAMIC_COLORS_ENABLED_KEY] ?: false
+                }
+                .collect { enabled ->
+                    isDynamicColorsEnabled = enabled
+                    // Update existing drag zones if they exist
+                    dragZonesView?.useDynamicColors = enabled
+                }
+        }
     }
 
     /**
@@ -467,7 +511,10 @@ class ViewBasedFloatingBubbleService : Service() {
                 PixelFormat.TRANSLUCENT
             )
 
-            // Add the drag zones to the window
+            // Ensure we pass the dynamic color setting
+            dragZonesView?.useDynamicColors = isDynamicColorsEnabled
+
+            // Add to window manager
             windowManager.addView(dragZonesView, params)
 
             // Set the flag to indicate drag zones are showing

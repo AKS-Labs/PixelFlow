@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
+//import androidx.compose.material.icons.filled.Palette
 //import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.compose.material.icons.filled.Edit
 import com.aks_labs.pixelflow.R
 import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
 
@@ -101,6 +104,16 @@ fun SettingsScreen(
                     icon = Icons.Outlined.CheckCircle,
                     checked = isBubbleEnabled,
                     onCheckedChange = { viewModel.setBubbleEnabled(it) }
+                )
+            }
+
+            item {
+                SettingsSwitchItem(
+                    title = "Dynamic Colors",
+                    subtitle = "Use system colors for drag zones (Android 12+)",
+                    icon = androidx.compose.material.icons.Icons.Default.Edit,
+                    checked = viewModel.isDynamicColorsEnabled.collectAsState(initial = false).value,
+                    onCheckedChange = { viewModel.setDynamicColorsEnabled(it) }
                 )
             }
 

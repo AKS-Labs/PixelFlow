@@ -42,6 +42,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     // DataStore keys
     private val BUBBLE_ENABLED_KEY = booleanPreferencesKey("bubble_enabled")
+    private val DYNAMIC_COLORS_ENABLED_KEY = booleanPreferencesKey("dynamic_colors_enabled")
 
     // Folders
     val folders: Flow<List<SimpleFolder>> = sharedPrefsManager.folders
@@ -75,6 +76,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
         .stateIn(viewModelScope, SharingStarted.Eagerly, true)
 
+    // Dynamic colors enabled preference
+    val isDynamicColorsEnabled = application.pixelFlowApp.dataStore.data
+        .map { preferences ->
+            preferences[DYNAMIC_COLORS_ENABLED_KEY] ?: false // Default to false
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
     // Theme mode
     private val _themeMode = MutableStateFlow(sharedPrefsManager.getThemeMode())
     val themeMode = _themeMode.asStateFlow()
@@ -97,6 +105,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    /**
+     * Set whether dynamic colors are enabled
+     */
+    fun setDynamicColorsEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            getApplication<Application>().pixelFlowApp.dataStore.edit { preferences ->
+                preferences[DYNAMIC_COLORS_ENABLED_KEY] = enabled
+            }
+        }
+    }
+
+    /**
+     * Start the floating bubble service
+     */
 
     /**
      * Start the floating bubble service
