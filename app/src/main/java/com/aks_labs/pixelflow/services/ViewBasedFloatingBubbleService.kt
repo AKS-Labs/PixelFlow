@@ -209,6 +209,17 @@ class ViewBasedFloatingBubbleService : Service() {
     override fun onDestroy() {
         Log.d(TAG, "Service onDestroy called")
 
+        // Unregister content observer
+        if (contentObserver != null) {
+            try {
+                contentResolver.unregisterContentObserver(contentObserver!!)
+                contentObserver = null
+                Log.d(TAG, "Content observer unregistered")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error unregistering content observer", e)
+            }
+        }
+
         // Clean up views
         removeBubble()
         hideDragZones()
@@ -725,20 +736,30 @@ class ViewBasedFloatingBubbleService : Service() {
         return -1
     }
 
+    // Content observer for screenshot detection
+    private var contentObserver: ContentObserver? = null
+
     /**
      * Starts the screenshot detection.
      */
     private fun startScreenshotDetection() {
         Log.d(TAG, "Starting screenshot detection")
 
+        // Check if already observing
+        if (contentObserver != null) {
+            Log.d(TAG, "Already observing for screenshots")
+            return
+        }
+
         // Create and register the content observer
-        val contentObserver = createScreenshotContentObserver()
+        contentObserver = createScreenshotContentObserver()
         val contentResolver = contentResolver
         contentResolver.registerContentObserver(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             true,
-            contentObserver
+            contentObserver!!
         )
+        Log.d(TAG, "Content observer registered successfully")
 
         // Check for recent screenshots
         checkForRecentScreenshots()

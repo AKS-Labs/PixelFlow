@@ -1,3 +1,4 @@
+---------------------------- PROCESS STARTED (20080) for package com.aks_labs.pixelflow ----------------------------
 --------- beginning of crash
 2025-12-16 00:34:39.389 25954-25954 AndroidRuntime          pid-25954                            E  FATAL EXCEPTION: main (Fix with AI)
                                                                                                     Process: com.aks_labs.pixelflow, PID: 25954
@@ -382,7 +383,6 @@
                                                                                                     	at java.lang.reflect.Method.invoke(Native Method)
                                                                                                     	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:591)
                                                                                                     	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:911)
---------- beginning of system
 2025-12-17 15:20:33.049 28405-28405 AndroidRuntime          pid-28405                            E  FATAL EXCEPTION: main (Fix with AI)
                                                                                                     Process: com.aks_labs.pixelflow, PID: 28405
                                                                                                     java.lang.IllegalStateException: ViewTreeLifecycleOwner not found from com.aks_labs.pixelflow.ui.components.compose.ServiceComposeViewImpl{85d6120 V.E...... ......I. 0,0-0,0}
@@ -412,8 +412,7 @@
                                                                                                     	at java.lang.reflect.Method.invoke(Native Method)
                                                                                                     	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:591)
                                                                                                     	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:911)
-2025-12-17 15:53:04.491  1985-2125  VerityUtils             system_server                        E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~zMi879nNbGPaykwAkdsMvw==/com.aks_labs.pixelflow-phfPSfUd7JvJQUBNphCrKQ==/base.apk
-2025-12-17 15:53:04.828  1985-2125  VerityUtils             system_server                        E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~zMi879nNbGPaykwAkdsMvw==/com.aks_labs.pixelflow-phfPSfUd7JvJQUBNphCrKQ==/base.apk
+--------- beginning of system
 2025-12-17 15:53:18.678  5337-5337  AndroidRuntime          pid-5337                             E  FATAL EXCEPTION: main (Fix with AI)
                                                                                                     Process: com.aks_labs.pixelflow, PID: 5337
                                                                                                     java.lang.IllegalStateException: ViewTreeLifecycleOwner not found from com.aks_labs.pixelflow.ui.components.compose.ServiceComposeViewImpl{6d9c292 V.E...... ......I. 0,0-0,0}
@@ -466,7 +465,7 @@
                                                                                                     	at java.lang.reflect.Method.invoke(Native Method)
                                                                                                     	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:591)
                                                                                                     	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:911)
-2025-12-17 15:57:33.274  1985-2312  AppOps                  system_server                        E  Operation not started: uid=10804 pkg=com.aks_labs.pixelflow(null) op=VIBRATE
+2025-12-17 15:57:33.274  1985-2312  AppOps                  pid-1985                             E  Operation not started: uid=10804 pkg=com.aks_labs.pixelflow(null) op=VIBRATE
 2025-12-17 15:57:41.318  6997-6997  AndroidRuntime          pid-6997                             E  FATAL EXCEPTION: main (Fix with AI)
                                                                                                     Process: com.aks_labs.pixelflow, PID: 6997
                                                                                                     java.lang.IllegalStateException: Composed into the View which doesn't propagateViewTreeSavedStateRegistryOwner!
@@ -490,11 +489,11 @@
                                                                                                     	at java.lang.reflect.Method.invoke(Native Method)
                                                                                                     	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:591)
                                                                                                     	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:911)
-2025-12-17 15:57:43.276  1985-11675 AppOps                  system_server                        E  Operation not started: uid=10804 pkg=com.aks_labs.pixelflow(null) op=SYSTEM_ALERT_WINDOW
-2025-12-17 16:01:13.103  1985-2125  VerityUtils             system_server                        E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~XzmhQS5wj0aZKx-eLiMCfA==/com.aks_labs.pixelflow-PLMRaS-KAQs8Wktz0WInsA==/base.apk
-2025-12-17 16:01:13.325  1985-2125  VerityUtils             system_server                        E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~XzmhQS5wj0aZKx-eLiMCfA==/com.aks_labs.pixelflow-PLMRaS-KAQs8Wktz0WInsA==/base.apk
-2025-12-17 16:20:33.367  1985-2125  VerityUtils             system_server                        E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~ToyYmJNiBKZb0xu3ligtrg==/com.aks_labs.pixelflow-IWUpK34O8i8Zt7WjPGuW6w==/base.apk
-2025-12-17 16:20:33.956  1985-2125  VerityUtils             system_server                        E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~ToyYmJNiBKZb0xu3ligtrg==/com.aks_labs.pixelflow-IWUpK34O8i8Zt7WjPGuW6w==/base.apk
+2025-12-17 15:57:43.276  1985-11675 AppOps                  pid-1985                             E  Operation not started: uid=10804 pkg=com.aks_labs.pixelflow(null) op=SYSTEM_ALERT_WINDOW
+2025-12-17 16:01:13.103  1985-2125  VerityUtils             pid-1985                             E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~XzmhQS5wj0aZKx-eLiMCfA==/com.aks_labs.pixelflow-PLMRaS-KAQs8Wktz0WInsA==/base.apk
+2025-12-17 16:01:13.325  1985-2125  VerityUtils             pid-1985                             E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~XzmhQS5wj0aZKx-eLiMCfA==/com.aks_labs.pixelflow-PLMRaS-KAQs8Wktz0WInsA==/base.apk
+2025-12-17 16:20:33.367  1985-2125  VerityUtils             pid-1985                             E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~ToyYmJNiBKZb0xu3ligtrg==/com.aks_labs.pixelflow-IWUpK34O8i8Zt7WjPGuW6w==/base.apk
+2025-12-17 16:20:33.956  1985-2125  VerityUtils             pid-1985                             E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~ToyYmJNiBKZb0xu3ligtrg==/com.aks_labs.pixelflow-IWUpK34O8i8Zt7WjPGuW6w==/base.apk
 2025-12-17 16:20:48.321 13778-13778 AndroidRuntime          pid-13778                            E  FATAL EXCEPTION: main (Fix with AI)
                                                                                                     Process: com.aks_labs.pixelflow, PID: 13778
                                                                                                     java.lang.IllegalStateException: ViewTreeLifecycleOwner not found from androidx.compose.ui.platform.ComposeView{2859479 V.E...... ......I. 0,0-0,0}
@@ -524,7 +523,6 @@
                                                                                                     	at java.lang.reflect.Method.invoke(Native Method)
                                                                                                     	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:591)
                                                                                                     	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:911)
---------- beginning of main
 2025-12-17 16:24:47.862 15149-15149 AndroidRuntime          pid-15149                            E  FATAL EXCEPTION: main (Fix with AI)
                                                                                                     Process: com.aks_labs.pixelflow, PID: 15149
                                                                                                     java.lang.IllegalStateException: ViewTreeLifecycleOwner not found from androidx.compose.ui.platform.ComposeView{c834570 V.E...... ......I. 0,0-0,0}
@@ -554,362 +552,7 @@
                                                                                                     	at java.lang.reflect.Method.invoke(Native Method)
                                                                                                     	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:591)
                                                                                                     	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:911)
-2025-12-17 16:24:53.307 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               I  Late-enabling -Xcheck:jni
-2025-12-17 16:24:53.351 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               I  Using CollectorTypeCC GC.
-2025-12-17 16:24:53.386 15505-15505 nativeloader            com.aks_labs.pixelflow               D  Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
-2025-12-17 16:24:53.476 15505-15505 re-initialized>         com.aks_labs.pixelflow               W  type=1400 audit(0.0:7542): avc:  granted  { execute } for  path="/data/data/com.aks_labs.pixelflow/code_cache/startup_agents/1f04feac-agent.so" dev="mmcblk0p61" ino=3170446 scontext=u:r:untrusted_app_32:s0:c36,c259,c512,c768 tcontext=u:object_r:app_data_file:s0:c36,c259,c512,c768 tclass=file app=com.aks_labs.pixelflow
-2025-12-17 16:24:53.494 15505-15505 nativeloader            com.aks_labs.pixelflow               D  Load /data/user/0/com.aks_labs.pixelflow/code_cache/startup_agents/1f04feac-agent.so using system ns (caller=<unknown>): ok
-2025-12-17 16:24:53.517 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               W  DexFile /data/data/com.aks_labs.pixelflow/code_cache/.studio/instruments-843f6601.jar is in boot class path but is not in a known location
-2025-12-17 16:24:53.618 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               W  Redefining intrinsic method java.lang.Thread java.lang.Thread.currentThread(). This may cause the unexpected use of the original definition of java.lang.Thread java.lang.Thread.currentThread()in methods that have already been compiled.
-2025-12-17 16:24:53.618 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               W  Redefining intrinsic method boolean java.lang.Thread.interrupted(). This may cause the unexpected use of the original definition of boolean java.lang.Thread.interrupted()in methods that have already been compiled.
-2025-12-17 16:24:53.710 15505-15505 ziparchive              com.aks_labs.pixelflow               W  Unable to open '/data/data/com.aks_labs.pixelflow/code_cache/.overlay/base.apk/classes7.dm': No such file or directory
-2025-12-17 16:24:53.714 15505-15505 ziparchive              com.aks_labs.pixelflow               W  Unable to open '/data/data/com.aks_labs.pixelflow/code_cache/.overlay/base.apk/classes5.dm': No such file or directory
-2025-12-17 16:24:53.735 15505-15505 ziparchive              com.aks_labs.pixelflow               W  Unable to open '/data/app/~~ToyYmJNiBKZb0xu3ligtrg==/com.aks_labs.pixelflow-IWUpK34O8i8Zt7WjPGuW6w==/base.dm': No such file or directory
-2025-12-17 16:24:53.735 15505-15505 ziparchive              com.aks_labs.pixelflow               W  Unable to open '/data/app/~~ToyYmJNiBKZb0xu3ligtrg==/com.aks_labs.pixelflow-IWUpK34O8i8Zt7WjPGuW6w==/base.dm': No such file or directory
-2025-12-17 16:24:54.255 15505-15505 nativeloader            com.aks_labs.pixelflow               D  Configuring clns-7 for other apk /data/app/~~ToyYmJNiBKZb0xu3ligtrg==/com.aks_labs.pixelflow-IWUpK34O8i8Zt7WjPGuW6w==/base.apk. target_sdk_version=33, uses_libraries=, library_path=/data/app/~~ToyYmJNiBKZb0xu3ligtrg==/com.aks_labs.pixelflow-IWUpK34O8i8Zt7WjPGuW6w==/lib/arm64, permitted_path=/data:/mnt/expand:/data/user/0/com.aks_labs.pixelflow
-2025-12-17 16:24:54.271 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               I  AssetManager2(0x733c3824b8) locale list changing from [] to [en-IN]
-2025-12-17 16:24:54.274 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               I  AssetManager2(0x733c378558) locale list changing from [] to [en-IN]
-2025-12-17 16:24:54.289 15505-15505 GraphicsEnvironment     com.aks_labs.pixelflow               V  Currently set values for:
-2025-12-17 16:24:54.290 15505-15505 GraphicsEnvironment     com.aks_labs.pixelflow               V    angle_gl_driver_selection_pkgs=[com.android.angle, com.linecorp.b612.android, com.campmobile.snow, com.google.android.apps.tachyon]
-2025-12-17 16:24:54.290 15505-15505 GraphicsEnvironment     com.aks_labs.pixelflow               V    angle_gl_driver_selection_values=[angle, native, native, native]
-2025-12-17 16:24:54.290 15505-15505 GraphicsEnvironment     com.aks_labs.pixelflow               V  com.aks_labs.pixelflow is not listed in per-application setting
-2025-12-17 16:24:54.290 15505-15505 GraphicsEnvironment     com.aks_labs.pixelflow               V  Neither updatable production driver nor prerelease driver is supported.
-2025-12-17 16:24:54.561 15505-15505 ScreenshotReceiver      com.aks_labs.pixelflow               D  ScreenshotBroadcastReceiver registered
-2025-12-17 16:24:54.609 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onCreate called
-2025-12-17 16:24:54.655 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Loaded 9 folders from SharedPrefsManager
-2025-12-17 16:24:54.659 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onStartCommand called with action: null
-2025-12-17 16:24:54.735 15505-15505 ComposeFlo...bleService com.aks_labs.pixelflow               D  Service onCreate called
-2025-12-17 16:24:54.752 15505-15505 ComposeFlo...bleService com.aks_labs.pixelflow               D  Service onStartCommand called with action: null
-2025-12-17 16:24:56.895 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               I  AssetManager2(0x733c37c6f8) locale list changing from [] to [en-IN]
-2025-12-17 16:24:56.993 15505-15505 DesktopModeFlagsUtil    com.aks_labs.pixelflow               D  Toggle override initialized to: OVERRIDE_UNSET
-2025-12-17 16:24:57.057 15505-15505 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  OnBackInvokedCallback is not enabled for the application.
-                                                                                                    Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
-2025-12-17 16:24:57.314 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               W  Method java.lang.Object androidx.compose.runtime.snapshots.SnapshotStateMap.mutate(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
-                                                                                                    Common causes for lock verification issues are non-optimized dex code
-                                                                                                    and incorrect proguard optimizations.
-2025-12-17 16:24:57.314 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               W  Method void androidx.compose.runtime.snapshots.SnapshotStateMap.update(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
-2025-12-17 16:24:57.315 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               W  Method boolean androidx.compose.runtime.snapshots.SnapshotStateMap.removeIf$runtime_release(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
-2025-12-17 16:24:57.655 15505-15650 AdrenoGLES-0            com.aks_labs.pixelflow               I  QUALCOMM build                   : 95db91f, Ifbc588260a
-                                                                                                    Build Date                       : 09/24/20
-                                                                                                    OpenGL ES Shader Compiler Version: EV031.32.02.01
-                                                                                                    Local Branch                     : mybrancheafe5b6d-fb5b-f1b0-b904-5cb90179c3e0
-                                                                                                    Remote Branch                    : quic/gfx-adreno.lnx.1.0.r114-rel
-                                                                                                    Remote Branch                    : NONE
-                                                                                                    Reconstruct Branch               : NOTHING
-2025-12-17 16:24:57.655 15505-15650 AdrenoGLES-0            com.aks_labs.pixelflow               I  Build Config                     : S P 10.0.7 AArch64
-2025-12-17 16:24:57.655 15505-15650 AdrenoGLES-0            com.aks_labs.pixelflow               I  Driver Path                      : /vendor/lib64/egl/libGLESv2_adreno.so
-2025-12-17 16:24:57.670 15505-15650 AdrenoGLES-0            com.aks_labs.pixelflow               I  PFP: 0x016ee190, ME: 0x00000000
-2025-12-17 16:24:57.734 15505-15657 Gralloc4                com.aks_labs.pixelflow               I  mapper 4.x is not supported
-2025-12-17 16:24:57.736 15505-15657 Gralloc3                com.aks_labs.pixelflow               W  mapper 3.x is not supported
-2025-12-17 16:24:57.742 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               W  Method boolean androidx.compose.runtime.snapshots.SnapshotStateList.conditionalUpdate(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
-2025-12-17 16:24:57.742 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               W  Method java.lang.Object androidx.compose.runtime.snapshots.SnapshotStateList.mutate(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
-2025-12-17 16:24:57.742 15505-15505 _labs.pixelflow         com.aks_labs.pixelflow               W  Method void androidx.compose.runtime.snapshots.SnapshotStateList.update(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
-2025-12-17 16:24:57.752 15505-15657 Gralloc2                com.aks_labs.pixelflow               I  Adding additional valid usage bits: 0x8202000
-2025-12-17 16:24:57.795 15505-15505 MainActivity            com.aks_labs.pixelflow               D  Starting ComposeFloatingBubbleService
-2025-12-17 16:24:57.795 15505-15505 MainActivity            com.aks_labs.pixelflow               D  Starting foreground service on Android O+
-2025-12-17 16:24:57.798 15505-15505 MainActivity            com.aks_labs.pixelflow               D  Service start requested successfully
-2025-12-17 16:24:57.807 15505-15505 Choreographer           com.aks_labs.pixelflow               I  Skipped 36 frames!  The application may be doing too much work on its main thread.
-2025-12-17 16:24:58.589 15505-15581 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=1379ms; Flags=0, FrameTimelineVsyncId=80483145, IntendedVsync=119416307345781, Vsync=119416907344137, InputEventId=0, HandleInputStart=119416917284391, AnimationStart=119416917290277, PerformTraversalsStart=119417057503662, DrawStart=119417650896214, FrameDeadline=119416907369535, FrameInterval=119416916844964, FrameStartTime=16666621, SyncQueued=119417669935277, SyncStart=119417670324027, IssueDrawCommandsStart=119417670423714, SwapBuffers=119417684600537, FrameCompleted=119417686940485, DequeueBufferDuration=15625, QueueBufferDuration=490261, GpuCompleted=119417686940485, SwapBuffersCompleted=119417686223089, DisplayPresentTime=0, CommandSubmissionCompleted=119417684600537, 
-2025-12-17 16:24:58.620 15505-15505 ComposeFlo...bleService com.aks_labs.pixelflow               D  Service onStartCommand called with action: START_FROM_APP
-2025-12-17 16:24:58.626 15505-15505 ComposeFlo...bleService com.aks_labs.pixelflow               D  Service starting from app
-2025-12-17 16:24:58.626 15505-15505 ScreenshotDetector      com.aks_labs.pixelflow               D  Starting screenshot observation
-2025-12-17 16:24:58.629 15505-15505 ScreenshotDetector      com.aks_labs.pixelflow               D  Successfully registered content observer
-2025-12-17 16:24:58.629 15505-15505 ComposeFlo...bleService com.aks_labs.pixelflow               D  Screenshot detector started
-2025-12-17 16:24:58.957 15505-15505 InsetsController        com.aks_labs.pixelflow               D  hide(ime(), fromIme=false)
-2025-12-17 16:24:58.957 15505-15505 ImeTracker              com.aks_labs.pixelflow               I  com.aks_labs.pixelflow:7ae00b21: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
-2025-12-17 16:24:59.512 15505-15671 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.513 15505-15609 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.528 15505-15608 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.535 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.585 15505-15673 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.588 15505-15671 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.621 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.651 15505-15671 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.677 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.724 15505-15671 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.746 15505-15671 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.824 15505-15671 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.826 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.892 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.894 15505-15671 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.958 15505-15671 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:24:59.959 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:00.050 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:00.072 15505-15671 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:00.093 15505-15673 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:00.257 15505-15581 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=1270ms; Flags=0, FrameTimelineVsyncId=80484997, IntendedVsync=119418074008879, Vsync=119418257343503, InputEventId=0, HandleInputStart=119418261011891, AnimationStart=119418261014755, PerformTraversalsStart=119418327014860, DrawStart=119418327136214, FrameDeadline=119418107339198, FrameInterval=119418260687360, FrameStartTime=16666784, SyncQueued=119419337946005, SyncStart=119419338175745, IssueDrawCommandsStart=119419338424755, SwapBuffers=119419341176318, FrameCompleted=119419344590849, DequeueBufferDuration=15782, QueueBufferDuration=264896, GpuCompleted=119419344590849, SwapBuffersCompleted=119419342316213, DisplayPresentTime=0, CommandSubmissionCompleted=119419341176318, 
-2025-12-17 16:25:00.441 15505-15505 Choreographer           com.aks_labs.pixelflow               I  Skipped 76 frames!  The application may be doing too much work on its main thread.
-2025-12-17 16:25:00.856 15505-15684 ProfileInstaller        com.aks_labs.pixelflow               D  Installing profile for com.aks_labs.pixelflow
-2025-12-17 16:25:00.857 15505-15581 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=1669ms; Flags=0, FrameTimelineVsyncId=80485258, IntendedVsync=119418274004323, Vsync=119419540652471, InputEventId=0, HandleInputStart=119419551177515, AnimationStart=119419551180484, PerformTraversalsStart=119419908150380, DrawStart=119419908277255, FrameDeadline=119419374017913, FrameInterval=119419550754599, FrameStartTime=16666423, SyncQueued=119419936989703, SyncStart=119419937324286, IssueDrawCommandsStart=119419937629442, SwapBuffers=119419940609755, FrameCompleted=119419943961005, DequeueBufferDuration=23438, QueueBufferDuration=345052, GpuCompleted=119419943961005, SwapBuffersCompleted=119419942021265, DisplayPresentTime=0, CommandSubmissionCompleted=119419940609755, 
-2025-12-17 16:25:01.233 15505-15505 Choreographer           com.aks_labs.pixelflow               I  Skipped 47 frames!  The application may be doing too much work on its main thread.
-2025-12-17 16:25:01.575 15505-15581 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=1106ms; Flags=0, FrameTimelineVsyncId=80486236, IntendedVsync=119419554171334, Vsync=119420337500547, InputEventId=0, HandleInputStart=119420344146526, AnimationStart=119420344149963, PerformTraversalsStart=119420621718088, DrawStart=119420621820796, FrameDeadline=119419978646378, FrameInterval=119420342806890, FrameStartTime=16666579, SyncQueued=119420655645015, SyncStart=119420655709077, IssueDrawCommandsStart=119420655943557, SwapBuffers=119420657142515, FrameCompleted=119420661211890, DequeueBufferDuration=16146, QueueBufferDuration=268802, GpuCompleted=119420660756734, SwapBuffersCompleted=119420661211890, DisplayPresentTime=0, CommandSubmissionCompleted=119420657142515, 
-2025-12-17 16:25:02.238 15505-15505 Choreographer           com.aks_labs.pixelflow               I  Skipped 32 frames!  The application may be doing too much work on its main thread.
-2025-12-17 16:25:02.491 15505-15526 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=774ms; Flags=0, FrameTimelineVsyncId=80486885, IntendedVsync=119420804167268, Vsync=119421337491652, InputEventId=0, HandleInputStart=119421347815327, AnimationStart=119421347819754, PerformTraversalsStart=119421559627202, DrawStart=119421559733973, FrameDeadline=119421092195837, FrameInterval=119421346916056, FrameStartTime=16666387, SyncQueued=119421572505796, SyncStart=119421572757879, IssueDrawCommandsStart=119421572952879, SwapBuffers=119421574459806, FrameCompleted=119421579112827, DequeueBufferDuration=15417, QueueBufferDuration=324687, GpuCompleted=119421579112827, SwapBuffersCompleted=119421575233192, DisplayPresentTime=0, CommandSubmissionCompleted=119421574459806, 
-2025-12-17 16:25:03.723 15505-15581 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=715ms; Flags=0, FrameTimelineVsyncId=80487579, IntendedVsync=119422104167631, Vsync=119422354164066, InputEventId=498231686, HandleInputStart=119422367158244, AnimationStart=119422367161369, PerformTraversalsStart=119422523508400, DrawStart=119422523633452, FrameDeadline=119422292174530, FrameInterval=119422366886056, FrameStartTime=16666429, SyncQueued=119422812920952, SyncStart=119422812982202, IssueDrawCommandsStart=119422813687775, SwapBuffers=119422817969337, FrameCompleted=119422819733868, DequeueBufferDuration=14532, QueueBufferDuration=335209, GpuCompleted=119422819733868, SwapBuffersCompleted=119422818776889, DisplayPresentTime=0, CommandSubmissionCompleted=119422817969337, 
-2025-12-17 16:25:03.862 15505-15673 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:03.871 15505-15671 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:03.882 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:05.806 15505-15581 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=890ms; Flags=0, FrameTimelineVsyncId=80488747, IntendedVsync=119424004181161, Vsync=119424004181161, InputEventId=-989379258, HandleInputStart=119424007176680, AnimationStart=119424007179180, PerformTraversalsStart=119424046437826, DrawStart=119424046554389, FrameDeadline=119424025514493, FrameInterval=119424007169180, FrameStartTime=16666898, SyncQueued=119424887813763, SyncStart=119424887889701, IssueDrawCommandsStart=119424888210638, SwapBuffers=119424889841315, FrameCompleted=119424894718399, DequeueBufferDuration=17396, QueueBufferDuration=261719, GpuCompleted=119424894718399, SwapBuffersCompleted=119424890561472, DisplayPresentTime=0, CommandSubmissionCompleted=119424889841315, 
-2025-12-17 16:25:05.839 15505-15505 Choreographer           com.aks_labs.pixelflow               I  Skipped 55 frames!  The application may be doing too much work on its main thread.
-2025-12-17 16:25:05.890 15505-15526 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=959ms; Flags=0, FrameTimelineVsyncId=80488762, IntendedVsync=119424020847918, Vsync=119424937525383, InputEventId=0, HandleInputStart=119424949590326, AnimationStart=119424949593451, PerformTraversalsStart=119424966957097, DrawStart=119424967073034, FrameDeadline=119424925526985, FrameInterval=119424948395482, FrameStartTime=16666863, SyncQueued=119424973209909, SyncStart=119424973499701, IssueDrawCommandsStart=119424973692565, SwapBuffers=119424975225170, FrameCompleted=119424980359493, DequeueBufferDuration=15937, QueueBufferDuration=256355, GpuCompleted=119424980359493, SwapBuffersCompleted=119424975926159, DisplayPresentTime=0, CommandSubmissionCompleted=119424975225170, 
-2025-12-17 16:25:06.235 15505-15520 _labs.pixelflow         com.aks_labs.pixelflow               I  Compiler allocated 4762KB to compile void com.aks_labs.pixelflow.ui.screens.ImprovedHomeScreenKt$ImprovedHomeScreen$13.invoke(androidx.compose.foundation.layout.PaddingValues, androidx.compose.runtime.Composer, int)
-2025-12-17 16:25:07.622 15505-15505 InsetsController        com.aks_labs.pixelflow               D  hide(ime(), fromIme=false)
-2025-12-17 16:25:07.622 15505-15505 ImeTracker              com.aks_labs.pixelflow               I  com.aks_labs.pixelflow:18ab2bff: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
-2025-12-17 16:25:09.007 15505-15525 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=762ms; Flags=0, FrameTimelineVsyncId=80491236, IntendedVsync=119427337507212, Vsync=119427654176241, InputEventId=0, HandleInputStart=119427655748450, AnimationStart=119427655750950, PerformTraversalsStart=119427798396366, DrawStart=119427798479439, FrameDeadline=119427492171602, FrameInterval=119427655485273, FrameStartTime=16666791, SyncQueued=119428092465950, SyncStart=119428092522825, IssueDrawCommandsStart=119428092789179, SwapBuffers=119428094341939, FrameCompleted=119428100495481, DequeueBufferDuration=15937, QueueBufferDuration=350104, GpuCompleted=119428100495481, SwapBuffersCompleted=119428095173033, DisplayPresentTime=0, CommandSubmissionCompleted=119428094341939, 
-2025-12-17 16:25:09.007 15505-15525 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=762ms; Flags=0, FrameTimelineVsyncId=80491236, IntendedVsync=119427337507212, Vsync=119427654176241, InputEventId=469654328, HandleInputStart=119427655748450, AnimationStart=119427655750950, PerformTraversalsStart=119427798396366, DrawStart=119428092906939, FrameDeadline=119427358840544, FrameInterval=119427655485273, FrameStartTime=16666791, SyncQueued=119428096829543, SyncStart=119428097305898, IssueDrawCommandsStart=119428097389127, SwapBuffers=119428099203033, FrameCompleted=119428100773762, DequeueBufferDuration=16614, QueueBufferDuration=194166, GpuCompleted=119428100773762, SwapBuffersCompleted=119428099785793, DisplayPresentTime=0, CommandSubmissionCompleted=119428099203033, 
-2025-12-17 16:25:09.443 15505-15505 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@e5e747
-2025-12-17 16:25:09.449 15505-15650 HWUI                    com.aks_labs.pixelflow               D  endAllActiveAnimators on 0x727c3fcf60 (UnprojectedRipple) with handle 0x728c3bbbb0
-2025-12-17 16:25:09.677 15505-15505 InsetsController        com.aks_labs.pixelflow               D  hide(ime(), fromIme=false)
-2025-12-17 16:25:09.677 15505-15505 ImeTracker              com.aks_labs.pixelflow               I  com.aks_labs.pixelflow:40227dd7: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
-2025-12-17 16:25:10.654 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onDestroy called
-2025-12-17 16:25:10.654 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Hiding drag zones - START
-2025-12-17 16:25:10.654 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  No drag zones view to remove
-2025-12-17 16:25:10.654 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones hidden successfully
-2025-12-17 16:25:10.654 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Hiding action buttons
-2025-12-17 16:25:11.173 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onCreate called
-2025-12-17 16:25:11.180 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Loaded 9 folders from SharedPrefsManager
-2025-12-17 16:25:11.180 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onStartCommand called with action: START_FROM_APP
-2025-12-17 16:25:11.186 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service starting from app
-2025-12-17 16:25:11.186 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Starting screenshot detection
-2025-12-17 16:25:11.204 15505-15720 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found recent screenshot during startup: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg, Already processed: false
-2025-12-17 16:25:11.247 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  New screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg
-2025-12-17 16:25:11.248 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot file exists, size: 443077 bytes
-2025-12-17 16:25:11.288 15505-15505 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:11.293 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Broadcast sent for screenshot detection: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg
-2025-12-17 16:25:11.293 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing floating bubble for screenshot
-2025-12-17 16:25:11.346 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Floating bubble shown successfully
-2025-12-17 16:25:11.385 15505-15505 ScreenshotReceiver      com.aks_labs.pixelflow               D  Received broadcast: com.aks_labs.pixelflow.SCREENSHOT_DETECTED
-2025-12-17 16:25:11.385 15505-15505 ScreenshotReceiver      com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg
-2025-12-17 16:25:28.494 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Starting refresh for 9 albums
-2025-12-17 16:25:28.532 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Posts' (id=1): found 1 thumbnails
-2025-12-17 16:25:28.532 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Posts': /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
-2025-12-17 16:25:28.542 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Docs' (id=2): found 1 thumbnails
-2025-12-17 16:25:28.542 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Docs': /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
-2025-12-17 16:25:28.547 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Chats' (id=3): found 1 thumbnails
-2025-12-17 16:25:28.548 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Chats': /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
-2025-12-17 16:25:28.556 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Payments' (id=4): found 1 thumbnails
-2025-12-17 16:25:28.556 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Payments': /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
-2025-12-17 16:25:28.591 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Memes' (id=5): found 1 thumbnails
-2025-12-17 16:25:28.592 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Memes': /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png
-2025-12-17 16:25:28.600 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Tweets' (id=6): found 1 thumbnails
-2025-12-17 16:25:28.600 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Tweets': /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png
-2025-12-17 16:25:28.606 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Starting refresh for 9 albums
-2025-12-17 16:25:28.610 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Quotes' (id=7): found 1 thumbnails
-2025-12-17 16:25:28.610 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Quotes': /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
-2025-12-17 16:25:28.613 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Posts' (id=1): found 1 thumbnails
-2025-12-17 16:25:28.613 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Posts': /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
-2025-12-17 16:25:28.615 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Messages' (id=8): found 1 thumbnails
-2025-12-17 16:25:28.615 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Messages': /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
-2025-12-17 16:25:28.619 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Docs' (id=2): found 1 thumbnails
-2025-12-17 16:25:28.619 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Docs': /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
-2025-12-17 16:25:28.623 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Chats' (id=3): found 1 thumbnails
-2025-12-17 16:25:28.624 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Chats': /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
-2025-12-17 16:25:28.630 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Payments' (id=4): found 1 thumbnails
-2025-12-17 16:25:28.630 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Payments': /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
-2025-12-17 16:25:28.636 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Unsorted' (id=9): found 1 thumbnails
-2025-12-17 16:25:28.636 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Unsorted': /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg
-2025-12-17 16:25:28.636 15505-15670 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Refresh complete. Total thumbnails: 9
-2025-12-17 16:25:28.636 15505-15670 FolderScreen            com.aks_labs.pixelflow               D  After refresh - albumToThumbnailMapping size: 9
-2025-12-17 16:25:28.636 15505-15670 FolderScreen            com.aks_labs.pixelflow               D  Album Posts (id=1): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
-2025-12-17 16:25:28.637 15505-15670 FolderScreen            com.aks_labs.pixelflow               D  Album Docs (id=2): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
-2025-12-17 16:25:28.637 15505-15670 FolderScreen            com.aks_labs.pixelflow               D  Album Chats (id=3): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
-2025-12-17 16:25:28.637 15505-15670 FolderScreen            com.aks_labs.pixelflow               D  Album Payments (id=4): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
-2025-12-17 16:25:28.637 15505-15670 FolderScreen            com.aks_labs.pixelflow               D  Album Memes (id=5): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png
-2025-12-17 16:25:28.637 15505-15670 FolderScreen            com.aks_labs.pixelflow               D  Album Tweets (id=6): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png
-2025-12-17 16:25:28.637 15505-15670 FolderScreen            com.aks_labs.pixelflow               D  Album Quotes (id=7): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
-2025-12-17 16:25:28.637 15505-15670 FolderScreen            com.aks_labs.pixelflow               D  Album Messages (id=8): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
-2025-12-17 16:25:28.637 15505-15670 FolderScreen            com.aks_labs.pixelflow               D  Album Unsorted (id=9): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg
-2025-12-17 16:25:28.642 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Memes' (id=5): found 1 thumbnails
-2025-12-17 16:25:28.642 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Memes': /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png
-2025-12-17 16:25:28.644 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Posts, itemId: -804332824, filePath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
-2025-12-17 16:25:28.647 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Tweets' (id=6): found 1 thumbnails
-2025-12-17 16:25:28.647 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Tweets': /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png
-2025-12-17 16:25:28.654 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Quotes' (id=7): found 1 thumbnails
-2025-12-17 16:25:28.654 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Quotes': /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
-2025-12-17 16:25:28.657 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Messages' (id=8): found 1 thumbnails
-2025-12-17 16:25:28.657 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Messages': /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
-2025-12-17 16:25:28.659 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, exists: true
-2025-12-17 16:25:28.666 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Unsorted' (id=9): found 1 thumbnails
-2025-12-17 16:25:28.666 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Unsorted': /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg
-2025-12-17 16:25:28.666 15505-15671 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Refresh complete. Total thumbnails: 9
-2025-12-17 16:25:28.666 15505-15671 FolderScreen            com.aks_labs.pixelflow               D  After refresh - albumToThumbnailMapping size: 9
-2025-12-17 16:25:28.666 15505-15671 FolderScreen            com.aks_labs.pixelflow               D  Album Posts (id=1): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
-2025-12-17 16:25:28.666 15505-15671 FolderScreen            com.aks_labs.pixelflow               D  Album Docs (id=2): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
-2025-12-17 16:25:28.666 15505-15671 FolderScreen            com.aks_labs.pixelflow               D  Album Chats (id=3): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
-2025-12-17 16:25:28.667 15505-15671 FolderScreen            com.aks_labs.pixelflow               D  Album Payments (id=4): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
-2025-12-17 16:25:28.667 15505-15671 FolderScreen            com.aks_labs.pixelflow               D  Album Memes (id=5): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png
-2025-12-17 16:25:28.667 15505-15671 FolderScreen            com.aks_labs.pixelflow               D  Album Tweets (id=6): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png
-2025-12-17 16:25:28.667 15505-15671 FolderScreen            com.aks_labs.pixelflow               D  Album Quotes (id=7): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
-2025-12-17 16:25:28.667 15505-15671 FolderScreen            com.aks_labs.pixelflow               D  Album Messages (id=8): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
-2025-12-17 16:25:28.667 15505-15671 FolderScreen            com.aks_labs.pixelflow               D  Album Unsorted (id=9): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg
-2025-12-17 16:25:28.682 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Docs, itemId: 1440477992, filePath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
-2025-12-17 16:25:28.689 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, exists: true
-2025-12-17 16:25:28.710 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Chats, itemId: 2035652294, filePath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
-2025-12-17 16:25:28.717 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, exists: true
-2025-12-17 16:25:28.739 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Payments, itemId: 2057259762, filePath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
-2025-12-17 16:25:28.753 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, exists: true
-2025-12-17 16:25:28.763 15505-15671 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:28.774 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:28.785 15505-15673 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:28.789 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Memes, itemId: 1668404524, filePath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png
-2025-12-17 16:25:28.795 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png, exists: true
-2025-12-17 16:25:28.818 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Tweets, itemId: -559454833, filePath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png
-2025-12-17 16:25:28.825 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png, exists: true
-2025-12-17 16:25:28.834 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:28.847 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Quotes, itemId: 1719613194, filePath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
-2025-12-17 16:25:28.854 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, exists: true
-2025-12-17 16:25:28.876 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Messages, itemId: 150555577, filePath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
-2025-12-17 16:25:28.882 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, exists: true
-2025-12-17 16:25:28.888 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:28.906 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Unsorted, itemId: -178079059, filePath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg
-2025-12-17 16:25:28.908 15505-15673 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:28.912 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg, exists: true
-2025-12-17 16:25:29.010 15505-15673 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:29.052 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:29.086 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Posts, itemId: -804332824, filePath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
-2025-12-17 16:25:29.089 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, exists: true
-2025-12-17 16:25:29.091 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Docs, itemId: 1440477992, filePath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
-2025-12-17 16:25:29.093 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, exists: true
-2025-12-17 16:25:29.095 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Chats, itemId: 2035652294, filePath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
-2025-12-17 16:25:29.097 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, exists: true
-2025-12-17 16:25:29.099 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Payments, itemId: 2057259762, filePath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
-2025-12-17 16:25:29.101 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, exists: true
-2025-12-17 16:25:29.104 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Memes, itemId: 1668404524, filePath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png
-2025-12-17 16:25:29.106 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png, exists: true
-2025-12-17 16:25:29.108 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Tweets, itemId: -559454833, filePath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png
-2025-12-17 16:25:29.110 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png, exists: true
-2025-12-17 16:25:29.113 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Quotes, itemId: 1719613194, filePath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
-2025-12-17 16:25:29.115 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, exists: true
-2025-12-17 16:25:29.117 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Messages, itemId: 150555577, filePath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
-2025-12-17 16:25:29.120 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, exists: true
-2025-12-17 16:25:29.123 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Unsorted, itemId: -178079059, filePath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg
-2025-12-17 16:25:29.125 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg, exists: true
-2025-12-17 16:25:29.281 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Posts, itemId: -804332824, filePath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
-2025-12-17 16:25:29.283 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, exists: true
-2025-12-17 16:25:29.285 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Docs, itemId: 1440477992, filePath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
-2025-12-17 16:25:29.288 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, exists: true
-2025-12-17 16:25:29.290 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Chats, itemId: 2035652294, filePath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
-2025-12-17 16:25:29.292 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, exists: true
-2025-12-17 16:25:29.294 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Payments, itemId: 2057259762, filePath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
-2025-12-17 16:25:29.295 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, exists: true
-2025-12-17 16:25:29.297 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Memes, itemId: 1668404524, filePath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png
-2025-12-17 16:25:29.299 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png, exists: true
-2025-12-17 16:25:29.301 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Tweets, itemId: -559454833, filePath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png
-2025-12-17 16:25:29.303 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png, exists: true
-2025-12-17 16:25:29.305 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Quotes, itemId: 1719613194, filePath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
-2025-12-17 16:25:29.307 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, exists: true
-2025-12-17 16:25:29.309 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Messages, itemId: 150555577, filePath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
-2025-12-17 16:25:29.311 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, exists: true
-2025-12-17 16:25:29.313 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Unsorted, itemId: -178079059, filePath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg
-2025-12-17 16:25:29.314 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg, exists: true
-2025-12-17 16:25:30.088 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Posts, itemId: -804332824, filePath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
-2025-12-17 16:25:30.089 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, exists: true
-2025-12-17 16:25:30.092 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Docs, itemId: 1440477992, filePath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
-2025-12-17 16:25:30.094 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, exists: true
-2025-12-17 16:25:30.096 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Chats, itemId: 2035652294, filePath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
-2025-12-17 16:25:30.098 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, exists: true
-2025-12-17 16:25:30.100 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Payments, itemId: 2057259762, filePath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
-2025-12-17 16:25:30.102 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, exists: true
-2025-12-17 16:25:30.104 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Memes, itemId: 1668404524, filePath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png
-2025-12-17 16:25:30.107 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-152755_PixelFlow.png, exists: true
-2025-12-17 16:25:30.109 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Tweets, itemId: -559454833, filePath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png
-2025-12-17 16:25:30.111 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251216-130240_PixelFlow.png, exists: true
-2025-12-17 16:25:30.113 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Quotes, itemId: 1719613194, filePath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
-2025-12-17 16:25:30.115 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, exists: true
-2025-12-17 16:25:30.117 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Messages, itemId: 150555577, filePath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
-2025-12-17 16:25:30.119 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, exists: true
-2025-12-17 16:25:30.121 15505-15505 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Unsorted, itemId: -178079059, filePath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg
-2025-12-17 16:25:30.123 15505-15505 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968887622.jpg, exists: true
-2025-12-17 16:25:49.225 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.236 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.247 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.264 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.279 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.296 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.313 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.330 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.346 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.363 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.380 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.391 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.392 15505-15505 SwipeToScreenShot       com.aks_labs.pixelflow               D  canceling motionEvent because of threeGesture detecting
-2025-12-17 16:25:49.611 15505-15505 ScreenshotDetector      com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004912
-2025-12-17 16:25:49.614 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004912
-2025-12-17 16:25:49.616 15505-15670 ScreenshotDetector      com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004912
-2025-12-17 16:25:49.616 15505-15670 ScreenshotDetector      com.aks_labs.pixelflow               D  Querying for images added after: 1765968944
-2025-12-17 16:25:49.617 15505-16200 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004912
-2025-12-17 16:25:49.617 15505-16200 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765968939
-2025-12-17 16:25:49.634 15505-15670 ScreenshotDetector      com.aks_labs.pixelflow               D  Query returned 1 results
-2025-12-17 16:25:49.634 15505-15670 ScreenshotDetector      com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-162549_PixelFlow.png at /storage/emulated/0/Pictures/Screenshots/.pending-1766573749-Screenshot_20251217-162549_PixelFlow.png
-2025-12-17 16:25:49.641 15505-15670 ScreenshotDetector      com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true
-2025-12-17 16:25:49.641 15505-15670 ScreenshotDetector      com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/Screenshots/.pending-1766573749-Screenshot_20251217-162549_PixelFlow.png
-2025-12-17 16:25:49.642 15505-15505 ComposeFlo...bleService com.aks_labs.pixelflow               D  New screenshot detected: /storage/emulated/0/Pictures/Screenshots/.pending-1766573749-Screenshot_20251217-162549_PixelFlow.png
-2025-12-17 16:25:49.644 15505-15505 ComposeFlo...bleService com.aks_labs.pixelflow               D  Screenshot file is still pending, waiting for it to be ready
-2025-12-17 16:25:49.685 15505-16200 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 0 results
-2025-12-17 16:25:50.146 15505-15670 ComposeFlo...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 1
-2025-12-17 16:25:50.308 15505-15505 ScreenshotDetector      com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004912
-2025-12-17 16:25:50.308 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004912
-2025-12-17 16:25:50.309 15505-15670 ScreenshotDetector      com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004912
-2025-12-17 16:25:50.309 15505-15670 ScreenshotDetector      com.aks_labs.pixelflow               D  Querying for images added after: 1765968945
-2025-12-17 16:25:50.309 15505-16204 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004912
-2025-12-17 16:25:50.309 15505-16204 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765968940
-2025-12-17 16:25:50.319 15505-15670 ScreenshotDetector      com.aks_labs.pixelflow               D  Query returned 1 results
-2025-12-17 16:25:50.319 15505-15670 ScreenshotDetector      com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-162549_PixelFlow.png at /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-162549_PixelFlow.png
-2025-12-17 16:25:50.320 15505-15670 ScreenshotDetector      com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true
-2025-12-17 16:25:50.320 15505-15670 ScreenshotDetector      com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-162549_PixelFlow.png
-2025-12-17 16:25:50.321 15505-15505 ComposeFlo...bleService com.aks_labs.pixelflow               D  New screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-162549_PixelFlow.png
-2025-12-17 16:25:50.321 15505-15505 ComposeFlo...bleService com.aks_labs.pixelflow               D  Screenshot file exists, size: 530886 bytes
-2025-12-17 16:25:50.322 15505-15505 ComposeFlo...bleService com.aks_labs.pixelflow               D  Showing floating bubble for screenshot
-2025-12-17 16:25:50.324 15505-16204 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
-2025-12-17 16:25:50.324 15505-16204 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-162549_PixelFlow.png at /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-162549_PixelFlow.png
-2025-12-17 16:25:50.325 15505-16204 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: false
-2025-12-17 16:25:50.325 15505-16204 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-162549_PixelFlow.png
-2025-12-17 16:25:50.390 15505-15505 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:50.415 15505-15505 ComposeFlo...bleService com.aks_labs.pixelflow               D  Floating bubble shown successfully
-2025-12-17 16:25:50.415 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  New screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-162549_PixelFlow.png
-2025-12-17 16:25:50.418 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot file is still pending, waiting for it to be ready
-2025-12-17 16:25:50.419 15505-15505 ScreenshotDetector      com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004912
-2025-12-17 16:25:50.419 15505-16206 ViewBasedF...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 1
-2025-12-17 16:25:50.419 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004912
-2025-12-17 16:25:50.420 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004913
-2025-12-17 16:25:50.420 15505-15673 ScreenshotDetector      com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004912
-2025-12-17 16:25:50.420 15505-15673 ScreenshotDetector      com.aks_labs.pixelflow               D  Querying for images added after: 1765968945
-2025-12-17 16:25:50.420 15505-15505 ScreenshotDetector      com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004913
-2025-12-17 16:25:50.420 15505-16208 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004913
-2025-12-17 16:25:50.420 15505-16208 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765968940
-2025-12-17 16:25:50.420 15505-16207 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004912
-2025-12-17 16:25:50.421 15505-16207 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765968940
-2025-12-17 16:25:50.421 15505-15608 ScreenshotDetector      com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004913
-2025-12-17 16:25:50.421 15505-15608 ScreenshotDetector      com.aks_labs.pixelflow               D  Querying for images added after: 1765968945
-2025-12-17 16:25:50.422 15505-15505 ScreenshotDetector      com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004912
-2025-12-17 16:25:50.422 15505-15505 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004912
-2025-12-17 16:25:50.424 15505-15671 ScreenshotDetector      com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004912
-2025-12-17 16:25:50.424 15505-15671 ScreenshotDetector      com.aks_labs.pixelflow               D  Querying for images added after: 1765968945
-2025-12-17 16:25:50.426 15505-15505 AndroidRuntime          com.aks_labs.pixelflow               D  Shutting down VM
-2025-12-17 16:25:50.426 15505-16209 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004912
-2025-12-17 16:25:50.426 15505-16209 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765968940
-2025-12-17 16:25:50.429 15505-15670 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:50.436 15505-15673 ScreenshotDetector      com.aks_labs.pixelflow               D  Query returned 0 results
-2025-12-17 16:25:50.437 15505-15673 ScreenshotDetector      com.aks_labs.pixelflow               D  No images found in the cursor
-2025-12-17 16:25:50.437 15505-15608 ScreenshotDetector      com.aks_labs.pixelflow               D  Query returned 1 results
-2025-12-17 16:25:50.437 15505-15608 ScreenshotDetector      com.aks_labs.pixelflow               D  Found image: screenshot_1765968950323.jpg at /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968950323.jpg
-2025-12-17 16:25:50.437 15505-15608 ScreenshotDetector      com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true
-2025-12-17 16:25:50.437 15505-15608 ScreenshotDetector      com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968950323.jpg
-2025-12-17 16:25:50.439 15505-16208 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
-2025-12-17 16:25:50.439 15505-16208 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: screenshot_1765968950323.jpg at /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968950323.jpg
-2025-12-17 16:25:50.440 15505-16207 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
-2025-12-17 16:25:50.440 15505-16208 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: false
-2025-12-17 16:25:50.440 15505-16207 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: screenshot_1765968950323.jpg at /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968950323.jpg
-2025-12-17 16:25:50.440 15505-16208 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968950323.jpg
-2025-12-17 16:25:50.440 15505-16207 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: false
-2025-12-17 16:25:50.440 15505-16207 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968950323.jpg
-2025-12-17 16:25:50.446 15505-16209 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
-2025-12-17 16:25:50.446 15505-16209 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: screenshot_1765968950323.jpg at /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968950323.jpg
-2025-12-17 16:25:50.447 15505-16209 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: false
-2025-12-17 16:25:50.447 15505-16209 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968950323.jpg
-2025-12-17 16:25:50.453 15505-15671 ScreenshotDetector      com.aks_labs.pixelflow               D  Query returned 0 results
-2025-12-17 16:25:50.453 15505-15671 ScreenshotDetector      com.aks_labs.pixelflow               D  No images found in the cursor
-2025-12-17 16:25:50.460 15505-15505 AndroidRuntime          com.aks_labs.pixelflow               E  FATAL EXCEPTION: main (Fix with AI)
+2025-12-17 16:25:50.460 15505-15505 AndroidRuntime          pid-15505                            E  FATAL EXCEPTION: main (Fix with AI)
                                                                                                     Process: com.aks_labs.pixelflow, PID: 15505
                                                                                                     java.lang.IllegalStateException: ViewTreeLifecycleOwner not found from androidx.compose.ui.platform.ComposeView{f509b95 V.E...... ......I. 0,0-0,0}
                                                                                                     	at androidx.compose.ui.platform.WindowRecomposer_androidKt.createLifecycleAwareWindowRecomposer(WindowRecomposer.android.kt:352)
@@ -938,24 +581,621 @@
                                                                                                     	at java.lang.reflect.Method.invoke(Native Method)
                                                                                                     	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:591)
                                                                                                     	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:911)
-2025-12-17 16:25:50.482 15505-15670 ComposeFlo...bleService com.aks_labs.pixelflow               D  Screenshot saved successfully to Unsorted folder
-2025-12-17 16:25:50.488 15505-15670 ComposeFlo...bleService com.aks_labs.pixelflow               D  Screenshot added to folder: 9
-2025-12-17 16:25:50.647 15505-15670 ComposeFlo...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 2
-2025-12-17 16:25:50.922 15505-16206 ViewBasedF...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 2
-2025-12-17 16:25:51.157 15505-15670 ComposeFlo...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 3
-2025-12-17 16:25:51.425 15505-16206 ViewBasedF...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 3
-2025-12-17 16:25:51.662 15505-15670 ComposeFlo...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 4
-2025-12-17 16:25:51.927 15505-16206 ViewBasedF...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 4
-2025-12-17 16:25:52.166 15505-15670 ComposeFlo...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 5
-2025-12-17 16:25:52.392 15505-15670 ComposeFlo...bleService com.aks_labs.pixelflow               D  Found recent screenshot in Screenshots directory: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-162047_PixelFlow.png
-2025-12-17 16:25:52.392 15505-15670 ComposeFlo...bleService com.aks_labs.pixelflow               D  New screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-162047_PixelFlow.png
-2025-12-17 16:25:52.393 15505-15670 ComposeFlo...bleService com.aks_labs.pixelflow               D  Screenshot file exists, size: 307049 bytes
-2025-12-17 16:25:52.440 15505-16206 ViewBasedF...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 5
-2025-12-17 16:25:52.486 15505-15671 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
-2025-12-17 16:25:52.508 15505-15671 ComposeFlo...bleService com.aks_labs.pixelflow               D  Screenshot saved successfully to Unsorted folder
-2025-12-17 16:25:52.510 15505-15671 ComposeFlo...bleService com.aks_labs.pixelflow               D  Screenshot added to folder: 9
-2025-12-17 16:25:52.943 15505-16206 ViewBasedF...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 6
-2025-12-17 16:25:53.446 15505-16206 ViewBasedF...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 7
-2025-12-17 16:25:53.949 15505-16206 ViewBasedF...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 8
-2025-12-17 16:25:54.455 15505-16206 ViewBasedF...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 9
-2025-12-17 16:25:54.959 15505-16206 ViewBasedF...bleService com.aks_labs.pixelflow               D  Waiting for screenshot file to be ready, attempt 10
+2025-12-17 16:26:04.940  1985-7210  AppOps                  system_server                        E  Operation not started: uid=10804 pkg=com.aks_labs.pixelflow(null) op=SYSTEM_ALERT_WINDOW
+--------- beginning of main
+2025-12-17 16:40:08.837  1985-2321  InputDispatcher         system_server                        E  channel '341ad81 com.aks_labs.pixelflow/com.aks_labs.pixelflow.MainActivity' ~ Channel is unrecoverably broken and will be disposed!
+2025-12-17 16:40:12.645 20080-20080 _labs.pixelflow         com.aks_labs.pixelflow               I  Late-enabling -Xcheck:jni
+2025-12-17 16:40:12.723 20080-20080 _labs.pixelflow         com.aks_labs.pixelflow               I  Using CollectorTypeCC GC.
+2025-12-17 16:40:12.869 20080-20080 nativeloader            com.aks_labs.pixelflow               D  Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+2025-12-17 16:40:13.867 20080-20080 ziparchive              com.aks_labs.pixelflow               W  Unable to open '/data/app/~~Kz-5jZIxyoxCcKtqjsZq0Q==/com.aks_labs.pixelflow-6cOUvVIFCOgWmVGexOsjVw==/base.dm': No such file or directory
+2025-12-17 16:40:13.867 20080-20080 ziparchive              com.aks_labs.pixelflow               W  Unable to open '/data/app/~~Kz-5jZIxyoxCcKtqjsZq0Q==/com.aks_labs.pixelflow-6cOUvVIFCOgWmVGexOsjVw==/base.dm': No such file or directory
+2025-12-17 16:40:14.349 20080-20080 nativeloader            com.aks_labs.pixelflow               D  Configuring clns-7 for other apk /data/app/~~Kz-5jZIxyoxCcKtqjsZq0Q==/com.aks_labs.pixelflow-6cOUvVIFCOgWmVGexOsjVw==/base.apk. target_sdk_version=33, uses_libraries=, library_path=/data/app/~~Kz-5jZIxyoxCcKtqjsZq0Q==/com.aks_labs.pixelflow-6cOUvVIFCOgWmVGexOsjVw==/lib/arm64, permitted_path=/data:/mnt/expand:/data/user/0/com.aks_labs.pixelflow
+2025-12-17 16:40:14.413 20080-20080 _labs.pixelflow         com.aks_labs.pixelflow               I  AssetManager2(0x733c3824b8) locale list changing from [] to [en-IN]
+2025-12-17 16:40:14.490 20080-20080 GraphicsEnvironment     com.aks_labs.pixelflow               V  Currently set values for:
+2025-12-17 16:40:14.490 20080-20080 GraphicsEnvironment     com.aks_labs.pixelflow               V    angle_gl_driver_selection_pkgs=[com.android.angle, com.linecorp.b612.android, com.campmobile.snow, com.google.android.apps.tachyon]
+2025-12-17 16:40:14.490 20080-20080 GraphicsEnvironment     com.aks_labs.pixelflow               V    angle_gl_driver_selection_values=[angle, native, native, native]
+2025-12-17 16:40:14.490 20080-20080 GraphicsEnvironment     com.aks_labs.pixelflow               V  com.aks_labs.pixelflow is not listed in per-application setting
+2025-12-17 16:40:14.490 20080-20080 GraphicsEnvironment     com.aks_labs.pixelflow               V  Neither updatable production driver nor prerelease driver is supported.
+2025-12-17 16:40:15.306 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  ScreenshotBroadcastReceiver registered
+2025-12-17 16:40:15.327 20080-20080 BootReceiver            com.aks_labs.pixelflow               D  Received intent: android.intent.action.BOOT_COMPLETED
+2025-12-17 16:40:15.327 20080-20080 BootReceiver            com.aks_labs.pixelflow               D  Starting FloatingBubbleService after boot or app update
+2025-12-17 16:40:15.406 20080-20080 _labs.pixelflow         com.aks_labs.pixelflow               I  AssetManager2(0x733c379818) locale list changing from [] to [en-IN]
+2025-12-17 16:40:15.546 20080-20080 DesktopModeFlagsUtil    com.aks_labs.pixelflow               D  Toggle override initialized to: OVERRIDE_UNSET
+2025-12-17 16:40:15.649 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  OnBackInvokedCallback is not enabled for the application.
+                                                                                                    Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+2025-12-17 16:40:16.020 20080-20080 _labs.pixelflow         com.aks_labs.pixelflow               W  Method java.lang.Object androidx.compose.runtime.snapshots.SnapshotStateMap.mutate(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
+                                                                                                    Common causes for lock verification issues are non-optimized dex code
+                                                                                                    and incorrect proguard optimizations.
+2025-12-17 16:40:16.020 20080-20080 _labs.pixelflow         com.aks_labs.pixelflow               W  Method void androidx.compose.runtime.snapshots.SnapshotStateMap.update(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
+2025-12-17 16:40:16.021 20080-20080 _labs.pixelflow         com.aks_labs.pixelflow               W  Method boolean androidx.compose.runtime.snapshots.SnapshotStateMap.removeIf$runtime_release(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
+2025-12-17 16:40:16.285 20080-20134 AdrenoGLES-0            com.aks_labs.pixelflow               I  QUALCOMM build                   : 95db91f, Ifbc588260a
+                                                                                                    Build Date                       : 09/24/20
+                                                                                                    OpenGL ES Shader Compiler Version: EV031.32.02.01
+                                                                                                    Local Branch                     : mybrancheafe5b6d-fb5b-f1b0-b904-5cb90179c3e0
+                                                                                                    Remote Branch                    : quic/gfx-adreno.lnx.1.0.r114-rel
+                                                                                                    Remote Branch                    : NONE
+                                                                                                    Reconstruct Branch               : NOTHING
+2025-12-17 16:40:16.285 20080-20134 AdrenoGLES-0            com.aks_labs.pixelflow               I  Build Config                     : S P 10.0.7 AArch64
+2025-12-17 16:40:16.285 20080-20134 AdrenoGLES-0            com.aks_labs.pixelflow               I  Driver Path                      : /vendor/lib64/egl/libGLESv2_adreno.so
+2025-12-17 16:40:16.292  1985-2125  VerityUtils             system_server                        E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~Kz-5jZIxyoxCcKtqjsZq0Q==/com.aks_labs.pixelflow-6cOUvVIFCOgWmVGexOsjVw==/base.apk
+2025-12-17 16:40:16.348 20080-20080 _labs.pixelflow         com.aks_labs.pixelflow               W  Method boolean androidx.compose.runtime.snapshots.SnapshotStateList.conditionalUpdate(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
+2025-12-17 16:40:16.348 20080-20080 _labs.pixelflow         com.aks_labs.pixelflow               W  Method java.lang.Object androidx.compose.runtime.snapshots.SnapshotStateList.mutate(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
+2025-12-17 16:40:16.348 20080-20080 _labs.pixelflow         com.aks_labs.pixelflow               W  Method void androidx.compose.runtime.snapshots.SnapshotStateList.update(kotlin.jvm.functions.Function1) failed lock verification and will run slower.
+2025-12-17 16:40:16.349 20080-20134 AdrenoGLES-0            com.aks_labs.pixelflow               I  PFP: 0x016ee190, ME: 0x00000000
+2025-12-17 16:40:16.662  1985-2125  VerityUtils             system_server                        E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~Kz-5jZIxyoxCcKtqjsZq0Q==/com.aks_labs.pixelflow-6cOUvVIFCOgWmVGexOsjVw==/base.apk
+2025-12-17 16:40:16.742 20080-20216 Gralloc4                com.aks_labs.pixelflow               I  mapper 4.x is not supported
+2025-12-17 16:40:16.742 20080-20216 Gralloc3                com.aks_labs.pixelflow               W  mapper 3.x is not supported
+2025-12-17 16:40:16.760 20080-20216 Gralloc2                com.aks_labs.pixelflow               I  Adding additional valid usage bits: 0x8202000
+2025-12-17 16:40:16.812 20080-20092 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=1012ms; Flags=1, FrameTimelineVsyncId=80981904, IntendedVsync=120334870900864, Vsync=120334870900864, InputEventId=0, HandleInputStart=120334873968260, AnimationStart=120334873973052, PerformTraversalsStart=120334873975760, DrawStart=120335804588051, FrameDeadline=120334892234196, FrameInterval=120334873951906, FrameStartTime=16666680, SyncQueued=120335809336697, SyncStart=120335809510447, IssueDrawCommandsStart=120335810202062, SwapBuffers=120335877813312, FrameCompleted=120335883448780, DequeueBufferDuration=66433021, QueueBufferDuration=411459, GpuCompleted=120335883448780, SwapBuffersCompleted=120335878711333, DisplayPresentTime=0, CommandSubmissionCompleted=120335877813312, 
+2025-12-17 16:40:16.827 20080-20080 MainActivity            com.aks_labs.pixelflow               D  Starting ViewBasedFloatingBubbleService
+2025-12-17 16:40:16.827 20080-20080 MainActivity            com.aks_labs.pixelflow               D  Starting foreground service on Android O+
+2025-12-17 16:40:16.834 20080-20080 MainActivity            com.aks_labs.pixelflow               D  Service start requested successfully
+2025-12-17 16:40:16.866 20080-20080 Choreographer           com.aks_labs.pixelflow               I  Skipped 60 frames!  The application may be doing too much work on its main thread.
+2025-12-17 16:40:17.898 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onCreate called
+2025-12-17 16:40:17.924 20080-20092 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=2050ms; Flags=0, FrameTimelineVsyncId=80981968, IntendedVsync=120334970893719, Vsync=120335970891819, InputEventId=0, HandleInputStart=120335975614926, AnimationStart=120335975620760, PerformTraversalsStart=120336134265030, DrawStart=120336923740030, FrameDeadline=120335908901676, FrameInterval=120335975070343, FrameStartTime=16666635, SyncQueued=120336940403311, SyncStart=120336940462790, IssueDrawCommandsStart=120336940562738, SwapBuffers=120337017738988, FrameCompleted=120337021450811, DequeueBufferDuration=15990, QueueBufferDuration=1815730, GpuCompleted=120337021450811, SwapBuffersCompleted=120337020326593, DisplayPresentTime=0, CommandSubmissionCompleted=120337017738988, 
+2025-12-17 16:40:17.929 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Loaded 9 folders from SharedPrefsManager
+2025-12-17 16:40:17.929 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onStartCommand called with action: START_FROM_APP
+2025-12-17 16:40:17.941 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service starting from app
+2025-12-17 16:40:17.941 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Starting screenshot detection
+2025-12-17 16:40:18.318 20080-20080 InsetsController        com.aks_labs.pixelflow               D  hide(ime(), fromIme=false)
+2025-12-17 16:40:18.319 20080-20080 ImeTracker              com.aks_labs.pixelflow               I  com.aks_labs.pixelflow:41adc192: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2025-12-17 16:40:18.703 20080-20194 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:40:18.703 20080-20199 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:40:18.703 20080-20193 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:40:18.705 20080-20194 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:40:18.705 20080-20199 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:40:18.705 20080-20193 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:40:18.771 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:18.771 20080-20260 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:18.827 20080-20260 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:18.830 20080-20194 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:18.861 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:18.921 20080-20260 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:18.932 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:18.968 20080-20194 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:18.978 20080-20194 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:18.989 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:19.039 20080-20194 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:19.062 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:19.088 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:19.109 20080-20194 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:19.139 20080-20194 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:19.150 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:19.218 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:19.283 20080-20080 BootReceiver            com.aks_labs.pixelflow               D  Service started successfully after boot
+2025-12-17 16:40:19.290 20080-20250 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=953ms; Flags=0, FrameTimelineVsyncId=80983492, IntendedVsync=120337437558968, Vsync=120337570891216, InputEventId=0, HandleInputStart=120337583627426, AnimationStart=120337583630551, PerformTraversalsStart=120337628922426, DrawStart=120337629037686, FrameDeadline=120337508895461, FrameInterval=120337583082530, FrameStartTime=16666531, SyncQueued=120338385501279, SyncStart=120338385729561, IssueDrawCommandsStart=120338385967582, SwapBuffers=120338388519873, FrameCompleted=120338391730759, DequeueBufferDuration=24219, QueueBufferDuration=256406, GpuCompleted=120338391730759, SwapBuffersCompleted=120338389958623, DisplayPresentTime=0, CommandSubmissionCompleted=120338388519873, 
+2025-12-17 16:40:19.420 20080-20080 Choreographer           com.aks_labs.pixelflow               I  Skipped 56 frames!  The application may be doing too much work on its main thread.
+2025-12-17 16:40:19.698 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onStartCommand called with action: START_ON_BOOT
+2025-12-17 16:40:19.707 20080-20250 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=1207ms; Flags=0, FrameTimelineVsyncId=80983571, IntendedVsync=120337587563525, Vsync=120338520894749, InputEventId=0, HandleInputStart=120338530601279, AnimationStart=120338530607946, PerformTraversalsStart=120338774987842, DrawStart=120338775103571, FrameDeadline=120338425551098, FrameInterval=120338529836488, FrameStartTime=16666629, SyncQueued=120338790247998, SyncStart=120338790484300, IssueDrawCommandsStart=120338790681227, SwapBuffers=120338792069300, FrameCompleted=120338795248467, DequeueBufferDuration=15417, QueueBufferDuration=215937, GpuCompleted=120338795248467, SwapBuffersCompleted=120338793045967, DisplayPresentTime=0, CommandSubmissionCompleted=120338792069300, 
+2025-12-17 16:40:19.949 20080-20080 Choreographer           com.aks_labs.pixelflow               I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-12-17 16:40:20.206 20080-20092 HWUI                    com.aks_labs.pixelflow               I  Davey! duration=761ms; Flags=0, FrameTimelineVsyncId=80983997, IntendedVsync=120338537572495, Vsync=120339054242241, InputEventId=0, HandleInputStart=120339059174821, AnimationStart=120339059178050, PerformTraversalsStart=120339267057529, DrawStart=120339267151540, FrameDeadline=120338825560774, FrameInterval=120339058534196, FrameStartTime=16666766, SyncQueued=120339287862269, SyncStart=120339288150862, IssueDrawCommandsStart=120339288382685, SwapBuffers=120339289677894, FrameCompleted=120339299349925, DequeueBufferDuration=16354, QueueBufferDuration=259688, GpuCompleted=120339298943206, SwapBuffersCompleted=120339299349925, DisplayPresentTime=0, CommandSubmissionCompleted=120339289677894, 
+2025-12-17 16:40:20.930 20080-20268 ProfileInstaller        com.aks_labs.pixelflow               D  Installing profile for com.aks_labs.pixelflow
+2025-12-17 16:40:22.085 20080-20084 _labs.pixelflow         com.aks_labs.pixelflow               I  Compiler allocated 4762KB to compile void com.aks_labs.pixelflow.ui.screens.ImprovedHomeScreenKt$ImprovedHomeScreen$13.invoke(androidx.compose.foundation.layout.PaddingValues, androidx.compose.runtime.Composer, int)
+2025-12-17 16:40:22.850 20080-20085 _labs.pixelflow         com.aks_labs.pixelflow               I  Background concurrent copying GC freed 16MB AllocSpace bytes, 47(940KB) LOS objects, 49% free, 6674KB/13MB, paused 72us,31us total 102.246ms
+2025-12-17 16:40:30.342 20080-20080 BootReceiver            com.aks_labs.pixelflow               D  Service started successfully after boot
+2025-12-17 16:40:30.343 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onStartCommand called with action: START_ON_BOOT
+2025-12-17 16:40:37.458 20080-20080 InsetsController        com.aks_labs.pixelflow               D  hide(ime(), fromIme=false)
+2025-12-17 16:40:37.459 20080-20080 ImeTracker              com.aks_labs.pixelflow               I  com.aks_labs.pixelflow:7915327c: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2025-12-17 16:40:38.569 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@dc128e9
+2025-12-17 16:40:38.575 20080-20134 HWUI                    com.aks_labs.pixelflow               D  endAllActiveAnimators on 0x727c3dc5f0 (UnprojectedRipple) with handle 0x728c4006d0
+2025-12-17 16:40:38.626 20080-20080 InsetsController        com.aks_labs.pixelflow               D  hide(ime(), fromIme=false)
+2025-12-17 16:40:38.626 20080-20080 ImeTracker              com.aks_labs.pixelflow               I  com.aks_labs.pixelflow:79e1e504: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2025-12-17 16:40:38.674 20080-20085 _labs.pixelflow         com.aks_labs.pixelflow               W  Cleared Reference was only reachable from finalizer (only reported once)
+2025-12-17 16:40:39.170 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onDestroy called
+2025-12-17 16:40:39.170 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Hiding drag zones - START
+2025-12-17 16:40:39.170 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  No drag zones view to remove
+2025-12-17 16:40:39.170 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones hidden successfully
+2025-12-17 16:40:39.170 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Hiding action buttons
+2025-12-17 16:40:39.685 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onCreate called
+2025-12-17 16:40:39.697 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Loaded 9 folders from SharedPrefsManager
+2025-12-17 16:40:39.698 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onStartCommand called with action: START_FROM_APP
+2025-12-17 16:40:39.705 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service starting from app
+2025-12-17 16:40:39.705 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Starting screenshot detection
+2025-12-17 16:40:41.126 20080-20199 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:40:41.126 20080-20199 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:40:41.126 20080-20194 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:40:41.127 20080-20194 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:40:41.133 20080-20194 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:40:41.134 20080-20194 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:40:43.572 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004923
+2025-12-17 16:40:43.573 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004923
+2025-12-17 16:40:43.573 20080-20371 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004923
+2025-12-17 16:40:43.573 20080-20371 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969833
+2025-12-17 16:40:43.573 20080-20372 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004923
+2025-12-17 16:40:43.573 20080-20372 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969833
+2025-12-17 16:40:43.627 20080-20371 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 0 results
+2025-12-17 16:40:43.628 20080-20372 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 0 results
+2025-12-17 16:40:44.292 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004923
+2025-12-17 16:40:44.293 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004923
+2025-12-17 16:40:44.293 20080-20381 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004923
+2025-12-17 16:40:44.293 20080-20381 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969834
+2025-12-17 16:40:44.294 20080-20380 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004923
+2025-12-17 16:40:44.294 20080-20380 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969834
+2025-12-17 16:40:44.314 20080-20381 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
+2025-12-17 16:40:44.314 20080-20381 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-164043_System UI.png at /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.316 20080-20380 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
+2025-12-17 16:40:44.316 20080-20380 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-164043_System UI.png at /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.317 20080-20381 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: false
+2025-12-17 16:40:44.317 20080-20381 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.317 20080-20380 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: false
+2025-12-17 16:40:44.317 20080-20380 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.317 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  New screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.317 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot file exists, size: 457595 bytes
+2025-12-17 16:40:44.365 20080-20080 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:44.368 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Broadcast sent for screenshot detection: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.368 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing floating bubble for screenshot
+2025-12-17 16:40:44.398 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Floating bubble shown successfully
+2025-12-17 16:40:44.398 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  New screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.399 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot file exists, size: 457595 bytes
+2025-12-17 16:40:44.445 20080-20080 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:44.448 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Broadcast sent for screenshot detection: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.448 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing floating bubble for screenshot
+2025-12-17 16:40:44.461 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Floating bubble shown successfully
+2025-12-17 16:40:44.462 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004923
+2025-12-17 16:40:44.462 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004923
+2025-12-17 16:40:44.462 20080-20382 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004923
+2025-12-17 16:40:44.462 20080-20382 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969834
+2025-12-17 16:40:44.462 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Received broadcast: com.aks_labs.pixelflow.SCREENSHOT_DETECTED
+2025-12-17 16:40:44.462 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.463 20080-20383 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004923
+2025-12-17 16:40:44.463 20080-20383 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969834
+2025-12-17 16:40:44.475 20080-20382 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
+2025-12-17 16:40:44.475 20080-20382 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-164043_System UI.png at /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.476 20080-20382 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: false
+2025-12-17 16:40:44.476 20080-20382 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.479 20080-20383 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
+2025-12-17 16:40:44.479 20080-20383 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-164043_System UI.png at /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.479 20080-20383 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: false
+2025-12-17 16:40:44.480 20080-20383 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.499 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Received broadcast: com.aks_labs.pixelflow.SCREENSHOT_DETECTED
+2025-12-17 16:40:44.499 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.503 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  New screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.504 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot file exists, size: 457595 bytes
+2025-12-17 16:40:44.547 20080-20080 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:44.549 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Broadcast sent for screenshot detection: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.549 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing floating bubble for screenshot
+2025-12-17 16:40:44.551 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Bubble removed
+2025-12-17 16:40:44.565 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Floating bubble shown successfully
+2025-12-17 16:40:44.565 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  New screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.566 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot file exists, size: 457595 bytes
+2025-12-17 16:40:44.609 20080-20080 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:40:44.612 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Broadcast sent for screenshot detection: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.612 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing floating bubble for screenshot
+2025-12-17 16:40:44.613 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Bubble removed
+2025-12-17 16:40:44.628 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Floating bubble shown successfully
+2025-12-17 16:40:44.629 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Received broadcast: com.aks_labs.pixelflow.SCREENSHOT_DETECTED
+2025-12-17 16:40:44.629 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.629 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@1d0c25e
+2025-12-17 16:40:44.686 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Received broadcast: com.aks_labs.pixelflow.SCREENSHOT_DETECTED
+2025-12-17 16:40:44.687 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:40:44.687 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@4240e37
+2025-12-17 16:40:45.334 20080-20080 BootReceiver            com.aks_labs.pixelflow               D  Service started successfully after boot
+2025-12-17 16:40:45.334 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Service onStartCommand called with action: START_ON_BOOT
+2025-12-17 16:40:45.829 20080-20080 InsetsController        com.aks_labs.pixelflow               D  hide(ime(), fromIme=false)
+2025-12-17 16:40:45.829 20080-20080 ImeTracker              com.aks_labs.pixelflow               I  com.aks_labs.pixelflow:efbb607b: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2025-12-17 16:40:48.413 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing drag zones - START
+2025-12-17 16:40:48.417 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Refreshed 9 folders from SharedPrefsManager
+2025-12-17 16:40:48.417 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Folders count: 9
+2025-12-17 16:40:48.417 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Hiding drag zones - START
+2025-12-17 16:40:48.417 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  No drag zones view to remove
+2025-12-17 16:40:48.418 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones hidden successfully
+2025-12-17 16:40:48.434 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones added to window manager
+2025-12-17 16:40:48.434 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing drag zones - COMPLETE
+2025-12-17 16:40:52.551 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Hiding drag zones - START
+2025-12-17 16:40:52.552 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones removed from window manager
+2025-12-17 16:40:52.553 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones hidden successfully
+2025-12-17 16:40:52.567 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@d71f3cc
+2025-12-17 16:40:53.229 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing drag zones - START
+2025-12-17 16:40:53.234 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Refreshed 9 folders from SharedPrefsManager
+2025-12-17 16:40:53.234 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Folders count: 9
+2025-12-17 16:40:53.234 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Hiding drag zones - START
+2025-12-17 16:40:53.234 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  No drag zones view to remove
+2025-12-17 16:40:53.234 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones hidden successfully
+2025-12-17 16:40:53.248 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones added to window manager
+2025-12-17 16:40:53.248 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing drag zones - COMPLETE
+2025-12-17 16:40:53.907 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Hiding drag zones - START
+2025-12-17 16:40:53.909 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones removed from window manager
+2025-12-17 16:40:53.909 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones hidden successfully
+2025-12-17 16:40:53.918 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@3b2e9ce
+2025-12-17 16:40:56.713 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing drag zones - START
+2025-12-17 16:40:56.717 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Refreshed 9 folders from SharedPrefsManager
+2025-12-17 16:40:56.717 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Folders count: 9
+2025-12-17 16:40:56.717 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Hiding drag zones - START
+2025-12-17 16:40:56.717 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  No drag zones view to remove
+2025-12-17 16:40:56.717 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones hidden successfully
+2025-12-17 16:40:56.733 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones added to window manager
+2025-12-17 16:40:56.733 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing drag zones - COMPLETE
+2025-12-17 16:41:01.378 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot dropped in folder: 5
+2025-12-17 16:41:01.378 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Moving screenshot to folder: Memes
+2025-12-17 16:41:01.382 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Added to processed screenshots: Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.776 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot copied to folder: Memes at /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.811 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Original screenshot deleted successfully
+2025-12-17 16:41:01.817 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Broadcast sent for screenshot moved: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png to folder: Memes
+2025-12-17 16:41:01.819 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Bubble removed
+2025-12-17 16:41:01.819 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Hiding drag zones - START
+2025-12-17 16:41:01.820 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones removed from window manager
+2025-12-17 16:41:01.820 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones hidden successfully
+2025-12-17 16:41:01.828 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004924
+2025-12-17 16:41:01.828 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004924
+2025-12-17 16:41:01.828 20080-20698 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004924
+2025-12-17 16:41:01.828 20080-20698 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969851
+2025-12-17 16:41:01.828 20080-20699 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004924
+2025-12-17 16:41:01.829 20080-20699 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969851
+2025-12-17 16:41:01.830 20080-20697 MediaScannerConnection  com.aks_labs.pixelflow               D  Scanned /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png to content://media/external_primary/images/media/1000004924
+2025-12-17 16:41:01.838 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004923
+2025-12-17 16:41:01.838 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004923
+2025-12-17 16:41:01.838 20080-20700 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004923
+2025-12-17 16:41:01.838 20080-20700 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969851
+2025-12-17 16:41:01.839 20080-20701 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004923
+2025-12-17 16:41:01.839 20080-20701 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969851
+2025-12-17 16:41:01.839 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Received broadcast: com.aks_labs.pixelflow.SCREENSHOT_MOVED
+2025-12-17 16:41:01.839 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Screenshot moved: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png to folder: 5
+2025-12-17 16:41:01.840 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@347f40
+2025-12-17 16:41:01.846 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@19b6c00
+2025-12-17 16:41:01.852 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004924
+2025-12-17 16:41:01.853 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004924
+2025-12-17 16:41:01.853 20080-20703 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004924
+2025-12-17 16:41:01.853 20080-20703 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969851
+2025-12-17 16:41:01.853 20080-20702 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004924
+2025-12-17 16:41:01.853 20080-20702 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969851
+2025-12-17 16:41:01.868 20080-20701 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
+2025-12-17 16:41:01.868 20080-20701 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-164043_System UI.png at /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.869 20080-20701 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: true
+2025-12-17 16:41:01.869 20080-20701 ViewBasedF...bleService com.aks_labs.pixelflow               D  Skipping already processed screenshot: Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.882 20080-20702 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
+2025-12-17 16:41:01.882 20080-20702 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-164043_System UI.png at /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.883 20080-20702 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: true
+2025-12-17 16:41:01.883 20080-20702 ViewBasedF...bleService com.aks_labs.pixelflow               D  Skipping already processed screenshot: Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.891 20080-20703 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
+2025-12-17 16:41:01.892 20080-20703 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-164043_System UI.png at /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.892 20080-20703 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: false
+2025-12-17 16:41:01.892 20080-20703 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.893 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  New screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.893 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot file exists, size: 457595 bytes
+2025-12-17 16:41:01.908 20080-20699 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
+2025-12-17 16:41:01.909 20080-20699 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-164043_System UI.png at /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.909 20080-20700 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
+2025-12-17 16:41:01.909 20080-20700 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-164043_System UI.png at /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.909 20080-20700 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: false
+2025-12-17 16:41:01.909 20080-20700 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.910 20080-20699 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: true
+2025-12-17 16:41:01.910 20080-20699 ViewBasedF...bleService com.aks_labs.pixelflow               D  Skipping already processed screenshot: Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.912 20080-20698 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
+2025-12-17 16:41:01.913 20080-20698 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-164043_System UI.png at /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.913 20080-20698 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: false
+2025-12-17 16:41:01.913 20080-20698 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.957 20080-20080 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:01.959 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Broadcast sent for screenshot detection: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.959 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing floating bubble for screenshot
+2025-12-17 16:41:01.961 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Bubble removed
+2025-12-17 16:41:01.978 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Floating bubble shown successfully
+2025-12-17 16:41:01.978 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  New screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:01.978 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot file exists, size: 457595 bytes
+2025-12-17 16:41:02.022 20080-20080 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:02.025 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Broadcast sent for screenshot detection: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:02.025 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing floating bubble for screenshot
+2025-12-17 16:41:02.026 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Bubble removed
+2025-12-17 16:41:02.043 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Floating bubble shown successfully
+2025-12-17 16:41:02.044 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  New screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:02.044 20080-20697 MediaScannerConnection  com.aks_labs.pixelflow               D  Scanned /storage/emulated/0/Pictures/Screenshots/Screenshot_20251217-164043_System UI.png to null
+2025-12-17 16:41:02.045 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot file exists, size: 457595 bytes
+2025-12-17 16:41:02.089 20080-20080 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:02.093 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Broadcast sent for screenshot detection: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:02.093 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing floating bubble for screenshot
+2025-12-17 16:41:02.094 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Bubble removed
+2025-12-17 16:41:02.110 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Floating bubble shown successfully
+2025-12-17 16:41:02.110 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Received broadcast: com.aks_labs.pixelflow.SCREENSHOT_DETECTED
+2025-12-17 16:41:02.110 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:02.111 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@9f9e3b1
+2025-12-17 16:41:02.177 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Received broadcast: com.aks_labs.pixelflow.SCREENSHOT_DETECTED
+2025-12-17 16:41:02.177 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:02.177 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@6ef92f4
+2025-12-17 16:41:02.183 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Received broadcast: com.aks_labs.pixelflow.SCREENSHOT_DETECTED
+2025-12-17 16:41:02.183 20080-20080 ScreenshotReceiver      com.aks_labs.pixelflow               D  Screenshot detected: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:02.183 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@1c5f7de
+2025-12-17 16:41:02.997 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing drag zones - START
+2025-12-17 16:41:03.003 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Refreshed 9 folders from SharedPrefsManager
+2025-12-17 16:41:03.003 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Folders count: 9
+2025-12-17 16:41:03.003 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Hiding drag zones - START
+2025-12-17 16:41:03.003 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  No drag zones view to remove
+2025-12-17 16:41:03.003 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones hidden successfully
+2025-12-17 16:41:03.021 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones added to window manager
+2025-12-17 16:41:03.021 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Showing drag zones - COMPLETE
+2025-12-17 16:41:04.319 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot dropped in folder: 5
+2025-12-17 16:41:04.320 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Moving screenshot to folder: Memes
+2025-12-17 16:41:04.322 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Added to processed screenshots: Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:04.639 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Screenshot copied to folder: Memes at /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:04.641 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Bubble removed
+2025-12-17 16:41:04.641 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Hiding drag zones - START
+2025-12-17 16:41:04.642 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones removed from window manager
+2025-12-17 16:41:04.642 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Drag zones hidden successfully
+2025-12-17 16:41:04.652 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@fb1a578
+2025-12-17 16:41:04.659 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@e379b54
+2025-12-17 16:41:04.665 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004924
+2025-12-17 16:41:04.665 20080-20080 ViewBasedF...bleService com.aks_labs.pixelflow               D  Content change detected: content://media/external/images/media/1000004924
+2025-12-17 16:41:04.666 20080-20717 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004924
+2025-12-17 16:41:04.666 20080-20717 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969854
+2025-12-17 16:41:04.666 20080-20718 ViewBasedF...bleService com.aks_labs.pixelflow               D  Checking if URI is a screenshot: content://media/external/images/media/1000004924
+2025-12-17 16:41:04.666 20080-20718 ViewBasedF...bleService com.aks_labs.pixelflow               D  Querying for images added after: 1765969854
+2025-12-17 16:41:04.667 20080-20697 MediaScannerConnection  com.aks_labs.pixelflow               D  Scanned /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png to content://media/external_primary/images/media/1000004924
+2025-12-17 16:41:04.712 20080-20717 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
+2025-12-17 16:41:04.712 20080-20717 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-164043_System UI.png at /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:04.712 20080-20718 ViewBasedF...bleService com.aks_labs.pixelflow               D  Query returned 1 results
+2025-12-17 16:41:04.712 20080-20718 ViewBasedF...bleService com.aks_labs.pixelflow               D  Found image: Screenshot_20251217-164043_System UI.png at /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:04.712 20080-20717 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: true
+2025-12-17 16:41:04.712 20080-20717 ViewBasedF...bleService com.aks_labs.pixelflow               D  Skipping already processed screenshot: Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:04.713 20080-20718 ViewBasedF...bleService com.aks_labs.pixelflow               D  Is screenshot by name: true, File exists: true, Already processed: true
+2025-12-17 16:41:04.713 20080-20718 ViewBasedF...bleService com.aks_labs.pixelflow               D  Skipping already processed screenshot: Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:06.730 20080-20194 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:06.731 20080-20194 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:08.787 20080-20080 InsetsController        com.aks_labs.pixelflow               D  hide(ime(), fromIme=false)
+2025-12-17 16:41:08.787 20080-20080 ImeTracker              com.aks_labs.pixelflow               I  com.aks_labs.pixelflow:4a636aeb: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2025-12-17 16:41:10.136 20080-20080 WindowOnBackDispatcher  com.aks_labs.pixelflow               W  sendCancelIfRunning: isInProgress=false callback=android.view.ViewRootImpl$$ExternalSyntheticLambda13@cb7a01c
+2025-12-17 16:41:10.140 20080-20134 HWUI                    com.aks_labs.pixelflow               D  endAllActiveAnimators on 0x727c3f2190 (UnprojectedRipple) with handle 0x728c3b8f40
+2025-12-17 16:41:10.283 20080-20080 InsetsController        com.aks_labs.pixelflow               D  hide(ime(), fromIme=false)
+2025-12-17 16:41:10.283 20080-20080 ImeTracker              com.aks_labs.pixelflow               I  com.aks_labs.pixelflow:b31a7c59: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2025-12-17 16:41:11.163 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Starting refresh for 9 albums
+2025-12-17 16:41:11.176 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Posts' (id=1): found 1 thumbnails
+2025-12-17 16:41:11.176 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Posts': /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:11.182 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Docs' (id=2): found 1 thumbnails
+2025-12-17 16:41:11.182 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Docs': /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:11.189 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Chats' (id=3): found 1 thumbnails
+2025-12-17 16:41:11.190 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Chats': /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:11.201 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Payments' (id=4): found 1 thumbnails
+2025-12-17 16:41:11.201 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Payments': /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:11.218 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Memes' (id=5): found 1 thumbnails
+2025-12-17 16:41:11.218 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Memes': /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:11.227 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Tweets' (id=6): found 1 thumbnails
+2025-12-17 16:41:11.227 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Tweets': /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:11.241 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Quotes' (id=7): found 1 thumbnails
+2025-12-17 16:41:11.241 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Quotes': /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:11.245 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Messages' (id=8): found 1 thumbnails
+2025-12-17 16:41:11.246 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Messages': /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:11.255 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Starting refresh for 9 albums
+2025-12-17 16:41:11.264 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Posts' (id=1): found 1 thumbnails
+2025-12-17 16:41:11.264 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Posts': /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:11.269 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Docs' (id=2): found 1 thumbnails
+2025-12-17 16:41:11.269 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Docs': /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:11.271 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Unsorted' (id=9): found 1 thumbnails
+2025-12-17 16:41:11.272 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Unsorted': /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:11.272 20080-20194 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Refresh complete. Total thumbnails: 9
+2025-12-17 16:41:11.272 20080-20194 FolderScreen            com.aks_labs.pixelflow               D  After refresh - albumToThumbnailMapping size: 9
+2025-12-17 16:41:11.272 20080-20194 FolderScreen            com.aks_labs.pixelflow               D  Album Posts (id=1): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:11.272 20080-20194 FolderScreen            com.aks_labs.pixelflow               D  Album Docs (id=2): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:11.272 20080-20194 FolderScreen            com.aks_labs.pixelflow               D  Album Chats (id=3): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:11.273 20080-20194 FolderScreen            com.aks_labs.pixelflow               D  Album Payments (id=4): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:11.273 20080-20194 FolderScreen            com.aks_labs.pixelflow               D  Album Memes (id=5): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:11.273 20080-20194 FolderScreen            com.aks_labs.pixelflow               D  Album Tweets (id=6): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:11.273 20080-20194 FolderScreen            com.aks_labs.pixelflow               D  Album Quotes (id=7): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:11.273 20080-20194 FolderScreen            com.aks_labs.pixelflow               D  Album Messages (id=8): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:11.273 20080-20194 FolderScreen            com.aks_labs.pixelflow               D  Album Unsorted (id=9): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:11.274 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Chats' (id=3): found 1 thumbnails
+2025-12-17 16:41:11.274 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Chats': /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:11.278 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Payments' (id=4): found 1 thumbnails
+2025-12-17 16:41:11.278 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Payments': /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:11.287 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Memes' (id=5): found 1 thumbnails
+2025-12-17 16:41:11.287 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Memes': /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:11.292 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Tweets' (id=6): found 1 thumbnails
+2025-12-17 16:41:11.292 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Tweets': /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:11.297 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Quotes' (id=7): found 1 thumbnails
+2025-12-17 16:41:11.297 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Quotes': /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:11.299 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Messages' (id=8): found 1 thumbnails
+2025-12-17 16:41:11.299 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Messages': /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:11.312 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Unsorted' (id=9): found 1 thumbnails
+2025-12-17 16:41:11.312 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Unsorted': /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:11.312 20080-20199 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Refresh complete. Total thumbnails: 9
+2025-12-17 16:41:11.312 20080-20199 FolderScreen            com.aks_labs.pixelflow               D  After refresh - albumToThumbnailMapping size: 9
+2025-12-17 16:41:11.312 20080-20199 FolderScreen            com.aks_labs.pixelflow               D  Album Posts (id=1): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:11.312 20080-20199 FolderScreen            com.aks_labs.pixelflow               D  Album Docs (id=2): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:11.312 20080-20199 FolderScreen            com.aks_labs.pixelflow               D  Album Chats (id=3): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:11.313 20080-20199 FolderScreen            com.aks_labs.pixelflow               D  Album Payments (id=4): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:11.313 20080-20199 FolderScreen            com.aks_labs.pixelflow               D  Album Memes (id=5): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:11.313 20080-20199 FolderScreen            com.aks_labs.pixelflow               D  Album Tweets (id=6): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:11.313 20080-20199 FolderScreen            com.aks_labs.pixelflow               D  Album Quotes (id=7): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:11.313 20080-20199 FolderScreen            com.aks_labs.pixelflow               D  Album Messages (id=8): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:11.313 20080-20199 FolderScreen            com.aks_labs.pixelflow               D  Album Unsorted (id=9): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:11.314 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Posts, itemId: -804332824, filePath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:11.329 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, exists: true
+2025-12-17 16:41:11.347 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Docs, itemId: 1440477992, filePath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:11.352 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, exists: true
+2025-12-17 16:41:11.369 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Chats, itemId: 2035652294, filePath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:11.374 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, exists: true
+2025-12-17 16:41:11.392 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Payments, itemId: 2057259762, filePath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:11.397 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, exists: true
+2025-12-17 16:41:11.427 20080-20194 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:11.432 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Memes, itemId: -2131050604, filePath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:11.434 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:11.439 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png, exists: true
+2025-12-17 16:41:11.448 20080-20260 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:11.455 20080-20199 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:11.455 20080-20199 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:11.458 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Tweets, itemId: 1384305940, filePath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:11.463 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png, exists: true
+2025-12-17 16:41:11.480 20080-20193 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:11.480 20080-20199 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:11.481 20080-20199 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:11.484 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Quotes, itemId: 1719613194, filePath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:11.489 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, exists: true
+2025-12-17 16:41:11.506 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Messages, itemId: 150555577, filePath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:11.512 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, exists: true
+2025-12-17 16:41:11.529 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Unsorted, itemId: -1830649977, filePath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:11.531 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:11.534 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg, exists: true
+2025-12-17 16:41:11.629 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:11.652 20080-20193 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:11.702 20080-20085 _labs.pixelflow         com.aks_labs.pixelflow               I  Background concurrent copying GC freed 6203KB AllocSpace bytes, 18(368KB) LOS objects, 49% free, 8728KB/17MB, paused 124us,60us total 112.588ms
+2025-12-17 16:41:11.754 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Posts, itemId: -804332824, filePath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:11.757 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, exists: true
+2025-12-17 16:41:11.760 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Docs, itemId: 1440477992, filePath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:11.763 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, exists: true
+2025-12-17 16:41:11.766 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Chats, itemId: 2035652294, filePath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:11.768 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, exists: true
+2025-12-17 16:41:11.771 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Payments, itemId: 2057259762, filePath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:11.773 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, exists: true
+2025-12-17 16:41:11.775 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Memes, itemId: -2131050604, filePath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:11.777 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png, exists: true
+2025-12-17 16:41:11.779 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Tweets, itemId: 1384305940, filePath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:11.781 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png, exists: true
+2025-12-17 16:41:11.784 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Quotes, itemId: 1719613194, filePath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:11.786 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, exists: true
+2025-12-17 16:41:11.788 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Messages, itemId: 150555577, filePath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:11.790 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, exists: true
+2025-12-17 16:41:11.792 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Unsorted, itemId: -1830649977, filePath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:11.793 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg, exists: true
+2025-12-17 16:41:13.703 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Posts, itemId: -804332824, filePath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:13.705 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, exists: true
+2025-12-17 16:41:13.706 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Docs, itemId: 1440477992, filePath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:13.708 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, exists: true
+2025-12-17 16:41:13.709 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Chats, itemId: 2035652294, filePath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:13.711 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, exists: true
+2025-12-17 16:41:13.713 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Payments, itemId: 2057259762, filePath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:13.715 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, exists: true
+2025-12-17 16:41:13.717 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Memes, itemId: -2131050604, filePath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:13.718 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png, exists: true
+2025-12-17 16:41:13.720 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Tweets, itemId: 1384305940, filePath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:13.722 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png, exists: true
+2025-12-17 16:41:13.724 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Quotes, itemId: 1719613194, filePath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:13.727 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, exists: true
+2025-12-17 16:41:13.729 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Messages, itemId: 150555577, filePath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:13.731 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, exists: true
+2025-12-17 16:41:13.733 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Unsorted, itemId: -1830649977, filePath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:13.735 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg, exists: true
+2025-12-17 16:41:13.889 20080-20193 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:13.889 20080-20193 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:13.900 20080-20193 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:13.900 20080-20193 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:13.912 20080-20193 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:13.913 20080-20193 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:13.998 20080-20193 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.026 20080-20260 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.028 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.034 20080-20194 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.050 20080-20193 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.134 20080-20194 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.150 20080-20260 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.192 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.198 20080-20834 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.222 20080-20193 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.225 20080-20194 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.247 20080-20260 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.270 20080-20199 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.279 20080-20194 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:14.307 20080-20835 HWUI                    com.aks_labs.pixelflow               W  Image decoding logging dropped!
+2025-12-17 16:41:15.677 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Starting refresh for 9 albums
+2025-12-17 16:41:15.681 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Posts' (id=1): found 1 thumbnails
+2025-12-17 16:41:15.681 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Posts': /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:15.685 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Docs' (id=2): found 1 thumbnails
+2025-12-17 16:41:15.685 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Docs': /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:15.688 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Chats' (id=3): found 1 thumbnails
+2025-12-17 16:41:15.688 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Chats': /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:15.694 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Payments' (id=4): found 1 thumbnails
+2025-12-17 16:41:15.694 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Payments': /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:15.706 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Memes' (id=5): found 1 thumbnails
+2025-12-17 16:41:15.706 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Memes': /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:15.710 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Tweets' (id=6): found 1 thumbnails
+2025-12-17 16:41:15.710 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Tweets': /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:15.715 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Quotes' (id=7): found 1 thumbnails
+2025-12-17 16:41:15.716 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Quotes': /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:15.718 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Messages' (id=8): found 1 thumbnails
+2025-12-17 16:41:15.719 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Messages': /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:15.727 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Unsorted' (id=9): found 1 thumbnails
+2025-12-17 16:41:15.727 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Unsorted': /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:15.727 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Refresh complete. Total thumbnails: 9
+2025-12-17 16:41:15.727 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  After refresh - albumToThumbnailMapping size: 9
+2025-12-17 16:41:15.727 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Posts (id=1): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:15.727 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Docs (id=2): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:15.727 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Chats (id=3): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:15.727 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Payments (id=4): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:15.727 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Memes (id=5): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:15.727 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Tweets (id=6): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:15.727 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Quotes (id=7): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:15.727 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Messages (id=8): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:15.728 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Unsorted (id=9): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:15.777 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Posts, itemId: -804332824, filePath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:15.782 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, exists: true
+2025-12-17 16:41:15.799 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Docs, itemId: 1440477992, filePath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:15.804 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, exists: true
+2025-12-17 16:41:15.822 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Chats, itemId: 2035652294, filePath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:15.827 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, exists: true
+2025-12-17 16:41:15.843 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Payments, itemId: 2057259762, filePath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:15.848 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, exists: true
+2025-12-17 16:41:15.864 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Memes, itemId: -2131050604, filePath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:15.868 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png, exists: true
+2025-12-17 16:41:15.880 20080-20835 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:15.880 20080-20835 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:15.883 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Tweets, itemId: 1384305940, filePath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:15.887 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png, exists: true
+2025-12-17 16:41:15.899 20080-20835 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:15.899 20080-20835 HWUI                    com.aks_labs.pixelflow               D  --- Failed to create image decoder with message 'unimplemented'
+2025-12-17 16:41:15.903 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Quotes, itemId: 1719613194, filePath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:15.907 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, exists: true
+2025-12-17 16:41:15.923 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Messages, itemId: 150555577, filePath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:15.927 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, exists: true
+2025-12-17 16:41:15.943 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Unsorted, itemId: -1830649977, filePath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:15.947 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg, exists: true
+2025-12-17 16:41:16.013 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Starting refresh for 9 albums
+2025-12-17 16:41:16.017 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Posts' (id=1): found 1 thumbnails
+2025-12-17 16:41:16.018 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Posts': /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:16.021 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Docs' (id=2): found 1 thumbnails
+2025-12-17 16:41:16.021 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Docs': /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:16.024 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Chats' (id=3): found 1 thumbnails
+2025-12-17 16:41:16.024 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Chats': /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:16.028 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Payments' (id=4): found 1 thumbnails
+2025-12-17 16:41:16.029 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Payments': /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:16.038 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Memes' (id=5): found 1 thumbnails
+2025-12-17 16:41:16.038 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Memes': /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:16.043 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Tweets' (id=6): found 1 thumbnails
+2025-12-17 16:41:16.043 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Tweets': /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:16.048 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Quotes' (id=7): found 1 thumbnails
+2025-12-17 16:41:16.048 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Quotes': /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:16.051 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Messages' (id=8): found 1 thumbnails
+2025-12-17 16:41:16.051 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Messages': /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:16.055 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Posts, itemId: -804332824, filePath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:16.056 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, exists: true
+2025-12-17 16:41:16.058 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Docs, itemId: 1440477992, filePath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:16.060 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Folder 'Unsorted' (id=9): found 1 thumbnails
+2025-12-17 16:41:16.060 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, exists: true
+2025-12-17 16:41:16.060 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Stored thumbnail for 'Unsorted': /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:16.060 20080-20835 refreshAlbumsAsync      com.aks_labs.pixelflow               D  Refresh complete. Total thumbnails: 9
+2025-12-17 16:41:16.060 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  After refresh - albumToThumbnailMapping size: 9
+2025-12-17 16:41:16.060 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Posts (id=1): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:16.060 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Docs (id=2): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:16.060 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Chats (id=3): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:16.060 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Payments (id=4): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:16.060 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Memes (id=5): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:16.060 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Tweets (id=6): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:16.060 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Quotes (id=7): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:16.060 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Messages (id=8): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:16.060 20080-20835 FolderScreen            com.aks_labs.pixelflow               D  Album Unsorted (id=9): thumbnail=/storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:16.061 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Chats, itemId: 2035652294, filePath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:16.063 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, exists: true
+2025-12-17 16:41:16.064 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Payments, itemId: 2057259762, filePath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:16.066 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, exists: true
+2025-12-17 16:41:16.067 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Memes, itemId: -2131050604, filePath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:16.070 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png, exists: true
+2025-12-17 16:41:16.071 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Tweets, itemId: 1384305940, filePath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:16.073 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png, exists: true
+2025-12-17 16:41:16.074 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Quotes, itemId: 1719613194, filePath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:16.076 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, exists: true
+2025-12-17 16:41:16.077 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Messages, itemId: 150555577, filePath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:16.079 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, exists: true
+2025-12-17 16:41:16.080 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Unsorted, itemId: -1830649977, filePath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:16.083 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg, exists: true
+2025-12-17 16:41:16.180 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Posts, itemId: -804332824, filePath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png
+2025-12-17 16:41:16.183 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Posts/Screenshot_20250506-202059_Infinity-X Launcher.png, exists: true
+2025-12-17 16:41:16.185 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Docs, itemId: 1440477992, filePath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png
+2025-12-17 16:41:16.187 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Docs/Screenshot_20250501-093408_PixelFlow.png, exists: true
+2025-12-17 16:41:16.188 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Chats, itemId: 2035652294, filePath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png
+2025-12-17 16:41:16.190 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Chats/Screenshot_20250508-002443_PixelFlow.png, exists: true
+2025-12-17 16:41:16.192 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Payments, itemId: 2057259762, filePath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png
+2025-12-17 16:41:16.193 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Payments/Screenshot_20251216-130903_PixelFlow.png, exists: true
+2025-12-17 16:41:16.195 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Memes, itemId: -2131050604, filePath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png
+2025-12-17 16:41:16.196 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Memes/Screenshot_20251217-164043_System UI.png, exists: true
+2025-12-17 16:41:16.198 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Tweets, itemId: 1384305940, filePath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png
+2025-12-17 16:41:16.199 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Tweets/Screenshot_20251217-163103_PixelFlow.png, exists: true
+2025-12-17 16:41:16.201 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Quotes, itemId: 1719613194, filePath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png
+2025-12-17 16:41:16.203 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Quotes/Screenshot_20251214-212658_Google Play Store.png, exists: true
+2025-12-17 16:41:16.205 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Messages, itemId: 150555577, filePath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png
+2025-12-17 16:41:16.206 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Messages/Screenshot_20250806-194032_Infinity-X Launcher.png, exists: true
+2025-12-17 16:41:16.207 20080-20080 AlbumGridItem           com.aks_labs.pixelflow               D  Rendering album: Unsorted, itemId: -1830649977, filePath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg, thumbnailPath: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg
+2025-12-17 16:41:16.209 20080-20080 GlideImage              com.aks_labs.pixelflow               D  Loading image from file: /storage/emulated/0/Pictures/PixelFlow/Unsorted/screenshot_1765968952395.jpg, exists: true
