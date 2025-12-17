@@ -488,8 +488,11 @@ class ViewBasedFloatingBubbleService : Service() {
             // First, hide any existing drag zones to prevent duplicates
             hideDragZones()
 
+            // Apply the app theme to the context so attributes resolve correctly
+            val themedContext = android.view.ContextThemeWrapper(this, R.style.Theme_PixelFlow)
+
             // Create a new drag zones view
-            dragZonesView = ViewBasedCircularDragZones(this).apply {
+            dragZonesView = ViewBasedCircularDragZones(themedContext).apply {
                 setFolders(folders)
                 setOnFolderSelectedListener { folderId ->
                     handleScreenshotDrop(folderId)
@@ -1041,14 +1044,13 @@ class ViewBasedFloatingBubbleService : Service() {
                             showDragZones()
                         }
 
-                        // Scale up the bubble by 5dp with bouncing animation
-                        // 90dp to 95dp is approximately a 1.056 scale factor
-                        view.animate()
-                            .scaleX(1.056f)
-                            .scaleY(1.056f)
-                            .setDuration(150)
-                            .setInterpolator(android.view.animation.OvershootInterpolator(1.2f))
-                            .start()
+                        // Scale up the bubble - REMOVED per user request
+                        // view.animate()
+                        //     .scaleX(1.056f)
+                        //     .scaleY(1.056f)
+                        //     .setDuration(150)
+                        //     .setInterpolator(android.view.animation.OvershootInterpolator(1.2f))
+                        //     .start()
                     }
 
                     // Update action buttons position if they're showing
@@ -1071,19 +1073,19 @@ class ViewBasedFloatingBubbleService : Service() {
                             // We no longer need to provide haptic feedback here
                             // The FloatingActionButtons class handles this when the highlighted button changes
 
-                            // Scale the bubble slightly to indicate it can be dropped
-                            view.animate()
-                                .scaleX(1.1f)
-                                .scaleY(1.1f)
-                                .setDuration(100)
-                                .start()
+                            // Scale the bubble - REMOVED
+                            // view.animate()
+                            //    .scaleX(1.1f)
+                            //    .scaleY(1.1f)
+                            //    .setDuration(100)
+                            //    .start()
                         } else {
-                            // Reset the scale if not over a button
-                            view.animate()
-                                .scaleX(1.05f)
-                                .scaleY(1.05f)
-                                .setDuration(100)
-                                .start()
+                            // Reset the scale - REMOVED
+                            // view.animate()
+                            //    .scaleX(1.05f)
+                            //    .scaleY(1.05f)
+                            //    .setDuration(100)
+                            //    .start()
                         }
                     }
 
@@ -1173,13 +1175,13 @@ class ViewBasedFloatingBubbleService : Service() {
                             return true
                         }
 
-                        // Scale down the bubble with bouncing animation
-                        view.animate()
-                            .scaleX(1.0f)
-                            .scaleY(1.0f)
-                            .setDuration(200)
-                            .setInterpolator(android.view.animation.BounceInterpolator())
-                            .start()
+                        // Scale down the bubble - REMOVED
+                        // view.animate()
+                        //     .scaleX(1.0f)
+                        //     .scaleY(1.0f)
+                        //     .setDuration(200)
+                        //     .setInterpolator(android.view.animation.BounceInterpolator())
+                        //     .start()
 
                         // Check if we dropped on a zone
                         val droppedFolderId = checkDroppedOnZone(
@@ -1253,9 +1255,12 @@ class ViewBasedFloatingBubbleService : Service() {
             val bubbleParams = bubbleView.layoutParams as WindowManager.LayoutParams
             val bubbleSize = bubbleView.width
 
+            // Apply the app theme to the context so attributes resolve correctly
+            val themedContext = android.view.ContextThemeWrapper(this, R.style.Theme_PixelFlow)
+
             // Create a new action buttons view
             actionButtonsView = FloatingActionButtons(
-                this,
+                themedContext,
                 bubbleParams.x + bubbleSize / 2,
                 bubbleParams.y + bubbleSize / 2,
                 bubbleSize
@@ -1263,6 +1268,7 @@ class ViewBasedFloatingBubbleService : Service() {
                 setOnActionSelectedListener { actionType ->
                     handleAction(actionType)
                 }
+                useDynamicColors = isDynamicColorsEnabled
             }
 
             // Set up window parameters for the action buttons

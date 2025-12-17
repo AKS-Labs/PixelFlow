@@ -477,13 +477,15 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
             // Set the zone color to match the reference image or use dynamic colors
             if (isHighlighted) {
                 if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    zonePaint.color = ContextCompat.getColor(context, android.R.color.system_accent1_100)
+                    // Use Primary Container for highlight as requested
+                    zonePaint.color = getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer, Color.parseColor("#EADDFF"))
                 } else {
                     zonePaint.color = ContextCompat.getColor(context, R.color.colorAccent)
                 }
             } else {
                 if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    zonePaint.color = ContextCompat.getColor(context, android.R.color.system_accent2_100)
+                    // Use Secondary Container for regular zones as requested
+                    zonePaint.color = getThemeColor(com.google.android.material.R.attr.colorSecondaryContainer, Color.parseColor("#E8DEF8"))
                 } else {
                     zonePaint.color = Color.rgb(240, 240, 240) // Light gray like in the reference image
                 }
@@ -533,7 +535,24 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
                 val radius = if (isHighlighted) ACTION_ZONE_RADIUS_HIGHLIGHTED else ACTION_ZONE_RADIUS
 
                 // Set the zone color based on action type
-                actionZonePaint.color = zone.color
+                // actionZonePaint.color = zone.color // Original static color
+
+                if (isHighlighted) {
+                    if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        // Use Primary Container for highlight as requested
+                        actionZonePaint.color = getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer, Color.parseColor("#EADDFF"))
+                    } else {
+                         // Default highlight
+                         actionZonePaint.color = ContextCompat.getColor(context, R.color.colorAccent)
+                    }
+                } else {
+                    if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        // Use Secondary Container for action zones as requested
+                        actionZonePaint.color = getThemeColor(com.google.android.material.R.attr.colorSecondaryContainer, Color.parseColor("#E8DEF8"))
+                    } else {
+                        actionZonePaint.color = zone.color
+                    }
+                }
 
                 // Create the wavy-edged circular path
                 val path = createFlowerPath(zone.x, zone.y, radius)
@@ -635,8 +654,18 @@ class ViewBasedCircularDragZones @JvmOverloads constructor(
     }
 
     /**
-     * Data class to hold the position of a zone.
+     * Helper to resolve a color attribute from the current theme.
+     * Returns defaultColor if resolution fails.
      */
+    private fun getThemeColor(attrResId: Int, defaultColor: Int): Int {
+        val typedValue = android.util.TypedValue()
+        val resolved = context.theme.resolveAttribute(attrResId, typedValue, true)
+        return if (resolved) typedValue.data else defaultColor
+    }
+
+    /**
+     * Data class to hold the position of a zone.
+     *//* ... existing data classes ... */
     private data class ZonePosition(val x: Float, val y: Float)
 
     /**

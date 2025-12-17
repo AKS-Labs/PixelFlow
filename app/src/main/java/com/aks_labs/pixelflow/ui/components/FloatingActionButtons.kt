@@ -51,6 +51,13 @@ class FloatingActionButtons(
     // Currently highlighted button
     private var highlightedButtonIndex = -1
 
+    // Flag to indicate if dynamic colors should be used
+    var useDynamicColors = false
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     // Paint objects
     private val buttonPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
@@ -379,10 +386,20 @@ class FloatingActionButtons(
             val radius = if (isHighlighted) BUTTON_RADIUS_HIGHLIGHTED else BUTTON_RADIUS
 
             // Set the button color based on highlight state
-            buttonPaint.color = if (isHighlighted) {
-                ContextCompat.getColor(context, R.color.colorAccent)
+            if (isHighlighted) {
+                if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                     // Use Primary Container for highlight as requested
+                     buttonPaint.color = getThemeColor(com.google.android.material.R.attr.colorPrimaryContainer, Color.parseColor("#EADDFF"))
+                } else {
+                     buttonPaint.color = ContextCompat.getColor(context, R.color.colorAccent)
+                }
             } else {
-                button.color
+                if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    // Use Secondary Container for action buttons as requested
+                    buttonPaint.color = getThemeColor(com.google.android.material.R.attr.colorSecondaryContainer, Color.parseColor("#E8DEF8"))
+                } else {
+                    buttonPaint.color = button.color
+                }
             }
 
             // Create the wavy-edged circular path
@@ -453,6 +470,16 @@ class FloatingActionButtons(
                 }
             }
         }
+    }
+
+    /**
+     * Helper to resolve a color attribute from the current theme.
+     * Returns defaultColor if resolution fails.
+     */
+    private fun getThemeColor(attrResId: Int, defaultColor: Int): Int {
+        val typedValue = android.util.TypedValue()
+        val resolved = context.theme.resolveAttribute(attrResId, typedValue, true)
+        return if (resolved) typedValue.data else defaultColor
     }
 
     /**
