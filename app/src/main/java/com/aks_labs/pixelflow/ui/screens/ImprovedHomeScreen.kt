@@ -434,11 +434,9 @@ fun ImprovedHomeScreen(
                                                 navController.navigate("manage_folders")
                                             },
                                             getThumbnailPaths = { folderId ->
-                                                // Ideally ViewModel should expose this directly or we call it.
-                                                // MainViewModel has getScreenshotThumbnailsForFolder(folderId)
-                                                // We need to access it. 
-                                                // ImprovedHomeScreen has viewModel passed in.
-                                                viewModel.getScreenshotThumbnailsForFolder(folderId)
+                                                // Access the SnapshotStateMap directly to ensure recomposition when it updates
+                                                val thumbnail = viewModel.albumsThumbnailsMap[folderId]
+                                                if (thumbnail != null) listOf(thumbnail.filePath) else emptyList()
                                             }
                                         )
                                     }

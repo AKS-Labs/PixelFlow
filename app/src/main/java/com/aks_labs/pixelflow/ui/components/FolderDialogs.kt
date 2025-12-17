@@ -46,7 +46,8 @@ fun AddFolderDialog(
     onAddFolder: (name: String, iconName: String) -> Unit
 ) {
     var folderName by remember { mutableStateOf("") }
-    var selectedIconName by remember { mutableStateOf("ic_images") }
+    // Default icon
+    val selectedIconName = "ic_images"
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -60,29 +61,6 @@ fun AddFolderDialog(
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    text = "Select Icon", 
-                    style = MaterialTheme.typography.titleSmall, 
-                    color = MaterialTheme.colorScheme.primary
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    listOf("ic_quotes", "ic_tricks", "ic_images", "ic_posts").forEach { iconName ->
-                         FolderIconOption(
-                             iconName = iconName,
-                             isSelected = selectedIconName == iconName,
-                             onClick = { selectedIconName = iconName }
-                         )
-                    }
-                }
             }
         },
         confirmButton = {
@@ -115,7 +93,8 @@ fun EditFolderDialog(
     onDelete: () -> Unit
 ) {
     var folderName by remember { mutableStateOf(folder.name) }
-    var selectedIconName by remember { mutableStateOf(folder.iconName) }
+    // Keep existing icon or default
+    val selectedIconName = folder.iconName
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -130,29 +109,6 @@ fun EditFolderDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    text = "Select Icon",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    listOf("ic_quotes", "ic_tricks", "ic_images", "ic_posts").forEach { iconName ->
-                         FolderIconOption(
-                             iconName = iconName,
-                             isSelected = selectedIconName == iconName,
-                             onClick = { selectedIconName = iconName }
-                         )
-                    }
-                }
-                
                 Spacer(modifier = Modifier.height(24.dp))
                 
                 Button(
@@ -192,31 +148,4 @@ fun EditFolderDialog(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         shape = RoundedCornerShape(28.dp)
     )
-}
-
-@Composable
-fun FolderIconOption(
-    iconName: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    val iconResId = getIconResId(iconName)
-    val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
-    val iconColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-    
-    Box(
-        modifier = Modifier
-            .size(48.dp)
-            .clip(CircleShape)
-            .background(backgroundColor)
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-         Icon(
-             painter = painterResource(id = iconResId),
-             contentDescription = null,
-             tint = iconColor,
-             modifier = Modifier.size(24.dp)
-         )
-    }
 }

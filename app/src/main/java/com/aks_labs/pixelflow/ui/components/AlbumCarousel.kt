@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -107,7 +108,8 @@ fun AlbumCarousel(
             AlbumCarouselItem(
                 folder = folder,
                 thumbnailPath = mainThumbnail,
-                onClick = { onAlbumClick(folder) }
+                onClick = { onAlbumClick(folder) },
+                modifier = Modifier.maskClip(RoundedCornerShape(16.dp))
             )
         }
     }
@@ -117,13 +119,14 @@ fun AlbumCarousel(
 fun AlbumCarouselItem(
     folder: SimpleFolder,
     thumbnailPath: String?,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     // Strict rounded corners as requested
     val shape = RoundedCornerShape(16.dp)
     
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = shape,
@@ -149,7 +152,10 @@ fun AlbumCarouselItem(
                         .clip(shape) // Strictly clip the image to the card shape
                 )
             } else {
-                // Fallback Icon
+                // Fallback Icon - removed if "remove concept of folder icon" applies to display too?
+                // User said "remove the concept of folder icon completly from add folder fab button too".
+                // And "it's showing album icon instead of screenshot thumbnail".
+                // If thumbnail is missing, we must show SOMETHING. Let's keep icon as fallback but ensure thumbnail logic works.
                  val iconResId = when (folder.iconName) {
                     "ic_quotes" -> R.drawable.ic_quotes
                     "ic_tricks" -> R.drawable.ic_tricks
