@@ -1,8 +1,11 @@
 package com.aks_labs.pixelflow.data
 
+import android.content.ContentUris
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
 import com.aks_labs.pixelflow.data.models.SimpleFolder
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +18,7 @@ import java.io.File
 /**
  * Manager for storing and retrieving data using SharedPreferences
  */
-class SharedPrefsManager(context: Context) {
+class SharedPrefsManager(private val context: Context) {
 
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences(
         PREFS_NAME, Context.MODE_PRIVATE
@@ -274,16 +277,33 @@ class SharedPrefsManager(context: Context) {
     }
 
     /**
-     * Delete a screenshot
+     * Delete a screenshot from both memory and storage
      */
     fun deleteScreenshot(screenshotId: Long) {
-        val currentScreenshots = _screenshots.value.toMutableList()
-        val screenshot = currentScreenshots.find { it.id == screenshotId }
-
+        val screenshot = _screenshots.value.find { it.id == screenshotId }
+        
         if (screenshot != null) {
+            // Remove from memory list
+            val currentScreenshots = _screenshots.value.toMutableList()
             currentScreenshots.remove(screenshot)
             _screenshots.value = currentScreenshots
             saveScreenshots()
+            
+            // Delete the actual file from MediaStore
+            try {
+                val uri = ContentUris.withAppendedId(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    screenshotId
+                )
+                val deleted = context.contentResolver.delete(uri, null, null)
+                if (deleted > 0) {
+                    Log.d("SharedPrefsManager", "Successfully deleted screenshot file: $screenshotId")
+                } else {
+                    Log.w("SharedPrefsManager", "Failed to delete screenshot file: $screenshotId")
+                }
+            } catch (e: Exception) {
+                Log.e("SharedPrefsManager", "Error deleting screenshot file", e)
+            }
         }
     }
 

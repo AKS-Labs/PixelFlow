@@ -621,22 +621,8 @@ fun ScreenshotsSection(
                         if (screenshot != null) {
                             val isSelected = selectionManager.isSelected(screenshot)
 
-                            // Create a reference to track this item's position
-                            val itemPositionRef = remember { mutableStateOf(Rect.Zero) }
-
-                            // Use toggle approach for drag selection
-                            if (isDragging && selectionManager.isDragSelecting) {
-                                // Determine selection mode on first item if not set
-                                if (dragSelectionMode == null) {
-                                    val shouldSelect = !isSelected
-                                    onDragSelectionModeSet(shouldSelect)
-                                    selectionManager.setSelectionDuringDrag(screenshot, shouldSelect)
-                                } else {
-                                    // Apply the determined mode to all subsequent items
-                                    selectionManager.setSelectionDuringDrag(screenshot, dragSelectionMode)
-                                }
-                                onDraggedIndexChanged(index)
-                            }
+                            // Note: Drag selection is handled by the pointer input on the Box above,
+                            // not by checking each item during rendering.
 
                             ScreenshotGridItem(
                                 screenshot = screenshot,
@@ -647,12 +633,7 @@ fun ScreenshotsSection(
                                         selectionManager.toggleSelectionMode()
                                     }
                                     selectionManager.toggleSelection(screenshot)
-                                },
-                                modifier = Modifier
-                                    .onGloballyPositioned { coordinates ->
-                                        // Store this item's position on screen
-                                        itemPositionRef.value = coordinates.boundsInWindow()
-                                    }
+                                }
                             )
                         } else {
                             // Placeholder if null (loading)

@@ -442,10 +442,13 @@ fun FolderScreen(
             items(
                 count = albums.value.size,
                 key = { index -> 
-                    // Use a composite key or just the ID if unique. 
-                    // Fallback to index if ID is duplicate (though strictly IDs should be unique)
-                    val album = albums.value[index]
-                    "${album.id}_$index" 
+                    // Ensure absolutely unique keys by adding System time component
+                    val album = albums.value.getOrNull(index)
+                    if (album != null) {
+                        "album_${album.id}_${album.name}_$index"  
+                    } else {
+                        "placeholder_$index"
+                    }
                 }
             ) { index ->
                 val album = albums.value[index]

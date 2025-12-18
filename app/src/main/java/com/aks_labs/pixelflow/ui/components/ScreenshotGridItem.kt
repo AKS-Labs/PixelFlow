@@ -76,7 +76,7 @@ fun ScreenshotGridItem(
                 spotColor = Color.Gray.copy(alpha = 0.2f)
             )
             .border(
-                width = if (isSelected) 4.dp else 0.dp,
+                width = if (isSelected) 6.dp else 0.dp,
                 color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
                 shape = MaterialTheme.shapes.medium
             )
