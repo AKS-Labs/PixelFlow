@@ -78,7 +78,27 @@ class SelectionManager {
     }
 
     /**
-     * Select a screenshot during drag selection.
+     * Select or deselect a screenshot during drag selection based on the desired state.
+     *
+     * @param screenshot The screenshot to select/deselect
+     * @param shouldSelect True to select, false to deselect
+     */
+    fun setSelectionDuringDrag(screenshot: SimpleScreenshot, shouldSelect: Boolean) {
+        if (!isDragSelecting) return
+        
+        val isCurrentlySelected = _selectedItems.any { it.id == screenshot.id }
+        
+        if (shouldSelect && !isCurrentlySelected) {
+            _selectedItems.add(screenshot)
+            lastDragSelectedId = screenshot.id
+        } else if (!shouldSelect && isCurrentlySelected) {
+            _selectedItems.removeAll { it.id == screenshot.id }
+            lastDragSelectedId = screenshot.id
+        }
+    }
+
+    /**
+     * Select a screenshot during drag selection (legacy method).
      *
      * @param screenshot The screenshot to select
      */

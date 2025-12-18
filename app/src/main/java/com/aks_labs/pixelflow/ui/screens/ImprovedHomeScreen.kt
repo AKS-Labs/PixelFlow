@@ -1,5 +1,7 @@
 package com.aks_labs.pixelflow.ui.screens
 
+import androidx.activity.compose.BackHandler
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -41,6 +43,9 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -131,6 +136,17 @@ fun ImprovedHomeScreen(
     // Track drag selection state
     var isDragging by remember { mutableStateOf(false) }
     var lastDraggedIndex by remember { mutableStateOf(-1) }
+    var dragSelectionMode by remember { mutableStateOf<Boolean?>(null) } // null = not started, true = selecting, false = deselecting
+
+    // Dialog state for delete confirmation
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    // BackHandler for selection mode
+    if (selectionManager.selectionMode) {
+        BackHandler {
+            selectionManager.toggleSelectionMode()
+        }
+    }
 
     // Refresh function using Paging 3
     val pullRefreshState = rememberPullRefreshState(
@@ -273,14 +289,10 @@ fun ImprovedHomeScreen(
                             }
 
                             IconButton(onClick = {
-                                // Delete selected screenshots
-                                val selectedScreenshots = selectionManager.getSelectedScreenshots()
-                                selectedScreenshots.forEach { screenshot ->
-                                    viewModel.deleteScreenshot(screenshot)
+                                // Show delete confirmation dialog
+                                if (selectionManager.getSelectionCount() > 0) {
+                                    showDeleteDialog = true
                                 }
-                                selectionManager.toggleSelectionMode()
-                                // Refresh the list
-                                screenshots.refresh()
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
@@ -398,9 +410,17 @@ fun ImprovedHomeScreen(
                             selectionManager = selectionManager,
                             gridState = gridState,
                             isDragging = isDragging,
-                            onDragStart = { isDragging = true },
-                            onDragEnd = { isDragging = false },
+                            onDragStart = { 
+                                isDragging = true
+                                dragSelectionMode = null // Reset on new drag
+                            },
+                            onDragEnd = { 
+                                isDragging = false
+                                dragSelectionMode = null // Reset after drag
+                            },
                             onDraggedIndexChanged = { index: Int -> lastDraggedIndex = index },
+                            dragSelectionMode = dragSelectionMode,
+                            onDragSelectionModeSet = { mode -> dragSelectionMode = mode },
                             onScreenshotClick = { screenshot: SimpleScreenshot ->
                                 if (selectionManager.selectionMode) {
                                     selectionManager.toggleSelection(screenshot)
@@ -452,6 +472,41 @@ fun ImprovedHomeScreen(
                         modifier = Modifier.align(Alignment.TopCenter)
                     )
                 }
+
+                // Delete confirmation dialog
+                if (showDeleteDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDeleteDialog = false },
+                        title = { Text("Delete Screenshots") },
+                        text = {
+                            Text("Are you sure you want to delete ${selectionManager.getSelectionCount()} selected screenshot(s)?")
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    // Delete selected screenshots
+                                    val selectedScreenshots = selectionManager.getSelectedScreenshots()
+                                    selectedScreenshots.forEach { screenshot ->
+                                        viewModel.deleteScreenshot(screenshot)
+                                    }
+                                    selectionManager.toggleSelectionMode()
+                                    screenshots.refresh()
+                                    showDeleteDialog = false
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.error
+                                )
+                            ) {
+                                Text("Delete")
+                            }
+                        },
+                        dismissButton = {
+                            Button(onClick = { showDeleteDialog = false }) {
+                                Text("Cancel")
+                            }
+                        }
+                    )
+                }
             }
         }
     }
@@ -469,6 +524,8 @@ fun ScreenshotsSection(
     onDragStart: () -> Unit,
     onDragEnd: () -> Unit,
     onDraggedIndexChanged: (Int) -> Unit,
+    dragSelectionMode: Boolean?,
+    onDragSelectionModeSet: (Boolean) -> Unit,
     onScreenshotClick: (SimpleScreenshot) -> Unit,
     headerContent: @Composable () -> Unit = {}
 ) {
@@ -567,10 +624,17 @@ fun ScreenshotsSection(
                             // Create a reference to track this item's position
                             val itemPositionRef = remember { mutableStateOf(Rect.Zero) }
 
-                            // Use a simpler approach for drag selection
+                            // Use toggle approach for drag selection
                             if (isDragging && selectionManager.isDragSelecting) {
-                                // If we're in drag selection mode, select this item when it's rendered
-                                selectionManager.selectDuringDrag(screenshot)
+                                // Determine selection mode on first item if not set
+                                if (dragSelectionMode == null) {
+                                    val shouldSelect = !isSelected
+                                    onDragSelectionModeSet(shouldSelect)
+                                    selectionManager.setSelectionDuringDrag(screenshot, shouldSelect)
+                                } else {
+                                    // Apply the determined mode to all subsequent items
+                                    selectionManager.setSelectionDuringDrag(screenshot, dragSelectionMode)
+                                }
                                 onDraggedIndexChanged(index)
                             }
 

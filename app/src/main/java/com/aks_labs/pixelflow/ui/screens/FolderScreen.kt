@@ -100,6 +100,13 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -234,14 +241,48 @@ fun FolderScreen(
         mainViewModel.settings.AlbumsList.setAlbumsList(albums.value)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(1f)
-            .background(MaterialTheme.colorScheme.background)
-            .padding(8.dp, 0.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            LargeTopAppBar(
+                title = {
+                    Text(
+                        text = "Folders",
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
+                scrollBehavior = scrollBehavior
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddDialog = true },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ) {
+                Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.add_folder))
+            }
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize(1f)
+                .background(MaterialTheme.colorScheme.background)
+                .padding(innerPadding)
+                .padding(horizontal = 8.dp), // Add horizontal padding manually since we consumed innerPadding
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
         val localConfig = LocalConfiguration.current
         val localDensity = LocalDensity.current
         var isLandscape by remember { mutableStateOf(localConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) }
@@ -387,14 +428,14 @@ fun FolderScreen(
                     span = { GridItemSpan(maxLineSpan) },
                     key = "FavAndTrash"
                 ) {
-                    CategoryList(
-                        navigateToFavourites = {
-                            navController.navigate(MultiScreenViewType.FavouritesGridView.name)
-                        },
-                        navigateToTrash = {
-                            navController.navigate(MultiScreenViewType.TrashedPhotoView.name)
-                        }
-                    )
+//                    CategoryList(
+//                        navigateToFavourites = {
+//                            navController.navigate(MultiScreenViewType.FavouritesGridView.name)
+//                        },
+//                        navigateToTrash = {
+//                            navController.navigate(MultiScreenViewType.TrashedPhotoView.name)
+//                        }
+//                    )
                 }
             }
 
@@ -451,22 +492,6 @@ fun FolderScreen(
         }
     }
 
-    // Floating Action Button
-    Box(
-        modifier = Modifier
-            .fillMaxSize(1f)
-            .padding(16.dp),
-        contentAlignment = Alignment.BottomEnd
-    ) {
-        FloatingActionButton(
-            onClick = { showAddDialog = true },
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        ) {
-            Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.add_folder))
-        }
-    }
-
     if (showAddDialog) {
         AddFolderDialog(
             onDismiss = { showAddDialog = false },
@@ -476,7 +501,8 @@ fun FolderScreen(
             }
         )
     }
-}
+} // End of Scaffold content lambda
+} // End of FolderScreen function
 
 // @OptIn(ExperimentalGlideComposeApi::class) // Removed
 @Composable
@@ -606,93 +632,93 @@ private fun AlbumGridItem(
     }
 }
 
-@Composable
-private fun CategoryList(
-    navigateToTrash: () -> Unit,
-    navigateToFavourites: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(1f)
-            .wrapContentHeight()
-            .padding(8.dp)
-            .background(MaterialTheme.colorScheme.background),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        OutlinedButton(
-            onClick = {
-                navigateToFavourites()
-            },
-            modifier = Modifier
-                .weight(1f)
-                .height(48.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(1f),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Favorite, // Replaced favourite
-                    contentDescription = "Favourites",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .size(22.dp)
-                        .padding(0.dp, 2.dp, 0.dp, 0.dp)
-                )
-
-                Spacer(
-                    modifier = Modifier
-                        .width(8.dp)
-                )
-
-                Text(
-                    text = "Favourites", // Hardcoded
-                    fontSize = TextUnit(16f, TextUnitType.Sp),
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .fillMaxWidth(1f)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        OutlinedButton(
-            onClick = {
-                navigateToTrash()
-            },
-            modifier = Modifier
-                .weight(1f)
-                .height(48.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(1f),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete, // Replaced trash
-                    contentDescription = "Trash",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .size(20.dp)
-                )
-
-                Text(
-                    text = "Trash ", // Hardcoded
-                    fontSize = TextUnit(16f, TextUnitType.Sp),
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .fillMaxWidth(1f)
-                )
-            }
-        }
-    }
-}
+//@Composable
+//private fun CategoryList(
+//    navigateToTrash: () -> Unit,
+//    navigateToFavourites: () -> Unit
+//) {
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth(1f)
+//            .wrapContentHeight()
+//            .padding(8.dp)
+//            .background(MaterialTheme.colorScheme.background),
+//        verticalAlignment = Alignment.CenterVertically,
+//        horizontalArrangement = Arrangement.SpaceEvenly
+//    ) {
+//        OutlinedButton(
+//            onClick = {
+//                navigateToFavourites()
+//            },
+//            modifier = Modifier
+//                .weight(1f)
+//                .height(48.dp)
+//        ) {
+//            Row(
+//                modifier = Modifier.fillMaxWidth(1f),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.SpaceEvenly
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Default.Favorite, // Replaced favourite
+//                    contentDescription = "Favourites",
+//                    tint = MaterialTheme.colorScheme.primary,
+//                    modifier = Modifier
+//                        .size(22.dp)
+//                        .padding(0.dp, 2.dp, 0.dp, 0.dp)
+//                )
+//
+//                Spacer(
+//                    modifier = Modifier
+//                        .width(8.dp)
+//                )
+//
+//                Text(
+//                    text = "Favourites", // Hardcoded
+//                    fontSize = TextUnit(16f, TextUnitType.Sp),
+//                    textAlign = TextAlign.Center,
+//                    color = MaterialTheme.colorScheme.onBackground,
+//                    modifier = Modifier
+//                        .fillMaxWidth(1f)
+//                )
+//            }
+//        }
+//
+//        Spacer(modifier = Modifier.width(8.dp))
+//
+//        OutlinedButton(
+//            onClick = {
+//                navigateToTrash()
+//            },
+//            modifier = Modifier
+//                .weight(1f)
+//                .height(48.dp)
+//        ) {
+//            Row(
+//                modifier = Modifier.fillMaxWidth(1f),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.SpaceEvenly
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Default.Delete, // Replaced trash
+//                    contentDescription = "Trash",
+//                    tint = MaterialTheme.colorScheme.primary,
+//                    modifier = Modifier
+//                        .size(20.dp)
+//                )
+//
+//                Text(
+//                    text = "Trash ", // Hardcoded
+//                    fontSize = TextUnit(16f, TextUnitType.Sp),
+//                    textAlign = TextAlign.Center,
+//                    color = MaterialTheme.colorScheme.onBackground,
+//                    modifier = Modifier
+//                        .fillMaxWidth(1f)
+//                )
+//            }
+//        }
+//    }
+//}
 
 @Composable
 private fun SortModeHeader(
