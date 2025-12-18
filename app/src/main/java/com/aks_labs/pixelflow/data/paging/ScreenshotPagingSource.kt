@@ -95,25 +95,34 @@ class ScreenshotPagingSource(
                     val filePath = cursor.getString(dataColumn)
                     val dateModified = cursor.getLong(dateModifiedColumn)
 
+                    // Check if file exists to filter out stale MediaStore entries
                     val file = File(filePath)
-                    if (file.exists()) {
-                         // Filter logic (check if it is actually a screenshot based on name if needed, 
-                         // though the path filter helps).
-                         // The original code checked name "screenshot" OR folder "PixelFlow"
-                         val isPixelFlow = filePath.contains("PixelFlow", ignoreCase = true)
-                         val isScreenshotName = file.name.contains("screenshot", ignoreCase = true)
-                         
-                         if (isPixelFlow || isScreenshotName) {
-                            val screenshot = SimpleScreenshot(
-                                id = id,
-                                filePath = filePath,
-                                thumbnailPath = filePath,
-                                folderId = 0,
-                                originalTimestamp = dateModified * 1000,
-                                savedTimestamp = dateModified * 1000
-                            )
-                            screenshots.add(screenshot)
-                         }
+                    if (!file.exists()) {
+                        // File was deleted externally but MediaStore still has entry
+                        android.util.Log.d("ScreenshotPagingSource", "Skipping deleted file: $filePath")
+                        continue
+                    }
+                    
+                    // Additional validation: check file is readable
+                    if (!file.canRead()) {
+                        android.util.Log.w("ScreenshotPagingSource", "Skipping unreadable file: $filePath")
+                        continue
+                    }
+                    
+                    // Filter logic (check if it is actually a screenshot based on name or path)
+                    val isPixelFlow = filePath.contains("PixelFlow", ignoreCase = true)
+                    val isScreenshotName = file.name.contains("screenshot", ignoreCase = true)
+                    
+                    if (isPixelFlow || isScreenshotName) {
+                        val screenshot = SimpleScreenshot(
+                            id = id,
+                            filePath = filePath,
+                            thumbnailPath = filePath,
+                            folderId = 0,
+                            originalTimestamp = dateModified * 1000,
+                            savedTimestamp = dateModified * 1000
+                        )
+                        screenshots.add(screenshot)
                     }
                 }
             }

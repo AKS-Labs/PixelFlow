@@ -3,10 +3,13 @@ package com.aks_labs.pixelflow.ui.viewmodels
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.database.ContentObserver
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
@@ -86,6 +89,47 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // Theme mode
     private val _themeMode = MutableStateFlow(sharedPrefsManager.getThemeMode())
     val themeMode = _themeMode.asStateFlow()
+    
+    // MediaStore change notification
+    private val _mediaStoreChanged = MutableStateFlow(0L)
+    val mediaStoreChanged = _mediaStoreChanged.asStateFlow()
+    
+    // MediaStore ContentObserver to detect external changes
+    private val mediaStoreObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
+        override fun onChange(selfChange: Boolean, uri: Uri?) {
+            super.onChange(selfChange, uri)
+            Log.d("MainViewModel", "MediaStore changed, triggering refresh")
+            // Increment counter to notify observers
+            _mediaStoreChanged.value = System.currentTimeMillis()
+            // Trigger SharedPrefsManager refresh for folder-based screenshots
+            sharedPrefsManager.refresh()
+        }
+    }
+    
+    init {
+        // Register MediaStore observer to detect external file changes
+        try {
+            getApplication<Application>().contentResolver.registerContentObserver(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                true,
+                mediaStoreObserver
+            )
+            Log.d("MainViewModel", "MediaStore observer registered")
+        } catch (e: Exception) {
+            Log.e("MainViewModel", "Failed to register MediaStore observer", e)
+        }
+    }
+    
+    override fun onCleared() {
+        super.onCleared()
+        // Unregister MediaStore observer
+        try {
+            getApplication<Application>().contentResolver.unregisterContentObserver(mediaStoreObserver)
+            Log.d("MainViewModel", "MediaStore observer unregistered")
+        } catch (e: Exception) {
+            Log.e("MainViewModel", "Failed to unregister MediaStore observer", e)
+        }
+    }
 
     /**
      * Set whether the floating bubble is enabled
@@ -217,9 +261,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Get screenshots for a specific folder by folder name (scans filesystem)
      */
     fun getScreenshotsForFolderByNameAsFlow(folderName: String): Flow<List<SimpleScreenshot>> {
-        return kotlinx.coroutines.flow.flowOf(
+        // Combine mediaStoreChanged flow to trigger refresh when external changes occur
+        return mediaStoreChanged.map {
             getSharedPrefsManager().getImagesFromFolder(folderName)
-        )
+        }
     }
 
     /**

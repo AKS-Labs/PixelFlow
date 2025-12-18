@@ -249,7 +249,7 @@ fun FolderScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = "Folders",
+                        text = "Collections",
                         fontWeight = FontWeight.Bold
                     )
                 },

@@ -326,17 +326,29 @@ class SharedPrefsManager(private val context: Context) {
             _screenshots.value = currentScreenshots
             saveScreenshots()
             
-            // 2. Delete from MediaStore
+            // 2. Delete from MediaStore - first verify the ID exists
             try {
                 val uri = ContentUris.withAppendedId(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     screenshotId
                 )
-                val deleted = context.contentResolver.delete(uri, null, null)
-                if (deleted > 0) {
-                    Log.d("SharedPrefsManager", "MediaStore delete successful for ID $screenshotId: $deleted rows")
+                
+                // Query to verify entry exists before deletion
+                val projection = arrayOf(MediaStore.Images.Media._ID)
+                val cursor = context.contentResolver.query(uri, projection, null, null, null)
+                
+                if (cursor != null && cursor.count > 0) {
+                    cursor.close()
+                    // Entry exists, proceed with deletion
+                    val deleted = context.contentResolver.delete(uri, null, null)
+                    if (deleted > 0) {
+                        Log.d("SharedPrefsManager", "MediaStore delete successful for ID $screenshotId: $deleted rows")
+                    } else {
+                        Log.w("SharedPrefsManager", "MediaStore delete returned 0 rows for ID $screenshotId")
+                    }
                 } else {
-                    Log.w("SharedPrefsManager", "MediaStore delete returned 0 rows for ID $screenshotId")
+                    cursor?.close()
+                    Log.d("SharedPrefsManager", "MediaStore entry doesn't exist for ID $screenshotId, skipping MediaStore deletion")
                 }
             } catch (e: Exception) {
                 Log.e("SharedPrefsManager", "MediaStore delete failed for ID $screenshotId", e)
@@ -552,36 +564,83 @@ class SharedPrefsManager(private val context: Context) {
     }
 
     /**
+     * Get screenshots from system screenshot directories
+     * Scans both Pictures/Screenshot and Pictures/Screenshots
+     */
+    private fun getSystemScreenshots(): List<SimpleScreenshot> {
+        val screenshots = mutableListOf<SimpleScreenshot>()
+        val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        
+        // Common screenshot directory names
+        val screenshotDirNames = listOf("Screenshot", "Screenshots")
+        
+        for (dirName in screenshotDirNames) {
+            val screenshotDir = File(picturesDir, dirName)
+            
+            if (!screenshotDir.exists() || !screenshotDir.isDirectory) {
+                continue
+            }
+            
+            val imageFiles = screenshotDir.listFiles { file ->
+                file.isFile && file.exists() && (file.extension.lowercase() in listOf("jpg", "jpeg", "png", "gif", "webp"))
+            } ?: emptyArray()
+            
+            imageFiles.forEach { file ->
+                val screenshot = SimpleScreenshot(
+                    id = file.absolutePath.hashCode().toLong(),
+                    filePath = file.absolutePath,
+                    thumbnailPath = file.absolutePath,
+                    folderId = "Unsorted".hashCode().toLong(),
+                    originalTimestamp = file.lastModified(),
+                    savedTimestamp = file.lastModified()
+                )
+                screenshots.add(screenshot)
+            }
+        }
+        
+        Log.d("SharedPrefsManager", "Found ${screenshots.size} screenshots in system directories")
+        return screenshots
+    }
+    
+    /**
      * Get images from a folder by scanning the filesystem
+     * For "Unsorted" folder, also includes system screenshot directories
      */
     fun getImagesFromFolder(folderName: String): List<SimpleScreenshot> {
-        val folderDir = File(appDirectory, folderName)
         val images = mutableListOf<SimpleScreenshot>()
         
-        if (!folderDir.exists() || !folderDir.isDirectory) {
-            return images
+        // For "Unsorted" folder, load from system screenshot directories
+        if (folderName.equals("Unsorted", ignoreCase = true)) {
+            // Add system screenshots from Pictures/Screenshot and Pictures/Screenshots
+            images.addAll(getSystemScreenshots())
         }
         
-        val imageFiles = folderDir.listFiles { file ->
-            file.isFile && (file.extension.lowercase() in listOf("jpg", "jpeg", "png", "gif", "webp"))
-        } ?: emptyArray()
-        
-        // Sort by last modified (most recent first)
-        val sortedFiles = imageFiles.sortedByDescending { it.lastModified() }
-        
-        sortedFiles.forEachIndexed { index, file ->
-            val screenshot = SimpleScreenshot(
-                id = file.absolutePath.hashCode().toLong(),
-                filePath = file.absolutePath,
-                thumbnailPath = file.absolutePath,  // Use same file as thumbnail
-                folderId = folderName.hashCode().toLong(),  // Use folder name hash as ID
-                originalTimestamp = file.lastModified(),
-                savedTimestamp = file.lastModified()
-            )
-            images.add(screenshot)
+        // Also check app's own folder
+        val folderDir = File(appDirectory, folderName)
+        if (folderDir.exists() && folderDir.isDirectory) {
+            val imageFiles = folderDir.listFiles { file ->
+                file.isFile && file.exists() && (file.extension.lowercase() in listOf("jpg", "jpeg", "png", "gif", "webp"))
+            } ?: emptyArray()
+            
+            imageFiles.forEach { file ->
+                val screenshot = SimpleScreenshot(
+                    id = file.absolutePath.hashCode().toLong(),
+                    filePath = file.absolutePath,
+                    thumbnailPath = file.absolutePath,
+                    folderId = folderName.hashCode().toLong(),
+                    originalTimestamp = file.lastModified(),
+                    savedTimestamp = file.lastModified()
+                )
+                images.add(screenshot)
+            }
         }
         
-        return images
+        // Remove duplicates based on file path and sort by most recent
+        val uniqueImages = images.distinctBy { it.filePath }
+            .sortedByDescending { it.savedTimestamp }
+        
+        Log.d("SharedPrefsManager", "Loaded ${uniqueImages.size} images from folder: $folderName")
+        return uniqueImages
     }
 
     /**
