@@ -196,7 +196,7 @@ fun ImprovedHomeScreen(
                 viewModel.shareScreenshot(context, screenshot)
             },
             onDelete = { screenshot ->
-                viewModel.deleteScreenshot(screenshot)
+                viewModel.deleteScreenshotByPath(screenshot.filePath)
                 screenshots.refresh()
             }
         )
@@ -211,7 +211,7 @@ fun ImprovedHomeScreen(
             },
             onShare = { screenshot -> viewModel.shareScreenshot(context, screenshot) },
             onDelete = { screenshot ->
-                viewModel.deleteScreenshot(screenshot)
+                viewModel.deleteScreenshotByPath(screenshot.filePath)
                 screenshots.refresh()
             },
             onEdit = { /* TODO */ },
@@ -487,7 +487,7 @@ fun ImprovedHomeScreen(
                                     // Delete selected screenshots
                                     val selectedScreenshots = selectionManager.getSelectedScreenshots()
                                     selectedScreenshots.forEach { screenshot ->
-                                        viewModel.deleteScreenshot(screenshot)
+                                        viewModel.deleteScreenshotByPath(screenshot.filePath)
                                     }
                                     // Refresh paging data to reflect deletions from MediaStore
                                     screenshots.refresh()
