@@ -489,8 +489,10 @@ fun ImprovedHomeScreen(
                                     selectedScreenshots.forEach { screenshot ->
                                         viewModel.deleteScreenshot(screenshot)
                                     }
-                                    selectionManager.toggleSelectionMode()
+                                    // Refresh paging data to reflect deletions from MediaStore
                                     screenshots.refresh()
+                                    // Exit selection mode and close dialog
+                                    selectionManager.toggleSelectionMode()
                                     showDeleteDialog = false
                                 },
                                 colors = ButtonDefaults.buttonColors(

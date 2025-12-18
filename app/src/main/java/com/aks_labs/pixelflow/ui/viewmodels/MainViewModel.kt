@@ -254,6 +254,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteScreenshot(screenshot: SimpleScreenshot) {
         sharedPrefsManager.deleteScreenshot(screenshot.id)
     }
+    
+    /**
+     * Delete a screenshot by file path (for filesystem-scanned screenshots)
+     */
+    fun deleteScreenshotByPath(filePath: String) {
+        sharedPrefsManager.deleteScreenshotByPath(filePath)
+    }
 
     /**
      * Move a screenshot to a different folder

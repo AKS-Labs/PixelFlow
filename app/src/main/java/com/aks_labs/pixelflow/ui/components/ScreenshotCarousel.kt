@@ -21,6 +21,9 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +31,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -78,6 +82,9 @@ fun ScreenshotCarousel(
 ) {
     var currentIndex by remember { mutableStateOf(initialIndex) }
     val currentScreenshot = screenshots.getOrNull(currentIndex)
+    
+    // State for delete confirmation dialog
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     val metadata = remember(currentScreenshot) {
         currentScreenshot?.let { getScreenshotMetadata(it) }
@@ -175,8 +182,35 @@ fun ScreenshotCarousel(
                 if (currentScreenshot != null) {
                     CarouselActionButton(Icons.Default.Share, "Share") { onShare(currentScreenshot) }
                     CarouselActionButton(Icons.Default.Edit, "Edit") { onEdit(currentScreenshot) }
-                    CarouselActionButton(Icons.Default.Delete, "Delete") { onDelete(currentScreenshot) }
+                    CarouselActionButton(Icons.Default.Delete, "Delete") { showDeleteDialog = true }
                 }
+            }
+            
+            // Delete confirmation dialog
+            if (showDeleteDialog && currentScreenshot != null) {
+                AlertDialog(
+                    onDismissRequest = { showDeleteDialog = false },
+                    title = { Text("Delete Screenshot?") },
+                    text = { Text("Are you sure you want to delete this screenshot? This action cannot be undone.") },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                onDelete(currentScreenshot)
+                                showDeleteDialog = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.error
+                            )
+                        ) {
+                            Text("Delete")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDeleteDialog = false }) {
+                            Text("Cancel")
+                        }
+                    }
+                )
             }
 
 //            Spacer(modifier = Modifier.size(4.dp))

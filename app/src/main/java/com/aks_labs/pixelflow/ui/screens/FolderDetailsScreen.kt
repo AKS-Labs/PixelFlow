@@ -18,13 +18,18 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -39,7 +44,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign // Added Missing Import
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aks_labs.pixelflow.data.models.SimpleScreenshot
@@ -67,11 +73,11 @@ fun FolderDetailsScreen(
     // Get screenshots by folder name (scans filesystem)
     val screenshots by viewModel.getScreenshotsForFolderByNameAsFlow(folderName).collectAsState(initial = emptyList())
 
-    // Refresh function (can be removed if not used elsewhere, but keeping for now)
+    // Refresh function to force reload screenshots after deletion
     fun refreshScreenshots() {
-        // The flow now handles updates automatically.
-        // This function can be kept for explicit refresh if needed, but its body might be empty
-        // or trigger a re-fetch in the ViewModel if that's ever implemented.
+        // Force SharedPrefsManager to reload data from storage
+        // This will emit new values through the Flow, updating the UI
+        viewModel.getSharedPrefsManager().refresh()
     }
 
     LaunchedEffect(folderId) {
@@ -83,10 +89,16 @@ fun FolderDetailsScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val gridColumns by viewModel.gridColumns.collectAsState()
     
-    // Viewer States
     var showCarousel by remember { mutableStateOf(false) }
     var showImmersiveViewer by remember { mutableStateOf(false) }
     var selectedScreenshotIndex by remember { mutableStateOf(0) }
+    
+    // State for rename dialog
+    var showRenameDialog by remember { mutableStateOf(false) }
+    var newFolderName by remember { mutableStateOf(folderName) }
+    
+    // State for delete confirmation dialog
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     // Handle Back Press for Viewers
     if (showCarousel || showImmersiveViewer) {
@@ -110,7 +122,8 @@ fun FolderDetailsScreen(
             },
             onShare = { screenshot -> viewModel.shareScreenshot(context, screenshot) },
             onDelete = { screenshot ->
-                viewModel.deleteScreenshot(screenshot)
+                // Use deleteScreenshotByPath for filesystem-scanned screenshots
+                viewModel.deleteScreenshotByPath(screenshot.filePath)
                 refreshScreenshots()
                 // If empty -> close viewer? ImmersiveImageViewer might handle it or crash if list empty
                 if (screenshots.isEmpty()) showImmersiveViewer = false
@@ -127,7 +140,8 @@ fun FolderDetailsScreen(
             },
             onShare = { s -> viewModel.shareScreenshot(context, s) },
             onDelete = { s ->
-                viewModel.deleteScreenshot(s)
+                // Use deleteScreenshotByPath for filesystem-scanned screenshots
+                viewModel.deleteScreenshotByPath(s.filePath)
                 refreshScreenshots()
                  if (screenshots.isEmpty()) showCarousel = false
             },
@@ -146,7 +160,19 @@ fun FolderDetailsScreen(
                          if (selectionManager.selectionMode) {
                               Text("${selectionManager.getSelectionCount()} Selected")
                          } else {
-                             Text(folderName, fontWeight = FontWeight.Bold)
+                             Text(
+                                 text = folderName, 
+                                 fontWeight = FontWeight.Bold,
+                                 modifier = Modifier.clickable { 
+                                     // Get the folder first
+                                     val folder = folders.find { it.id == folderId }
+                                     // Only allow rename if folder is editable
+                                     if (folder != null && folder.isEditable) {
+                                         showRenameDialog = true
+                                         newFolderName = folderName
+                                     }
+                                 }
+                             )
                          }
                     },
                     navigationIcon = {
@@ -175,11 +201,7 @@ fun FolderDetailsScreen(
                                 Icon(Icons.Default.Share, contentDescription = "Share")
                             }
                             IconButton(onClick = {
-                                selectionManager.getSelectedScreenshots().forEach { 
-                                    viewModel.deleteScreenshot(it) 
-                                }
-                                selectionManager.toggleSelectionMode()
-                                refreshScreenshots()
+                                showDeleteDialog = true
                             }) {
                                 Icon(Icons.Default.Delete, contentDescription = "Delete")
                             }
@@ -238,5 +260,77 @@ fun FolderDetailsScreen(
                 }
             }
         }
+    }
+    
+    // Rename folder dialog
+    if (showRenameDialog) {
+        AlertDialog(
+            onDismissRequest = { showRenameDialog = false },
+            title = { Text("Rename Folder") },
+            text = {
+                OutlinedTextField(
+                    value = newFolderName,
+                    onValueChange = { newFolderName = it },
+                    label = { Text("Folder Name") },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (newFolderName.isNotBlank() && newFolderName != folderName) {
+                            val folder = folders.find { it.id == folderId }
+                            if (folder != null) {
+                                val updatedFolder = folder.copy(name = newFolderName.trim())
+                                viewModel.updateFolder(updatedFolder)
+                            }
+                        }
+                        showRenameDialog = false
+                    },
+                    enabled = newFolderName.isNotBlank()
+                ) {
+                    Text("Rename")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRenameDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+    
+    // Delete confirmation dialog
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete Screenshots") },
+            text = { 
+                Text("Are you sure you want to delete ${selectionManager.getSelectionCount()} selected screenshot(s)? This action cannot be undone.") 
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        selectionManager.getSelectedScreenshots().forEach { screenshot ->
+                            // Use deleteScreenshotByPath for filesystem-scanned screenshots
+                            viewModel.deleteScreenshotByPath(screenshot.filePath)
+                        }
+                        selectionManager.toggleSelectionMode()
+                        refreshScreenshots()
+                        showDeleteDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }

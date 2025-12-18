@@ -202,9 +202,46 @@ class SharedPrefsManager(private val context: Context) {
         val currentFolders = _folders.value.toMutableList()
         val index = currentFolders.indexOfFirst { it.id == folder.id }
         if (index != -1) {
+            val oldFolder = currentFolders[index]
+            val oldFolderName = oldFolder.name
+            val newFolderName = folder.name
+            
+            // Update folder in memory
             currentFolders[index] = folder
             _folders.value = currentFolders
             saveFolders()
+            
+            // If folder name changed, rename the physical directory
+            if (oldFolderName != newFolderName) {
+                try {
+                    val oldDir = File(appDirectory, oldFolderName)
+                    val newDir = File(appDirectory, newFolderName)
+                    
+                    if (oldDir.exists()) {
+                        val renamed = oldDir.renameTo(newDir)
+                        if (renamed) {
+                            Log.d("SharedPrefsManager", "Successfully renamed folder: $oldFolderName -> $newFolderName")
+                            
+                            // Scan the new directory to update MediaStore
+                            android.media.MediaScannerConnection.scanFile(
+                                context,
+                                arrayOf(newDir.absolutePath),
+                                null
+                            ) { path, uri ->
+                                Log.d("SharedPrefsManager", "Media scan completed for renamed folder: $path")
+                            }
+                        } else {
+                            Log.w("SharedPrefsManager", "Failed to rename folder: $oldFolderName -> $newFolderName")
+                        }
+                    } else {
+                        Log.d("SharedPrefsManager", "Old folder doesn't exist, creating new one: $newFolderName")
+                        // Create new folder if old one doesn't exist
+                        getFolderDirectory(newFolderName)
+                    }
+                } catch (e: Exception) {
+                    Log.e("SharedPrefsManager", "Error renaming folder: $oldFolderName -> $newFolderName", e)
+                }
+            }
         }
     }
 
@@ -283,13 +320,13 @@ class SharedPrefsManager(private val context: Context) {
         val screenshot = _screenshots.value.find { it.id == screenshotId }
         
         if (screenshot != null) {
-            // Remove from memory list
+            // 1. Remove from memory list immediately for instant UI update
             val currentScreenshots = _screenshots.value.toMutableList()
             currentScreenshots.remove(screenshot)
             _screenshots.value = currentScreenshots
             saveScreenshots()
             
-            // Delete the actual file from MediaStore
+            // 2. Delete from MediaStore
             try {
                 val uri = ContentUris.withAppendedId(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -297,13 +334,50 @@ class SharedPrefsManager(private val context: Context) {
                 )
                 val deleted = context.contentResolver.delete(uri, null, null)
                 if (deleted > 0) {
-                    Log.d("SharedPrefsManager", "Successfully deleted screenshot file: $screenshotId")
+                    Log.d("SharedPrefsManager", "MediaStore delete successful for ID $screenshotId: $deleted rows")
                 } else {
-                    Log.w("SharedPrefsManager", "Failed to delete screenshot file: $screenshotId")
+                    Log.w("SharedPrefsManager", "MediaStore delete returned 0 rows for ID $screenshotId")
                 }
             } catch (e: Exception) {
-                Log.e("SharedPrefsManager", "Error deleting screenshot file", e)
+                Log.e("SharedPrefsManager", "MediaStore delete failed for ID $screenshotId", e)
             }
+            
+            // 3. Delete physical file as fallback/additional safety
+            try {
+                val file = File(screenshot.filePath)
+                if (file.exists()) {
+                    val fileDeleted = file.delete()
+                    if (fileDeleted) {
+                        Log.d("SharedPrefsManager", "Physical file deleted: ${screenshot.filePath}")
+                        
+                        // 4. Notify MediaStore to scan and remove entry if it still exists
+                        android.media.MediaScannerConnection.scanFile(
+                            context,
+                            arrayOf(screenshot.filePath),
+                            null
+                        ) { path, uri ->
+                            Log.d("SharedPrefsManager", "Media scan completed for deleted file: $path")
+                        }
+                    } else {
+                        Log.w("SharedPrefsManager", "Failed to delete physical file: ${screenshot.filePath}")
+                    }
+                } else {
+                    Log.d("SharedPrefsManager", "Physical file already deleted or doesn't exist: ${screenshot.filePath}")
+                }
+                
+                // Also try to delete thumbnail if it exists and is different from main file
+                if (screenshot.thumbnailPath != screenshot.filePath) {
+                    val thumbnailFile = File(screenshot.thumbnailPath)
+                    if (thumbnailFile.exists()) {
+                        thumbnailFile.delete()
+                        Log.d("SharedPrefsManager", "Thumbnail deleted: ${screenshot.thumbnailPath}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("SharedPrefsManager", "Error deleting physical file: ${screenshot.filePath}", e)
+            }
+        } else {
+            Log.w("SharedPrefsManager", "Screenshot with ID $screenshotId not found in memory")
         }
     }
 
@@ -317,6 +391,36 @@ class SharedPrefsManager(private val context: Context) {
         if (newScreenshots.size != currentScreenshots.size) {
             _screenshots.value = newScreenshots
             saveScreenshots()
+        }
+    }
+    
+    /**
+     * Delete a screenshot by file path (for screenshots loaded from filesystem, not in StateFlow)
+     */
+    fun deleteScreenshotByPath(filePath: String) {
+        try {
+            val file = File(filePath)
+            if (file.exists()) {
+                val fileDeleted = file.delete()
+                if (fileDeleted) {
+                    Log.d("SharedPrefsManager", "Physical file deleted by path: $filePath")
+                    
+                    // Notify MediaStore to scan and remove entry
+                    android.media.MediaScannerConnection.scanFile(
+                        context,
+                        arrayOf(filePath),
+                        null
+                    ) { path, uri ->
+                        Log.d("SharedPrefsManager", "Media scan completed for deleted file: $path")
+                    }
+                } else {
+                    Log.w("SharedPrefsManager", "Failed to delete physical file by path: $filePath")
+                }
+            } else {
+                Log.d("SharedPrefsManager", "File doesn't exist at path: $filePath")
+            }
+        } catch (e: Exception) {
+            Log.e("SharedPrefsManager", "Error deleting file by path: $filePath", e)
         }
     }
 

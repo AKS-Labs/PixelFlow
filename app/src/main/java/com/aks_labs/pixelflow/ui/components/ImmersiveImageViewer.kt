@@ -25,8 +25,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -81,6 +87,9 @@ fun ImmersiveImageViewer(
     var currentIndex by remember { mutableStateOf(initialIndex) }
     var showControls by remember { mutableStateOf(true) }
     val currentScreenshot = screenshots.getOrNull(currentIndex) ?: return
+    
+    // State for delete confirmation dialog
+    var showDeleteDialog by remember { mutableStateOf(false) }
     
     // State for swipe animation
     var swipeOffset by remember { mutableStateOf(0f) }
@@ -320,21 +329,7 @@ fun ImmersiveImageViewer(
                 }
 
                 IconButton(
-                    onClick = {
-                        onDelete(currentScreenshot)
-                        // Navigate to previous screenshot if available, otherwise close
-                        if (screenshots.size > 1) {
-                            if (currentIndex > 0) {
-                                currentIndex--
-                            } else if (currentIndex < screenshots.size - 1) {
-                                // Stay on same index which will now show the next item
-                            } else {
-                                onClose()
-                            }
-                        } else {
-                            onClose()
-                        }
-                    },
+                    onClick = { showDeleteDialog = true },
                     modifier = Modifier.size(40.dp)
                 ) {
                     Icon(
@@ -344,6 +339,45 @@ fun ImmersiveImageViewer(
                     )
                 }
             }
+        }
+        
+        // Delete confirmation dialog
+        if (showDeleteDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                title = { Text("Delete Screenshot?") },
+                text = { Text("Are you sure you want to delete this screenshot? This action cannot be undone.") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            onDelete(currentScreenshot)
+                            showDeleteDialog = false
+                            // Navigate to previous screenshot if available, otherwise close
+                            if (screenshots.size > 1) {
+                                if (currentIndex > 0) {
+                                    currentIndex--
+                                } else if (currentIndex < screenshots.size - 1) {
+                                    // Stay on same index which will now show the next item
+                                } else {
+                                    onClose()
+                                }
+                            } else {
+                                onClose()
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteDialog = false }) {
+                        Text("Cancel")
+                    }
+                }
+            )
         }
     }
 }
