@@ -1,9 +1,13 @@
 package com.aks_labs.pixelflow.ui.components
 
-
+import android.content.Context
+import android.content.Intent
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.compose.foundation.background
+import androidx.core.content.FileProvider
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +39,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.graphics.Color
@@ -78,15 +83,134 @@ fun ScreenshotCarousel(
 ) {
     var currentIndex by remember { mutableStateOf(initialIndex) }
     val currentScreenshot = screenshots.getOrNull(currentIndex)
+    val context = LocalContext.current
     
     val metadata = remember(currentScreenshot) {
         currentScreenshot?.let { getScreenshotMetadata(it) }
     }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.background, // M3 Expressive Dynamic Color fallback
-//        contentWindowInsets = WindowInsets(0, 0, 0, 0), // Handle insets manually for full control
-        topBar = {
+    // Edit Function
+    fun launchEdit(screenshot: SimpleScreenshot) {
+        try {
+            val file = File(screenshot.filePath)
+            val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+            
+            // Try explicit Pixel Markup first
+            val intent = Intent(Intent.ACTION_EDIT).apply {
+                setDataAndType(uri, "image/*")
+                setClassName(
+                    "com.google.android.markup",
+                    "com.google.android.markup.AnnotateActivity"
+                )
+                addFlags(
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            }
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            // Fallback to generic chooser
+             try {
+               val file = File(screenshot.filePath)
+               val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+               val intent = Intent(Intent.ACTION_EDIT).apply {
+                   setDataAndType(uri, "image/*")
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+               }
+               context.startActivity(Intent.createChooser(intent, "Edit with"))
+           } catch (e2: Exception) {
+               e2.printStackTrace()
+           }
+        }
+    }
+
+    // Main Container
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black) // Dark background
+    ) {
+        // 1. Carousel Layer (Bottom)
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { ctx ->
+                RecyclerView(ctx).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    clipChildren = false
+                    clipToPadding = false
+                    
+                    layoutManager = CarouselLayoutManager(FullScreenCarouselStrategy(), RecyclerView.VERTICAL)
+                    
+                    adapter = CarouselAdapter(screenshots) {
+                        onScreenshotClick()
+                    }
+                    
+                    val snapHelper = CarouselSnapHelper()
+                    snapHelper.attachToRecyclerView(this)
+
+                    scrollToPosition(initialIndex)
+
+                    addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                            super.onScrollStateChanged(recyclerView, newState)
+                            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                                val lm = layoutManager as? CarouselLayoutManager ?: return
+                                val snapView = snapHelper.findSnapView(lm)
+                                if (snapView != null) {
+                                    val position = lm.getPosition(snapView)
+                                    if (position != RecyclerView.NO_POSITION) {
+                                        currentIndex = position
+                                        onPageChanged(position)
+                                    }
+                                }
+                            }
+                        }
+                    })
+                }
+            }
+        )
+
+        // 2. Gradients Layer (Middle - for legibility)
+        // Top Gradient
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(140.dp)
+                .align(Alignment.TopCenter)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Black.copy(alpha = 0.6f),
+                            Color.Transparent
+                        )
+                    )
+                )
+        )
+        // Bottom Gradient
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .align(Alignment.BottomCenter)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            Color.Black.copy(alpha = 0.8f)
+                        )
+                    )
+                )
+        )
+
+        // 3. UI Controls Layer (Top)
+        // Using Column to space out TopBar and Bottom Controls
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // Top Bar
             TopAppBar(
                 title = { 
                     Text(
@@ -104,49 +228,45 @@ fun ScreenshotCarousel(
                         )
                     }
                 },
-                actions = {
-                    IconButton(onClick = { /* Settings placeholder */ }) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings"
-                        )
-                    }
-                },
+                // Removed Settings Icon as requested
+                actions = {},
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background, // Match Scaffold
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
+                    containerColor = Color.Transparent, // Transparent
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White,
+                    actionIconContentColor = Color.White
                 ),
-                windowInsets = WindowInsets.statusBars // Apply status bar padding correctly
+                windowInsets = WindowInsets.statusBars
             )
-        }
-    ) {
-        innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            Spacer(modifier = Modifier.size(70.dp))
-            
-            // Metadata Section
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Metadata & Actions Section
             if (metadata != null) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .padding(horizontal = 16.dp, vertical = 16.dp) // Added bottom padding
                 ) {
-                    // Path Display
-                    Text(
-                        text = metadata.path,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    // Path Display with Background
+                     Box(
+                        modifier = Modifier
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = metadata.path,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                     
-                    Spacer(modifier = Modifier.size(4.dp))
+                    Spacer(modifier = Modifier.size(8.dp))
                     
                     // Chips Row
                     Row(
@@ -156,88 +276,29 @@ fun ScreenshotCarousel(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        MetadataChip(text = metadata.size, color = MaterialTheme.colorScheme.secondaryContainer)
-                        MetadataChip(text = metadata.resolution, color = MaterialTheme.colorScheme.tertiaryContainer)
-                        MetadataChip(text = "${metadata.megaPixels} MP", color = MaterialTheme.colorScheme.primaryContainer)
-                        MetadataChip(text = metadata.date, color = MaterialTheme.colorScheme.surfaceVariant)
+                        MetadataChip(text = metadata.size, color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha=0.9f))
+                        MetadataChip(text = metadata.resolution, color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha=0.9f))
+                        MetadataChip(text = "${metadata.megaPixels} MP", color = MaterialTheme.colorScheme.primaryContainer.copy(alpha=0.9f))
+                        MetadataChip(text = metadata.date, color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha=0.9f))
+                    }
+                    
+                    Spacer(modifier = Modifier.size(16.dp))
+
+                    // Action Buttons Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End, // Right aligned
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                         if (currentScreenshot != null) {
+                             CarouselActionButton(Icons.Default.Share, "Share", Color.White) { onShare(currentScreenshot) }
+                             Spacer(modifier = Modifier.size(16.dp))
+                             CarouselActionButton(Icons.Default.Edit, "Edit", Color.White) { launchEdit(currentScreenshot) } // Use new edit logic
+                             Spacer(modifier = Modifier.size(16.dp))
+                             CarouselActionButton(Icons.Default.Delete, "Delete", Color.White) { onDelete(currentScreenshot) }
+                         }
                     }
                 }
-            }
-
-            // Action Buttons Row (Right Aligned as requested, below metadata)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 5.dp, vertical = 1.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                 if (currentScreenshot != null) {
-                     CarouselActionButton(Icons.Default.Share, "Share") { onShare(currentScreenshot) }
-                     CarouselActionButton(Icons.Default.Edit, "Edit") { onEdit(currentScreenshot) }
-                     CarouselActionButton(Icons.Default.Delete, "Delete") { onDelete(currentScreenshot) }
-                 }
-            }
-
-//            Spacer(modifier = Modifier.size(4.dp))
-
-            // The View-based Carousel
-            // We wrap it in a box to manage padding/cutout if needed
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(16.dp)
-                    // The user said "no padding for corousel" - assume they mean edge-to-edge
-                    // But standard M3 carousel usually has start/end padding for next items peeking.
-                    // If they want it like the 2nd screenshot (Fullscreen one), it might be truly full width?
-                    // "it's not looking like the 2nd screenshot their is no padding for corousel"
-                    // If 2nd screenshot IS the target, and it has padding, then we need padding.
-                    // If 2nd screenshot is the "bad" one, then we remove padding.
-                    // Ambiguous. I will add minimal horizontal padding to allow peeking, 
-                    // which is the signature Carousel look.
-            ) {
-                AndroidView(
-                    modifier = Modifier.fillMaxSize(),
-                    factory = { ctx ->
-                        RecyclerView(ctx).apply {
-                            layoutParams = ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT
-                            )
-                            clipChildren = false
-                            clipToPadding = false
-                            
-                            layoutManager = CarouselLayoutManager(FullScreenCarouselStrategy(), RecyclerView.VERTICAL)
-                            
-                            adapter = CarouselAdapter(screenshots) {
-                                onScreenshotClick()
-                            }
-                            
-                            val snapHelper = CarouselSnapHelper()
-                            snapHelper.attachToRecyclerView(this)
-
-                            scrollToPosition(initialIndex)
-
-                            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                                    super.onScrollStateChanged(recyclerView, newState)
-                                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                                        val lm = layoutManager as? CarouselLayoutManager ?: return
-                                        val snapView = snapHelper.findSnapView(lm)
-                                        if (snapView != null) {
-                                            val position = lm.getPosition(snapView)
-                                            if (position != RecyclerView.NO_POSITION) {
-                                                currentIndex = position
-                                                onPageChanged(position)
-                                            }
-                                        }
-                                    }
-                                }
-                            })
-                        }
-                    }
-                )
             }
         }
     }
@@ -302,12 +363,13 @@ fun formatFileSize(size: Long): String {
 fun CarouselActionButton(
     icon: ImageVector,
     description: String,
+    tint: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit
 ) {
     IconButton(
         onClick = onClick,
         colors = IconButtonDefaults.iconButtonColors(
-            contentColor = MaterialTheme.colorScheme.primary
+            contentColor = tint
         )
     ) {
         Icon(imageVector = icon, contentDescription = description)

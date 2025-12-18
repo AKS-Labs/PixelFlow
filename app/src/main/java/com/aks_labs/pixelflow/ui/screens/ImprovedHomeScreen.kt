@@ -431,7 +431,7 @@ fun ImprovedHomeScreen(
                                                 navController.navigate("folder_details/${folder.id}")
                                             },
                                             onSeeAllClick = {
-                                                navController.navigate("manage_folders")
+                                                navController.navigate("folders")
                                             },
                                             getThumbnailPaths = { folderId ->
                                                 // Access the SnapshotStateMap directly to ensure recomposition when it updates
