@@ -65,6 +65,8 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.aks_labs.pixelflow.R
 import com.aks_labs.pixelflow.data.SharedPrefsManager
+import com.aks_labs.pixelflow.ui.components.ManageFilesAnimation
+import com.aks_labs.pixelflow.ui.components.MediaAccessAnimation
 import com.aks_labs.pixelflow.ui.components.OrganizeScreenshotAnimation
 import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
 
@@ -215,7 +217,7 @@ fun PermissionSetupScreen(
                     title = "PixelFlow needs access to photos",
                     description = "To detect and organize screenshots, we need permission to access your media.",
                     buttonText = "Grant Permission",
-                    illustrationRes = R.drawable.ic_permission_storage,
+                    nativeAnimationType = NativeAnimationType.MEDIA_ACCESS,
                     onButtonClick = {
                         // Use MainActivity's method to request storage permissions
                         // This ensures permissions are only requested when the user clicks the button
@@ -240,7 +242,7 @@ fun PermissionSetupScreen(
                     title = "PixelFlow needs to display over other apps",
                     description = "To show floating bubbles for screenshots, we need permission to draw over other apps.",
                     buttonText = "Grant Permission",
-                    useNativeAnimation = true,
+                    nativeAnimationType = NativeAnimationType.ORGANIZE_SCREENSHOT,
                     onButtonClick = {
                         // Use MainActivity's method to request overlay permission
                         val activity = context.findActivity()
@@ -264,7 +266,7 @@ fun PermissionSetupScreen(
                     title = "PixelFlow needs to manage files",
                     description = "To organize screenshots into folders, we need permission to manage all files.",
                     buttonText = "Grant Permission",
-                    illustrationRes = R.drawable.ic_onboarding_organize,
+                    nativeAnimationType = NativeAnimationType.MANAGE_FILES,
                     onButtonClick = {
                         // Use MainActivity's method to request manage files permission
                         val activity = context.findActivity()
@@ -321,13 +323,17 @@ fun PermissionSetupScreen(
     }
 }
 
+enum class NativeAnimationType {
+    NONE, ORGANIZE_SCREENSHOT, MEDIA_ACCESS, MANAGE_FILES
+}
+
 @Composable
 fun PermissionScreen(
     title: String,
     description: String,
     buttonText: String,
     illustrationRes: Int? = null,
-    useNativeAnimation: Boolean = false,
+    nativeAnimationType: NativeAnimationType = NativeAnimationType.NONE,
     onButtonClick: () -> Unit
 ) {
     var visible by remember { mutableStateOf(false) }
@@ -390,32 +396,43 @@ fun PermissionScreen(
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(32.dp))
 
-                // Illustration area
+                // Illustration area (exactly below text)
                 Box(
                     modifier = Modifier.size(240.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (useNativeAnimation) {
-                        OrganizeScreenshotAnimation(modifier = Modifier.size(240.dp))
-                    } else if (illustrationRes != null) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(illustrationRes)
-                                .decoderFactory(SvgDecoder.Factory())
-                                .build(),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        // Fallback icon
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(120.dp)
-                        )
+                    when (nativeAnimationType) {
+                        NativeAnimationType.ORGANIZE_SCREENSHOT -> {
+                            OrganizeScreenshotAnimation(modifier = Modifier.size(240.dp))
+                        }
+                        NativeAnimationType.MEDIA_ACCESS -> {
+                            MediaAccessAnimation(modifier = Modifier.size(240.dp))
+                        }
+                        NativeAnimationType.MANAGE_FILES -> {
+                            ManageFilesAnimation(modifier = Modifier.size(240.dp))
+                        }
+                        else -> {
+                            if (illustrationRes != null) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(illustrationRes)
+                                        .decoderFactory(SvgDecoder.Factory())
+                                        .build(),
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            } else {
+                                // Fallback icon
+                                Icon(
+                                    imageVector = Icons.Filled.Settings,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(120.dp)
+                                )
+                            }
+                        }
                     }
                 }
 
