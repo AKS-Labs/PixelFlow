@@ -36,6 +36,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.WindowInsets
@@ -70,6 +76,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.MoreVert
 import java.io.File
 
 /**
@@ -129,7 +136,7 @@ fun ScreenshotCarousel(
                 actions = {
                     IconButton(onClick = { /* Settings placeholder */ }) {
                         Icon(
-                            imageVector = Icons.Default.Settings,
+                            imageVector = Icons.Default.MoreVert,
                             contentDescription = "Settings"
                         )
                     }
@@ -140,7 +147,7 @@ fun ScreenshotCarousel(
                     navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
                     actionIconContentColor = MaterialTheme.colorScheme.onSurface
                 ),
-                windowInsets = WindowInsets.statusBars // Apply status bar padding correctly
+                windowInsets = WindowInsets(0, 0, 0, 0) // Remove status bar padding for compact look
             )
         }
     ) {
@@ -150,7 +157,7 @@ fun ScreenshotCarousel(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Spacer(modifier = Modifier.size(70.dp))
+            // Spacer(modifier = Modifier.size(70.dp)) // Removed to make layout more compact
 
             // Metadata Section
             if (metadata != null) {
@@ -159,7 +166,26 @@ fun ScreenshotCarousel(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 4.dp)
                 ) {
-                    // Path Display
+                    // OCR Text Section
+                    OutlinedTextField(
+                        value = "No OCR text available- Feature Comming Soon...\n\n\n", // Placeholder/State for OCR text
+                        onValueChange = {},
+                        label = { Text("OCR Text", style = MaterialTheme.typography.labelSmall) },
+                        placeholder = { Text("No OCR text available", style = MaterialTheme.typography.bodySmall) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        readOnly = true,
+                        shape = MaterialTheme.shapes.small,
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                        ),
+                        textStyle = MaterialTheme.typography.bodySmall
+                    )
+
                     // Path Display with Text Field-like Background
                     Box(
                         modifier = Modifier
