@@ -76,6 +76,7 @@ dependencies {
 
     // Image Loading
     implementation(libs.coil.compose)
+    implementation(libs.coil.svg)
 
     // Accompanist libraries for Compose
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")

@@ -471,10 +471,10 @@ private class CarouselAdapter(
 
         // --- BORDER SHADOW SETTINGS ---
         // Transparency: 0 (transparent) to 255 (opaque). Current: 160
-        val shadowAlpha = 20
+        val shadowAlpha = 15
         // Size: Current: 120dp for top/bottom, 60dp for sides
-        val verticalShadowSize = (context.resources.displayMetrics.density * 50).toInt()
-        val horizontalShadowSize = (context.resources.displayMetrics.density * 50).toInt()
+        val verticalShadowSize = (context.resources.displayMetrics.density * 40).toInt()
+        val horizontalShadowSize = (context.resources.displayMetrics.density * 40).toInt()
         // ------------------------------
 
         // Add Translucent Border Shadows (Dimmers)

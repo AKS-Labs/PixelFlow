@@ -60,8 +60,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.aks_labs.pixelflow.R
 import com.aks_labs.pixelflow.data.SharedPrefsManager
+import com.aks_labs.pixelflow.ui.components.OrganizeScreenshotAnimation
+import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
 
 /**
  * Extension function to find the Activity from a Context
@@ -210,6 +215,7 @@ fun PermissionSetupScreen(
                     title = "PixelFlow needs access to photos",
                     description = "To detect and organize screenshots, we need permission to access your media.",
                     buttonText = "Grant Permission",
+                    illustrationRes = R.drawable.ic_permission_storage,
                     onButtonClick = {
                         // Use MainActivity's method to request storage permissions
                         // This ensures permissions are only requested when the user clicks the button
@@ -234,6 +240,7 @@ fun PermissionSetupScreen(
                     title = "PixelFlow needs to display over other apps",
                     description = "To show floating bubbles for screenshots, we need permission to draw over other apps.",
                     buttonText = "Grant Permission",
+                    useNativeAnimation = true,
                     onButtonClick = {
                         // Use MainActivity's method to request overlay permission
                         val activity = context.findActivity()
@@ -257,6 +264,7 @@ fun PermissionSetupScreen(
                     title = "PixelFlow needs to manage files",
                     description = "To organize screenshots into folders, we need permission to manage all files.",
                     buttonText = "Grant Permission",
+                    illustrationRes = R.drawable.ic_onboarding_organize,
                     onButtonClick = {
                         // Use MainActivity's method to request manage files permission
                         val activity = context.findActivity()
@@ -318,6 +326,8 @@ fun PermissionScreen(
     title: String,
     description: String,
     buttonText: String,
+    illustrationRes: Int? = null,
+    useNativeAnimation: Boolean = false,
     onButtonClick: () -> Unit
 ) {
     var visible by remember { mutableStateOf(false) }
@@ -382,13 +392,32 @@ fun PermissionScreen(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Use a Material icon instead of a custom drawable
-                Icon(
-                    imageVector = Icons.Filled.Settings,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(120.dp)
-                )
+                // Illustration area
+                Box(
+                    modifier = Modifier.size(240.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (useNativeAnimation) {
+                        OrganizeScreenshotAnimation(modifier = Modifier.size(240.dp))
+                    } else if (illustrationRes != null) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(illustrationRes)
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        // Fallback icon
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(120.dp)
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.weight(1f))
 
