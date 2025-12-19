@@ -1,224 +1,304 @@
-<svg viewBox="0 0 400 800" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <!-- Phone shadow -->
-    <filter id="phoneShadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
-      <feOffset dx="0" dy="4" result="offsetblur"/>
-      <feComponentTransfer>
-        <feFuncA type="linear" slope="0.15"/>
-      </feComponentTransfer>
-      <feMerge>
-        <feMergeNode/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    
-    <!-- Soft shadow for elements -->
-    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
-      <feOffset dx="0" dy="2" result="offsetblur"/>
-      <feComponentTransfer>
-        <feFuncA type="linear" slope="0.2"/>
-      </feComponentTransfer>
-      <feMerge>
-        <feMergeNode/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-  
-  <!-- Phone Frame -->
-  <g filter="url(#phoneShadow)">
-    <rect x="50" y="100" width="300" height="600" rx="30" fill="#1a1a1a"/>
-    <rect x="58" y="108" width="284" height="584" rx="26" fill="#000"/>
-    
-    <!-- Screen - Pure White -->
-    <rect x="58" y="108" width="284" height="584" rx="26" fill="#ffffff">
-      <!-- Flash effect - brighter white -->
-      <animate id="flash" attributeName="fill" 
-        from="#ffffff" to="#f0f9ff" 
-        begin="3s;13s" repeatCount="1" dur="0.1s" fill="freeze"/>
-      <animate attributeName="fill" 
-        from="#f0f9ff" to="#ffffff" 
-        begin="3.1s;13.1s" repeatCount="1" dur="0.1s" fill="freeze"/>
-    </rect>
-    
-    <!-- Flash overlay for stronger effect -->
-    <rect x="58" y="108" width="284" height="584" rx="26" fill="#e0f2fe" opacity="0">
-      <animate attributeName="opacity" 
-        values="0;0.8;0" 
-        keyTimes="0;0.5;1"
-        begin="3s;13s" repeatCount="1" dur="0.2s" fill="freeze"/>
-    </rect>
-  </g>
-  
-  <!-- Content inside screen -->
-  <g clip-path="url(#screenClip)">
-    <clipPath id="screenClip">
-      <rect x="58" y="108" width="284" height="584" rx="26"/>
-    </clipPath>
-    
-    <!-- App content placeholders -->
-    <g opacity="1">
-      <rect x="80" y="140" width="240" height="14" rx="7" fill="#e5e7eb"/>
-      <rect x="80" y="168" width="180" height="14" rx="7" fill="#e5e7eb"/>
-      <rect x="80" y="196" width="200" height="14" rx="7" fill="#e5e7eb"/>
-      <rect x="80" y="230" width="240" height="80" rx="12" fill="#f3f4f6"/>
-    </g>
-    
-    <!-- Three finger swipe down gesture -->
-    <g id="fingers" opacity="0">
-      <animate attributeName="opacity" 
-        values="0;1;1;1;0" 
-        keyTimes="0;0.15;0.7;0.85;1"
-        begin="1.5s;11.5s" repeatCount="1" dur="2s" fill="freeze"/>
-      
-      <g>
-        <animateTransform attributeName="transform" type="translate"
-          from="0 -100" to="0 120"
-          begin="2s;12s" repeatCount="1" dur="1s" fill="freeze"/>
-        
-        <!-- Left finger with downward arrow -->
-        <g>
-          <!-- Finger touch point -->
-          <circle cx="150" cy="250" r="18" fill="#3b82f6" opacity="0.3"/>
-          <circle cx="150" cy="250" r="12" fill="#2563eb"/>
-          <!-- Downward arrow trail -->
-          <path d="M 150 270 L 150 340 M 150 340 L 140 330 M 150 340 L 160 330" 
-                stroke="#3b82f6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>
-        </g>
-        
-        <!-- Center finger with downward arrow -->
-        <g>
-          <!-- Finger touch point -->
-          <circle cx="200" cy="250" r="18" fill="#3b82f6" opacity="0.3"/>
-          <circle cx="200" cy="250" r="12" fill="#2563eb"/>
-          <!-- Downward arrow trail -->
-          <path d="M 200 270 L 200 340 M 200 340 L 190 330 M 200 340 L 210 330" 
-                stroke="#3b82f6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>
-        </g>
-        
-        <!-- Right finger with downward arrow -->
-        <g>
-          <!-- Finger touch point -->
-          <circle cx="250" cy="250" r="18" fill="#3b82f6" opacity="0.3"/>
-          <circle cx="250" cy="250" r="12" fill="#2563eb"/>
-          <!-- Downward arrow trail -->
-          <path d="M 250 270 L 250 340 M 250 340 L 240 330 M 250 340 L 260 330" 
-                stroke="#3b82f6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.8"/>
-        </g>
-      </g>
-    </g>
-    
-    <!-- Floating screenshot bubble -->
-    <g id="bubble" opacity="0">
-      <animate id="bubbleAppear" attributeName="opacity" 
-        from="0" to="1" 
-        begin="3.3s;13.3s" repeatCount="1" dur="0.3s" fill="freeze"/>
-      
-      <!-- Bubble shadow -->
-      <circle cx="312" cy="402" r="30" fill="#000" opacity="0.1">
-        <animate attributeName="cx"
-          from="312" to="202"
-          begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-        <animate attributeName="cy"
-          from="402" to="572"
-          begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-      </circle>
-      
-      <!-- Main bubble -->
-      <circle cx="310" cy="400" r="30" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" filter="url(#softShadow)">
-        <animate attributeName="cx"
-          from="310" to="200"
-          begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-        <animate attributeName="cy"
-          from="400" to="570"
-          begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-        <animate attributeName="r"
-          from="30" to="0"
-          begin="6.5s;16.5s" repeatCount="1" dur="0.3s" fill="freeze"/>
-      </circle>
-      
-      <!-- Thumbnail content (mini version of screen) -->
-      <g opacity="1">
-        <rect x="290" y="385" width="20" height="3" rx="1.5" fill="#e5e7eb">
-          <animate attributeName="x" from="290" to="180" begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-          <animate attributeName="y" from="385" to="555" begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-        </rect>
-        <rect x="290" y="392" width="15" height="3" rx="1.5" fill="#e5e7eb">
-          <animate attributeName="x" from="290" to="180" begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-          <animate attributeName="y" from="392" to="562" begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-        </rect>
-        <rect x="290" y="399" width="18" height="3" rx="1.5" fill="#e5e7eb">
-          <animate attributeName="x" from="290" to="180" begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-          <animate attributeName="y" from="399" to="569" begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-        </rect>
-        <rect x="290" y="407" width="20" height="8" rx="1.5" fill="#f3f4f6">
-          <animate attributeName="x" from="290" to="180" begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-          <animate attributeName="y" from="407" to="577" begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-        </rect>
-      </g>
-    </g>
-    
-    <!-- Dragging finger - realistic single finger -->
-    <g id="dragFinger" opacity="0">
-      <animate attributeName="opacity"
-        values="0;1;1;0"
-        keyTimes="0;0.1;0.9;1"
-        begin="4.8s;14.8s" repeatCount="1" dur="2s" fill="freeze"/>
-      
-      <g>
-        <animateTransform attributeName="transform" type="translate"
-          from="0 0" to="-110 170"
-          begin="5s;15s" repeatCount="1" dur="1.5s" fill="freeze"/>
-        
-        <!-- Finger pad -->
-        <ellipse cx="310" cy="400" rx="12" ry="16" fill="#ffdbcc" stroke="#ffb89d" stroke-width="1"/>
-        <!-- Fingertip -->
-        <ellipse cx="310" cy="388" rx="11" ry="12" fill="#ffd4b8" stroke="#ffb89d" stroke-width="1"/>
-        <!-- Fingernail -->
-        <ellipse cx="310" cy="383" rx="7" ry="6" fill="#ffe4d9" opacity="0.8"/>
-        <!-- Knuckle line -->
-        <line x1="300" y1="405" x2="320" y2="405" stroke="#ffb89d" stroke-width="1" opacity="0.5"/>
-      </g>
-    </g>
-    
-    <!-- Folder targets at bottom in INVERTED SEMI-CIRCLE ARC shape -->
-    <g id="folders" opacity="0">
-      <animate attributeName="opacity"
-        values="0;1;1;0"
-        keyTimes="0;0.15;0.85;1"
-        begin="5.2s;15.2s" repeatCount="1" dur="2s" fill="freeze"/>
-      
-      <animateTransform attributeName="transform" type="translate"
-        from="0 30" to="0 0"
-        begin="5.2s;15.2s" repeatCount="1" dur="0.4s" fill="freeze"/>
-      
-      <!-- Left folder (lowest - left point of inverted arc) -->
-      <circle cx="110" cy="590" r="32" fill="#fef3c7" stroke="#fbbf24" stroke-width="3" filter="url(#softShadow)"/>
-      <path d="M 98 585 L 108 579 L 118 583 L 122 585 L 122 601 L 98 601 Z" fill="#fbbf24" opacity="0.9"/>
-      
-      <!-- Center folder (highest point of inverted arc - top center) -->
-      <circle cx="200" cy="570" r="32" fill="#dbeafe" stroke="#3b82f6" stroke-width="3" filter="url(#softShadow)"/>
-      <path d="M 188 565 L 198 559 L 208 563 L 212 565 L 212 581 L 188 581 Z" fill="#3b82f6" opacity="0.9"/>
-      
-      <!-- Right folder (lowest - right point of inverted arc) -->
-      <circle cx="290" cy="590" r="32" fill="#fce7f3" stroke="#ec4899" stroke-width="3" filter="url(#softShadow)"/>
-      <path d="M 278 585 L 288 579 L 298 583 L 302 585 L 302 601 L 278 601 Z" fill="#ec4899" opacity="0.9"/>
-    </g>
-    
-    <!-- Success indicator in center folder -->
-    <g id="success" opacity="0">
-      <animate attributeName="opacity"
-        values="0;1;0"
-        keyTimes="0;0.3;1"
-        begin="6.5s;16.5s" repeatCount="1" dur="0.8s" fill="freeze"/>
-      
-      <circle cx="200" cy="570" r="36" fill="#3b82f6" opacity="0.15"/>
-      <circle cx="200" cy="570" r="28" fill="#3b82f6" opacity="0.2"/>
-    </g>
-  </g>
-  
-  <!-- Camera notch at top -->
-  <ellipse cx="200" cy="118" rx="30" ry="8" fill="#1a1a1a"/>
-</svg>
+--------- beginning of crash
+2025-12-19 12:34:37.119 21652-21652 AndroidRuntime          pid-21652                            E  FATAL EXCEPTION: main (Fix with AI)
+                                                                                                    Process: com.aks_labs.pixelflow, PID: 21652
+                                                                                                    java.lang.IllegalArgumentException: Key "1000004918" was already used. If you are using LazyColumn/Row please make sure you provide a unique key for each item.
+                                                                                                    	at androidx.compose.ui.layout.LayoutNodeSubcompositionsState.subcompose(SubcomposeLayout.kt:453)
+                                                                                                    	at androidx.compose.ui.layout.LayoutNodeSubcompositionsState$Scope.subcompose(SubcomposeLayout.kt:895)
+                                                                                                    	at androidx.compose.foundation.lazy.layout.LazyLayoutMeasureScopeImpl.measure-0kLqBqw(LazyLayoutMeasureScope.kt:125)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridMeasuredItemProvider.getAndMeasure-m8Kt_7k(LazyGridMeasuredItemProvider.kt:62)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridMeasuredLineProvider.getAndMeasure(LazyGridMeasuredLineProvider.kt:72)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridMeasureKt.measureLazyGrid-OZKpZRA(LazyGridMeasure.kt:155)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridKt$rememberLazyGridMeasurePolicy$1$1.invoke-0kLqBqw(LazyGrid.kt:341)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridKt$rememberLazyGridMeasurePolicy$1$1.invoke(LazyGrid.kt:172)
+                                                                                                    	at androidx.compose.foundation.lazy.layout.LazyLayoutKt$LazyLayout$3$2$1.invoke-0kLqBqw(LazyLayout.kt:119)
+                                                                                                    	at androidx.compose.foundation.lazy.layout.LazyLayoutKt$LazyLayout$3$2$1.invoke(LazyLayout.kt:112)
+                                                                                                    	at androidx.compose.ui.layout.LayoutNodeSubcompositionsState$createMeasurePolicy$1.measure-3p2s80s(SubcomposeLayout.kt:725)
+                                                                                                    	at androidx.compose.ui.node.InnerNodeCoordinator.measure-BRTryo0(InnerNodeCoordinator.kt:135)
+                                                                                                    	at androidx.compose.ui.graphics.SimpleGraphicsLayerModifier.measure-3p2s80s(GraphicsLayerModifier.kt:646)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.measure-BRTryo0(LayoutModifierNodeCoordinator.kt:188)
+                                                                                                    	at androidx.compose.foundation.layout.FillNode.measure-3p2s80s(Size.kt:699)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.measure-BRTryo0(LayoutModifierNodeCoordinator.kt:188)
+                                                                                                    	at androidx.compose.foundation.layout.FillNode.measure-3p2s80s(Size.kt:699)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.measure-BRTryo0(LayoutModifierNodeCoordinator.kt:188)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeLayoutDelegate$performMeasureBlock$1.invoke(LayoutNodeLayoutDelegate.kt:316)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeLayoutDelegate$performMeasureBlock$1.invoke(LayoutNodeLayoutDelegate.kt:315)
+                                                                                                    	at androidx.compose.runtime.snapshots.Snapshot$Companion.observe(Snapshot.kt:2441)
+                                                                                                    	at androidx.compose.runtime.snapshots.SnapshotStateObserver$ObservedScopeMap.observe(SnapshotStateObserver.kt:502)
+                                                                                                    	at androidx.compose.runtime.snapshots.SnapshotStateObserver.observeReads(SnapshotStateObserver.kt:258)
+                                                                                                    	at androidx.compose.ui.node.OwnerSnapshotObserver.observeReads$ui_release(OwnerSnapshotObserver.kt:133)
+                                                                                                    	at androidx.compose.ui.node.OwnerSnapshotObserver.observeMeasureSnapshotReads$ui_release(OwnerSnapshotObserver.kt:113)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeLayoutDelegate.performMeasure-BRTryo0(LayoutNodeLayoutDelegate.kt:1775)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeLayoutDelegate.access$performMeasure-BRTryo0(LayoutNodeLayoutDelegate.kt:40)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeLayoutDelegate$MeasurePassDelegate.remeasure-BRTryo0(LayoutNodeLayoutDelegate.kt:696)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.remeasure-_Sx5XlM$ui_release(LayoutNode.kt:1221)
+                                                                                                    	at androidx.compose.ui.node.MeasureAndLayoutDelegate.doRemeasure-sdFAvZA(MeasureAndLayoutDelegate.kt:367)
+                                                                                                    	at androidx.compose.ui.node.MeasureAndLayoutDelegate.measureAndLayout-0kLqBqw(MeasureAndLayoutDelegate.kt:463)
+                                                                                                    	at androidx.compose.ui.platform.AndroidComposeView.measureAndLayout-0kLqBqw(AndroidComposeView.android.kt:1285)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.forceRemeasure(LayoutNode.kt:1295)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridState.onScroll$foundation_release(LazyGridState.kt:421)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridState$scrollableState$1.invoke(LazyGridState.kt:211)
+2025-12-19 14:05:22.543  6040-6040  AndroidRuntime          pid-6040                             E  FATAL EXCEPTION: main (Fix with AI)
+                                                                                                    Process: com.aks_labs.pixelflow, PID: 6040
+                                                                                                    java.lang.IllegalArgumentException: Key "1000004935" was already used. If you are using LazyColumn/Row please make sure you provide a unique key for each item.
+                                                                                                    	at androidx.compose.ui.layout.LayoutNodeSubcompositionsState.subcompose(SubcomposeLayout.kt:453)
+                                                                                                    	at androidx.compose.ui.layout.LayoutNodeSubcompositionsState$Scope.subcompose(SubcomposeLayout.kt:895)
+                                                                                                    	at androidx.compose.foundation.lazy.layout.LazyLayoutMeasureScopeImpl.measure-0kLqBqw(LazyLayoutMeasureScope.kt:125)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridMeasuredItemProvider.getAndMeasure-m8Kt_7k(LazyGridMeasuredItemProvider.kt:62)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridMeasuredLineProvider.getAndMeasure(LazyGridMeasuredLineProvider.kt:72)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridMeasureKt.measureLazyGrid-OZKpZRA(LazyGridMeasure.kt:202)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridKt$rememberLazyGridMeasurePolicy$1$1.invoke-0kLqBqw(LazyGrid.kt:341)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridKt$rememberLazyGridMeasurePolicy$1$1.invoke(LazyGrid.kt:172)
+                                                                                                    	at androidx.compose.foundation.lazy.layout.LazyLayoutKt$LazyLayout$3$2$1.invoke-0kLqBqw(LazyLayout.kt:119)
+                                                                                                    	at androidx.compose.foundation.lazy.layout.LazyLayoutKt$LazyLayout$3$2$1.invoke(LazyLayout.kt:112)
+                                                                                                    	at androidx.compose.ui.layout.LayoutNodeSubcompositionsState$createMeasurePolicy$1.measure-3p2s80s(SubcomposeLayout.kt:725)
+                                                                                                    	at androidx.compose.ui.node.InnerNodeCoordinator.measure-BRTryo0(InnerNodeCoordinator.kt:135)
+                                                                                                    	at androidx.compose.ui.graphics.SimpleGraphicsLayerModifier.measure-3p2s80s(GraphicsLayerModifier.kt:646)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.measure-BRTryo0(LayoutModifierNodeCoordinator.kt:188)
+                                                                                                    	at androidx.compose.foundation.layout.FillNode.measure-3p2s80s(Size.kt:699)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.measure-BRTryo0(LayoutModifierNodeCoordinator.kt:188)
+                                                                                                    	at androidx.compose.foundation.layout.FillNode.measure-3p2s80s(Size.kt:699)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.measure-BRTryo0(LayoutModifierNodeCoordinator.kt:188)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeLayoutDelegate$performMeasureBlock$1.invoke(LayoutNodeLayoutDelegate.kt:316)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeLayoutDelegate$performMeasureBlock$1.invoke(LayoutNodeLayoutDelegate.kt:315)
+                                                                                                    	at androidx.compose.runtime.snapshots.Snapshot$Companion.observe(Snapshot.kt:2441)
+                                                                                                    	at androidx.compose.runtime.snapshots.SnapshotStateObserver$ObservedScopeMap.observe(SnapshotStateObserver.kt:502)
+                                                                                                    	at androidx.compose.runtime.snapshots.SnapshotStateObserver.observeReads(SnapshotStateObserver.kt:258)
+                                                                                                    	at androidx.compose.ui.node.OwnerSnapshotObserver.observeReads$ui_release(OwnerSnapshotObserver.kt:133)
+                                                                                                    	at androidx.compose.ui.node.OwnerSnapshotObserver.observeMeasureSnapshotReads$ui_release(OwnerSnapshotObserver.kt:113)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeLayoutDelegate.performMeasure-BRTryo0(LayoutNodeLayoutDelegate.kt:1775)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeLayoutDelegate.access$performMeasure-BRTryo0(LayoutNodeLayoutDelegate.kt:40)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeLayoutDelegate$MeasurePassDelegate.remeasure-BRTryo0(LayoutNodeLayoutDelegate.kt:696)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.remeasure-_Sx5XlM$ui_release(LayoutNode.kt:1221)
+                                                                                                    	at androidx.compose.ui.node.MeasureAndLayoutDelegate.doRemeasure-sdFAvZA(MeasureAndLayoutDelegate.kt:367)
+                                                                                                    	at androidx.compose.ui.node.MeasureAndLayoutDelegate.measureAndLayout-0kLqBqw(MeasureAndLayoutDelegate.kt:463)
+                                                                                                    	at androidx.compose.ui.platform.AndroidComposeView.measureAndLayout-0kLqBqw(AndroidComposeView.android.kt:1285)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.forceRemeasure(LayoutNode.kt:1295)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridState.onScroll$foundation_release(LazyGridState.kt:421)
+                                                                                                    	at androidx.compose.foundation.lazy.grid.LazyGridState$scrollableState$1.invoke(LazyGridState.kt:211)
+--------- beginning of system
+2025-12-19 15:00:27.953  1924-2072  VerityUtils             pid-1924                             E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~1lmTRPiekgTXcYL5gNsS8g==/com.aks_labs.pixelflow-BNwl0Kp-VY4aTv7LTZd_Iw==/base.apk
+2025-12-19 15:00:28.768  1924-2072  VerityUtils             pid-1924                             E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~1lmTRPiekgTXcYL5gNsS8g==/com.aks_labs.pixelflow-BNwl0Kp-VY4aTv7LTZd_Iw==/base.apk
+2025-12-19 15:15:57.314  1924-2072  VerityUtils             pid-1924                             E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~yT85A9Kc0PBA3n6P9BWF7w==/com.aks_labs.pixelflow-rAewEb-Rm2GBchNIkp7-3Q==/base.apk
+--------- beginning of main
+2025-12-19 15:34:14.049  1924-2072  VerityUtils             system_server                        E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~ezW4rrF1IQ859Wc215L6BA==/com.aks_labs.pixelflow-W4GHpwq3qCfQhmemnrTOrg==/base.apk
+2025-12-19 15:34:16.973 21554-21554 AndroidRuntime          pid-21554                            E  FATAL EXCEPTION: main (Fix with AI)
+                                                                                                    Process: com.aks_labs.pixelflow, PID: 21554
+                                                                                                    java.lang.IllegalArgumentException: ending radius must be > 0
+                                                                                                    	at android.graphics.RadialGradient.<init>(RadialGradient.java:162)
+                                                                                                    	at android.graphics.RadialGradient.<init>(RadialGradient.java:73)
+                                                                                                    	at androidx.compose.ui.graphics.AndroidShader_androidKt.ActualRadialGradientShader-8uybcMk(AndroidShader.android.kt:59)
+                                                                                                    	at androidx.compose.ui.graphics.ShaderKt.RadialGradientShader-8uybcMk(Shader.kt:81)
+                                                                                                    	at androidx.compose.ui.graphics.RadialGradient.createShader-uvyYCjk(Brush.kt:536)
+                                                                                                    	at androidx.compose.ui.graphics.ShaderBrush.applyTo-Pq9zytI(Brush.kt:661)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.CanvasDrawScope.configurePaint-swdJneE(CanvasDrawScope.kt:620)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.CanvasDrawScope.configurePaint-swdJneE$default(CanvasDrawScope.kt:611)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.CanvasDrawScope.drawCircle-V9BoPsw(CanvasDrawScope.kt:327)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeDrawScope.drawCircle-V9BoPsw(Unknown Source:13)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.DrawScope.drawCircle-V9BoPsw$default(DrawScope.kt:676)
+                                                                                                    	at com.aks_labs.pixelflow.ui.components.PermissionIllustrationsKt$MediaAccessAnimation$1$1.invoke(PermissionIllustrations.kt:106)
+                                                                                                    	at com.aks_labs.pixelflow.ui.components.PermissionIllustrationsKt$MediaAccessAnimation$1$1.invoke(PermissionIllustrations.kt:93)
+                                                                                                    	at androidx.compose.ui.draw.DrawBackgroundModifier.draw(DrawModifier.kt:127)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeDrawScope.drawDirect-eZhPAX0$ui_release(LayoutNodeDrawScope.kt:110)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeDrawScope.draw-eZhPAX0$ui_release(LayoutNodeDrawScope.kt:89)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:450)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.draw$ui_release(LayoutNode.kt:999)
+                                                                                                    	at androidx.compose.ui.node.InnerNodeCoordinator.performDraw(InnerNodeCoordinator.kt:196)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.draw$ui_release(LayoutNode.kt:999)
+                                                                                                    	at androidx.compose.ui.node.InnerNodeCoordinator.performDraw(InnerNodeCoordinator.kt:196)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.draw$ui_release(LayoutNode.kt:999)
+2025-12-19 15:34:44.374 21749-21749 AndroidRuntime          pid-21749                            E  FATAL EXCEPTION: main (Fix with AI)
+                                                                                                    Process: com.aks_labs.pixelflow, PID: 21749
+                                                                                                    java.lang.IllegalArgumentException: ending radius must be > 0
+                                                                                                    	at android.graphics.RadialGradient.<init>(RadialGradient.java:162)
+                                                                                                    	at android.graphics.RadialGradient.<init>(RadialGradient.java:73)
+                                                                                                    	at androidx.compose.ui.graphics.AndroidShader_androidKt.ActualRadialGradientShader-8uybcMk(AndroidShader.android.kt:59)
+                                                                                                    	at androidx.compose.ui.graphics.ShaderKt.RadialGradientShader-8uybcMk(Shader.kt:81)
+                                                                                                    	at androidx.compose.ui.graphics.RadialGradient.createShader-uvyYCjk(Brush.kt:536)
+                                                                                                    	at androidx.compose.ui.graphics.ShaderBrush.applyTo-Pq9zytI(Brush.kt:661)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.CanvasDrawScope.configurePaint-swdJneE(CanvasDrawScope.kt:620)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.CanvasDrawScope.configurePaint-swdJneE$default(CanvasDrawScope.kt:611)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.CanvasDrawScope.drawCircle-V9BoPsw(CanvasDrawScope.kt:327)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeDrawScope.drawCircle-V9BoPsw(Unknown Source:13)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.DrawScope.drawCircle-V9BoPsw$default(DrawScope.kt:676)
+                                                                                                    	at com.aks_labs.pixelflow.ui.components.PermissionIllustrationsKt$MediaAccessAnimation$1$1.invoke(PermissionIllustrations.kt:106)
+                                                                                                    	at com.aks_labs.pixelflow.ui.components.PermissionIllustrationsKt$MediaAccessAnimation$1$1.invoke(PermissionIllustrations.kt:93)
+                                                                                                    	at androidx.compose.ui.draw.DrawBackgroundModifier.draw(DrawModifier.kt:127)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeDrawScope.drawDirect-eZhPAX0$ui_release(LayoutNodeDrawScope.kt:110)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeDrawScope.draw-eZhPAX0$ui_release(LayoutNodeDrawScope.kt:89)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:450)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.draw$ui_release(LayoutNode.kt:999)
+                                                                                                    	at androidx.compose.ui.node.InnerNodeCoordinator.performDraw(InnerNodeCoordinator.kt:196)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.draw$ui_release(LayoutNode.kt:999)
+                                                                                                    	at androidx.compose.ui.node.InnerNodeCoordinator.performDraw(InnerNodeCoordinator.kt:196)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.draw$ui_release(LayoutNode.kt:999)
+2025-12-19 15:35:13.481 22035-22035 AndroidRuntime          pid-22035                            E  FATAL EXCEPTION: main (Fix with AI)
+                                                                                                    Process: com.aks_labs.pixelflow, PID: 22035
+                                                                                                    java.lang.IllegalArgumentException: ending radius must be > 0
+                                                                                                    	at android.graphics.RadialGradient.<init>(RadialGradient.java:162)
+                                                                                                    	at android.graphics.RadialGradient.<init>(RadialGradient.java:73)
+                                                                                                    	at androidx.compose.ui.graphics.AndroidShader_androidKt.ActualRadialGradientShader-8uybcMk(AndroidShader.android.kt:59)
+                                                                                                    	at androidx.compose.ui.graphics.ShaderKt.RadialGradientShader-8uybcMk(Shader.kt:81)
+                                                                                                    	at androidx.compose.ui.graphics.RadialGradient.createShader-uvyYCjk(Brush.kt:536)
+                                                                                                    	at androidx.compose.ui.graphics.ShaderBrush.applyTo-Pq9zytI(Brush.kt:661)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.CanvasDrawScope.configurePaint-swdJneE(CanvasDrawScope.kt:620)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.CanvasDrawScope.configurePaint-swdJneE$default(CanvasDrawScope.kt:611)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.CanvasDrawScope.drawCircle-V9BoPsw(CanvasDrawScope.kt:327)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeDrawScope.drawCircle-V9BoPsw(Unknown Source:13)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.DrawScope.drawCircle-V9BoPsw$default(DrawScope.kt:676)
+                                                                                                    	at com.aks_labs.pixelflow.ui.components.PermissionIllustrationsKt$MediaAccessAnimation$1$1.invoke(PermissionIllustrations.kt:106)
+                                                                                                    	at com.aks_labs.pixelflow.ui.components.PermissionIllustrationsKt$MediaAccessAnimation$1$1.invoke(PermissionIllustrations.kt:93)
+                                                                                                    	at androidx.compose.ui.draw.DrawBackgroundModifier.draw(DrawModifier.kt:127)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeDrawScope.drawDirect-eZhPAX0$ui_release(LayoutNodeDrawScope.kt:110)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeDrawScope.draw-eZhPAX0$ui_release(LayoutNodeDrawScope.kt:89)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:450)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.draw$ui_release(LayoutNode.kt:999)
+                                                                                                    	at androidx.compose.ui.node.InnerNodeCoordinator.performDraw(InnerNodeCoordinator.kt:196)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.draw$ui_release(LayoutNode.kt:999)
+                                                                                                    	at androidx.compose.ui.node.InnerNodeCoordinator.performDraw(InnerNodeCoordinator.kt:196)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.draw$ui_release(LayoutNode.kt:999)
+2025-12-19 15:35:13.533  1924-2325  InputDispatcher         system_server                        E  channel '7e44dc0 com.aks_labs.pixelflow/com.aks_labs.pixelflow.MainActivity' ~ Channel is unrecoverably broken and will be disposed!
+2025-12-19 15:35:52.948 18419-18454 android.vending         com.android.vending                  E  Failed to open APK '/data/app/~~ezW4rrF1IQ859Wc215L6BA==/com.aks_labs.pixelflow-W4GHpwq3qCfQhmemnrTOrg==/base.apk': I/O error
+2025-12-19 15:35:53.034 18419-18454 android.vending         com.android.vending                  E  Failed to open APK '/data/app/~~ezW4rrF1IQ859Wc215L6BA==/com.aks_labs.pixelflow-W4GHpwq3qCfQhmemnrTOrg==/base.apk': I/O error
+2025-12-19 15:35:53.035 18419-18454 ResourcesManager        com.android.vending                  E  failed to add asset path '/data/app/~~ezW4rrF1IQ859Wc215L6BA==/com.aks_labs.pixelflow-W4GHpwq3qCfQhmemnrTOrg==/base.apk' (Fix with AI)
+                                                                                                    java.io.IOException: Failed to load asset path /data/app/~~ezW4rrF1IQ859Wc215L6BA==/com.aks_labs.pixelflow-W4GHpwq3qCfQhmemnrTOrg==/base.apk
+                                                                                                    	at android.content.res.ApkAssets.nativeLoad(Native Method)
+                                                                                                    	at android.content.res.ApkAssets.<init>(ApkAssets.java:309)
+                                                                                                    	at android.content.res.ApkAssets.loadFromPath(ApkAssets.java:158)
+                                                                                                    	at android.app.ResourcesManager.loadApkAssets(ResourcesManager.java:616)
+                                                                                                    	at android.app.ResourcesManager$ApkAssetsSupplier.load(ResourcesManager.java:285)
+                                                                                                    	at android.app.ResourcesManager.createAssetManager(ResourcesManager.java:712)
+                                                                                                    	at android.app.ResourcesManager.createResourcesImpl(ResourcesManager.java:799)
+                                                                                                    	at android.app.ResourcesManager.findOrCreateResourcesImplForKeyLocked(ResourcesManager.java:852)
+                                                                                                    	at android.app.ResourcesManager.createResources(ResourcesManager.java:1197)
+                                                                                                    	at android.app.ResourcesManager.getResources(ResourcesManager.java:1299)
+                                                                                                    	at android.app.ActivityThread.getTopLevelResources(ActivityThread.java:2929)
+                                                                                                    	at android.app.ApplicationPackageManager.getResourcesForApplication(ApplicationPackageManager.java:2136)
+                                                                                                    	at android.app.ApplicationPackageManager.getResourcesForApplication(ApplicationPackageManager.java:2122)
+                                                                                                    	at android.app.ApplicationPackageManager.getDrawable(ApplicationPackageManager.java:1851)
+                                                                                                    	at android.app.ApplicationPackageManager.loadUnbadgedItemIcon(ApplicationPackageManager.java:3477)
+                                                                                                    	at android.app.ApplicationPackageManager.loadItemIcon(ApplicationPackageManager.java:3453)
+                                                                                                    	at android.content.pm.PackageItemInfo.loadIcon(PackageItemInfo.java:291)
+                                                                                                    	at android.app.ApplicationPackageManager.getApplicationIcon(ApplicationPackageManager.java:1914)
+                                                                                                    	at oqp.a(PG:25)
+                                                                                                    	at oqv.l(PG:30)
+                                                                                                    	at qf.kN(PG:762)
+                                                                                                    	at opz.k(PG:36)
+                                                                                                    	at ops.f(PG:17)
+                                                                                                    	at ops.i(PG:31)
+                                                                                                    	at oqt.i(PG:1)
+                                                                                                    	at oqw.d(PG:11)
+                                                                                                    	at oqw.e(PG:13)
+                                                                                                    	at odn.apply(PG:1647)
+                                                                                                    	at biyk.d(PG:3)
+                                                                                                    	at biyl.run(PG:38)
+                                                                                                    	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1156)
+                                                                                                    	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:651)
+                                                                                                    	at uqp.run(PG:612)
+                                                                                                    	at java.lang.Thread.run(Thread.java:1119)
+2025-12-19 15:35:59.710  1924-2072  VerityUtils             system_server                        E  Failed to check whether fs-verity is enabled, errno 38: /data/app/~~fcR7Nnb0NRoFbycgmOH8Iw==/com.aks_labs.pixelflow-1ZRDtUsk_1fB7ZdsQy7Lyg==/base.apk
+2025-12-19 15:36:02.515 22265-22265 AndroidRuntime          pid-22265                            E  FATAL EXCEPTION: main (Fix with AI)
+                                                                                                    Process: com.aks_labs.pixelflow, PID: 22265
+                                                                                                    java.lang.IllegalArgumentException: ending radius must be > 0
+                                                                                                    	at android.graphics.RadialGradient.<init>(RadialGradient.java:162)
+                                                                                                    	at android.graphics.RadialGradient.<init>(RadialGradient.java:73)
+                                                                                                    	at androidx.compose.ui.graphics.AndroidShader_androidKt.ActualRadialGradientShader-8uybcMk(AndroidShader.android.kt:59)
+                                                                                                    	at androidx.compose.ui.graphics.ShaderKt.RadialGradientShader-8uybcMk(Shader.kt:81)
+                                                                                                    	at androidx.compose.ui.graphics.RadialGradient.createShader-uvyYCjk(Brush.kt:536)
+                                                                                                    	at androidx.compose.ui.graphics.ShaderBrush.applyTo-Pq9zytI(Brush.kt:661)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.CanvasDrawScope.configurePaint-swdJneE(CanvasDrawScope.kt:620)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.CanvasDrawScope.configurePaint-swdJneE$default(CanvasDrawScope.kt:611)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.CanvasDrawScope.drawCircle-V9BoPsw(CanvasDrawScope.kt:327)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeDrawScope.drawCircle-V9BoPsw(Unknown Source:13)
+                                                                                                    	at androidx.compose.ui.graphics.drawscope.DrawScope.drawCircle-V9BoPsw$default(DrawScope.kt:676)
+                                                                                                    	at com.aks_labs.pixelflow.ui.components.PermissionIllustrationsKt$MediaAccessAnimation$1$1.invoke(PermissionIllustrations.kt:106)
+                                                                                                    	at com.aks_labs.pixelflow.ui.components.PermissionIllustrationsKt$MediaAccessAnimation$1$1.invoke(PermissionIllustrations.kt:93)
+                                                                                                    	at androidx.compose.ui.draw.DrawBackgroundModifier.draw(DrawModifier.kt:127)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeDrawScope.drawDirect-eZhPAX0$ui_release(LayoutNodeDrawScope.kt:110)
+                                                                                                    	at androidx.compose.ui.node.LayoutNodeDrawScope.draw-eZhPAX0$ui_release(LayoutNodeDrawScope.kt:89)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:450)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.draw$ui_release(LayoutNode.kt:999)
+                                                                                                    	at androidx.compose.ui.node.InnerNodeCoordinator.performDraw(InnerNodeCoordinator.kt:196)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.draw$ui_release(LayoutNode.kt:999)
+                                                                                                    	at androidx.compose.ui.node.InnerNodeCoordinator.performDraw(InnerNodeCoordinator.kt:196)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutModifierNodeCoordinator.performDraw(LayoutModifierNodeCoordinator.kt:280)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.drawContainedDrawModifiers(NodeCoordinator.kt:447)
+                                                                                                    	at androidx.compose.ui.node.NodeCoordinator.draw(NodeCoordinator.kt:439)
+                                                                                                    	at androidx.compose.ui.node.LayoutNode.draw$ui_release(LayoutNode.kt:999)
+2025-12-19 15:36:02.586  1924-2325  InputDispatcher         system_server                        E  channel '650f47a com.aks_labs.pixelflow/com.aks_labs.pixelflow.MainActivity' ~ Channel is unrecoverably broken and will be disposed!
