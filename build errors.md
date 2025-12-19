@@ -1,1 +1,0 @@
-it's not renaming actual physical folder in device and its not either deleting physical screenshot from device 

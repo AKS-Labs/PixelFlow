@@ -61,6 +61,15 @@ import com.google.android.material.carousel.CarouselSnapHelper
 import com.google.android.material.carousel.FullScreenCarouselStrategy
 import com.google.android.material.carousel.MaskableFrameLayout
 import com.google.android.material.shape.ShapeAppearanceModel
+import android.view.Gravity
+import android.view.View
+import android.graphics.drawable.GradientDrawable
+import android.widget.FrameLayout
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import java.io.File
 
 /**
@@ -82,6 +91,7 @@ fun ScreenshotCarousel(
 ) {
     var currentIndex by remember { mutableStateOf(initialIndex) }
     val currentScreenshot = screenshots.getOrNull(currentIndex)
+    val context = LocalContext.current
     
     // State for delete confirmation dialog
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -100,7 +110,12 @@ fun ScreenshotCarousel(
                         text = metadata?.filename ?: "Carousel",
                         style = MaterialTheme.typography.titleMedium,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.clickable {
+                            metadata?.filename?.let { 
+                                copyToClipboard(context, it, "Filename copied")
+                            }
+                        }
                     )
                 },
                 navigationIcon = {
@@ -145,13 +160,27 @@ fun ScreenshotCarousel(
                         .padding(horizontal = 16.dp, vertical = 4.dp)
                 ) {
                     // Path Display
-                    Text(
-                        text = metadata.path,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    // Path Display with Text Field-like Background
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
+                                shape = MaterialTheme.shapes.small
+                            )
+                            .clickable {
+                                copyToClipboard(context, metadata.path, "Path copied")
+                            }
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = metadata.path,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
 
                     Spacer(modifier = Modifier.size(4.dp))
 
@@ -163,10 +192,18 @@ fun ScreenshotCarousel(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        MetadataChip(text = metadata.size, color = MaterialTheme.colorScheme.secondaryContainer)
-                        MetadataChip(text = metadata.resolution, color = MaterialTheme.colorScheme.tertiaryContainer)
-                        MetadataChip(text = "${metadata.megaPixels} MP", color = MaterialTheme.colorScheme.primaryContainer)
-                        MetadataChip(text = metadata.date, color = MaterialTheme.colorScheme.surfaceVariant)
+                        MetadataChip(text = metadata.size, color = MaterialTheme.colorScheme.secondaryContainer) {
+                            copyToClipboard(context, metadata.size, "Size copied")
+                        }
+                        MetadataChip(text = metadata.resolution, color = MaterialTheme.colorScheme.tertiaryContainer) {
+                            copyToClipboard(context, metadata.resolution, "Resolution copied")
+                        }
+                        MetadataChip(text = "${metadata.megaPixels} MP", color = MaterialTheme.colorScheme.primaryContainer) {
+                            copyToClipboard(context, "${metadata.megaPixels} MP", "MP copied")
+                        }
+                        MetadataChip(text = metadata.date, color = MaterialTheme.colorScheme.surfaceVariant) {
+                            copyToClipboard(context, metadata.date, "Date copied")
+                        }
                     }
                 }
             }
@@ -278,10 +315,11 @@ fun ScreenshotCarousel(
 }
 
 @Composable
-fun MetadataChip(text: String, color: Color) {
+fun MetadataChip(text: String, color: Color, onClick: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .background(color, MaterialTheme.shapes.small)
+            .clickable { onClick() }
             .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Text(
@@ -385,6 +423,83 @@ private class CarouselAdapter(
 
         maskableFrameLayout.addView(imageView)
 
+        // --- BORDER SHADOW SETTINGS ---
+        // Transparency: 0 (transparent) to 255 (opaque). Current: 160
+        val shadowAlpha = 20
+        // Size: Current: 120dp for top/bottom, 60dp for sides
+        val verticalShadowSize = (context.resources.displayMetrics.density * 50).toInt()
+        val horizontalShadowSize = (context.resources.displayMetrics.density * 50).toInt()
+        // ------------------------------
+
+        // Add Translucent Border Shadows (Dimmers)
+        // Top Shadow
+        val topShadow = View(context).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                verticalShadowSize,
+                Gravity.TOP
+            )
+            background = GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                intArrayOf(
+                    android.graphics.Color.argb(shadowAlpha, 0, 0, 0),
+                    android.graphics.Color.TRANSPARENT
+                )
+            )
+        }
+        maskableFrameLayout.addView(topShadow)
+
+        // Bottom Shadow
+        val bottomShadow = View(context).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                verticalShadowSize,
+                Gravity.BOTTOM
+            )
+            background = GradientDrawable(
+                GradientDrawable.Orientation.BOTTOM_TOP,
+                intArrayOf(
+                    android.graphics.Color.argb(shadowAlpha, 0, 0, 0),
+                    android.graphics.Color.TRANSPARENT
+                )
+            )
+        }
+        maskableFrameLayout.addView(bottomShadow)
+
+        // Left Shadow
+        val leftShadow = View(context).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                horizontalShadowSize,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                Gravity.START
+            )
+            background = GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT,
+                intArrayOf(
+                    android.graphics.Color.argb(shadowAlpha, 0, 0, 0),
+                    android.graphics.Color.TRANSPARENT
+                )
+            )
+        }
+        maskableFrameLayout.addView(leftShadow)
+
+        // Right Shadow
+        val rightShadow = View(context).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                horizontalShadowSize,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                Gravity.END
+            )
+            background = GradientDrawable(
+                GradientDrawable.Orientation.RIGHT_LEFT,
+                intArrayOf(
+                    android.graphics.Color.argb(shadowAlpha, 0, 0, 0),
+                    android.graphics.Color.TRANSPARENT
+                )
+            )
+        }
+        maskableFrameLayout.addView(rightShadow)
+
         return CarouselViewHolder(maskableFrameLayout)
     }
 
@@ -402,4 +517,14 @@ private class CarouselAdapter(
     }
 
     override fun getItemCount(): Int = items.size
+}
+
+/**
+ * Helper to copy text to clipboard and show a toast
+ */
+private fun copyToClipboard(context: Context, text: String, label: String) {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText(label, text)
+    clipboard.setPrimaryClip(clip)
+    Toast.makeText(context, "$label to clipboard", Toast.LENGTH_SHORT).show()
 }
