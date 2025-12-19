@@ -411,25 +411,51 @@ class SharedPrefsManager(private val context: Context) {
      */
     fun deleteScreenshotByPath(filePath: String) {
         try {
+            // 1. First, try to delete from MediaStore using content resolver
+            // This is the preferred way for images in public directories
+            val projection = arrayOf(MediaStore.Images.Media._ID)
+            val selection = "${MediaStore.Images.Media.DATA} = ?"
+            val selectionArgs = arrayOf(filePath)
+            val queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            
+            val cursor = context.contentResolver.query(queryUri, projection, selection, selectionArgs, null)
+            var mediaStoreDeleted = false
+            
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID))
+                    val deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+                    val rowsDeleted = context.contentResolver.delete(deleteUri, null, null)
+                    if (rowsDeleted > 0) {
+                        Log.d("SharedPrefsManager", "MediaStore deletion successful for path: $filePath")
+                        mediaStoreDeleted = true
+                    }
+                }
+                cursor.close()
+            }
+            
+            // 2. Fallback: physical file deletion if MediaStore failed or as an extra safety measure
             val file = File(filePath)
             if (file.exists()) {
                 val fileDeleted = file.delete()
                 if (fileDeleted) {
                     Log.d("SharedPrefsManager", "Physical file deleted by path: $filePath")
                     
-                    // Notify MediaStore to scan and remove entry
-                    android.media.MediaScannerConnection.scanFile(
-                        context,
-                        arrayOf(filePath),
-                        null
-                    ) { path, uri ->
-                        Log.d("SharedPrefsManager", "Media scan completed for deleted file: $path")
+                    // Notify MediaStore to scan and remove entry if we haven't already deleted it from there
+                    if (!mediaStoreDeleted) {
+                        android.media.MediaScannerConnection.scanFile(
+                            context,
+                            arrayOf(filePath),
+                            null
+                        ) { path, uri ->
+                            Log.d("SharedPrefsManager", "Media scan completed for deleted file: $path")
+                        }
                     }
                 } else {
                     Log.w("SharedPrefsManager", "Failed to delete physical file by path: $filePath")
                 }
             } else {
-                Log.d("SharedPrefsManager", "File doesn't exist at path: $filePath")
+                Log.d("SharedPrefsManager", "File doesn't exist at path: $filePath (possibly already deleted by MediaStore)")
             }
         } catch (e: Exception) {
             Log.e("SharedPrefsManager", "Error deleting file by path: $filePath", e)

@@ -326,16 +326,29 @@ fun ScreenshotCarousel(
                                             val position = lm.getPosition(snapView)
                                             if (position != RecyclerView.NO_POSITION) {
                                                 currentIndex = position
-                                                onPageChanged(position)
-                                            }
-                                        }
-                                    }
-                                }
-                            })
+                                                 onPageChanged(position)
+                                             }
+                                         }
+                                     }
+                                 }
+                             })
+                         }
+                     },
+                     update = { recyclerView ->
+                        val adapter = recyclerView.adapter as? CarouselAdapter ?: return@AndroidView
+                        val oldSize = adapter.itemCount
+                        adapter.updateItems(screenshots)
+                        
+                        // If items were deleted, ensure currentIndex is still safe
+                        if (adapter.itemCount < oldSize) {
+                            if (currentIndex >= adapter.itemCount) {
+                                currentIndex = (adapter.itemCount - 1).coerceAtLeast(0)
+                            }
+                            recyclerView.scrollToPosition(currentIndex)
                         }
-                    }
-                )
-            }
+                     }
+                 )
+             }
         }
     }
 }
@@ -416,9 +429,16 @@ fun CarouselActionButton(
  * RecyclerView Adapter for the Carousel
  */
 private class CarouselAdapter(
-    private val items: List<SimpleScreenshot>,
+    private var items: List<SimpleScreenshot>,
     private val onClick: () -> Unit
 ) : RecyclerView.Adapter<CarouselAdapter.CarouselViewHolder>() {
+
+    fun updateItems(newItems: List<SimpleScreenshot>) {
+        if (items != newItems) {
+            items = newItems
+            notifyDataSetChanged()
+        }
+    }
 
     class CarouselViewHolder(val view: MaskableFrameLayout) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.getChildAt(0) as ImageView
