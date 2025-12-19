@@ -99,7 +99,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Lock
+//import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -621,15 +621,15 @@ private fun AlbumGridItem(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                if (album.isCustomAlbum) {
-                    Icon(
-                        imageVector = Icons.Default.Lock, // Placeholder for art_track/custom
-                        contentDescription = "Custom",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
-                            .padding(end = 2.dp)
-                    )
-                }
+//                if (album.isCustomAlbum) {
+//                    Icon(
+//                        imageVector = Icons.Default., // Placeholder for art_track/custom
+//                        contentDescription = "Custom",
+//                        tint = MaterialTheme.colorScheme.onSurface,
+//                        modifier = Modifier
+//                            .padding(end = 2.dp)
+//                    )
+//                }
             }
         }
     }
