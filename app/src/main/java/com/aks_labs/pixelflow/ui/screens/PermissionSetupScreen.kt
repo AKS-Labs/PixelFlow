@@ -17,6 +17,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,14 +52,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.akslabs.pixelscreenshots.ui.components.FeaturesAnimation
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
@@ -504,147 +514,285 @@ fun PermissionSummaryScreen(
         exit = fadeOut(animationSpec = tween(300))
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-            Spacer(modifier = Modifier.height(48.dp))
-
-            // App logo
-                Image(
-                    painter = painterResource(id = R.drawable.logo),
-                    contentDescription = "PixelScreenshots Logo",
-                    modifier = Modifier.size(88.dp)
-                )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Title
-            Text(
-                text = if (allPermissionsGranted) "All set! You're ready to go" else "Required Permissions",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                lineHeight = 36.sp,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Description
-            Text(
-                text = if (allPermissionsGranted)
-                    "PixelScreenshots has all the permissions it needs to work properly."
-                else
-                    "Please grant all required permissions to use PixelScreenshots",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Permission cards
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-            ) {
+            if (allPermissionsGranted) {
+                // High-fidelity Onboarding Summary
+                OnboardingSummaryScreen(onStartClick = onContinueClick)
+            } else {
+                // Fallback Permission Status List
                 Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // Storage permission
-                    PermissionStatusItem(
-                        title = "Storage Access",
-                        description = "Required to detect and manage screenshots",
-                        isGranted = hasStoragePermission,
-                        onClick = if (!hasStoragePermission) {
-                            {
-                                onContinueClick()
-                            }
-                        } else null
-                    )
-
-                    // Overlay permission
-                    PermissionStatusItem(
-                        title = "Draw Over Apps",
-                        description = "Required to show floating bubble",
-                        isGranted = hasOverlayPermission,
-                        onClick = if (!hasOverlayPermission) {
-                            {
-                                onContinueClick()
-                            }
-                        } else null
-                    )
-
-                    // Manage files permission (Android 11+)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        PermissionStatusItem(
-                            title = "Manage All Files",
-                            description = "Required to organize screenshots in folders",
-                            isGranted = hasManageFilesPermission,
-                            onClick = if (!hasManageFilesPermission) {
-                                {
-                                    onContinueClick()
-                                }
-                            } else null
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Page indicators
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 32.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                val totalSteps = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) 4 else 3
-                for (i in 0 until totalSteps) {
-                    Box(
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .size(width = if (i == totalSteps - 1) 24.dp else 8.dp, height = 8.dp)
-                            .background(
-                                color = if (i == totalSteps - 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
-                                shape = RoundedCornerShape(4.dp)
-                            )
-                    )
-                }
-            }
-
-            // Continue button in bottom right corner
-            Box(modifier = Modifier.fillMaxWidth()) {
-                TextButton(
-                    onClick = onContinueClick,
                     modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(bottom = 16.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.primary
-                    ),
-                    enabled = allPermissionsGranted
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "Next",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
+                    Spacer(modifier = Modifier.height(48.dp))
 
-            Spacer(modifier = Modifier.height(32.dp))
+                    // App logo
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "PixelFlow Logo",
+                        modifier = Modifier.size(88.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    // Title
+                    Text(
+                        text = "Required Permissions",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 36.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Description
+                    Text(
+                        text = "Please grant all required permissions to use PixelFlow",
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                    )
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    // Permission cards
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            // Storage permission
+                            PermissionStatusItem(
+                                title = "Storage Access",
+                                description = "Required to detect and manage screenshots",
+                                isGranted = hasStoragePermission,
+                                onClick = if (!hasStoragePermission) {
+                                    { onContinueClick() }
+                                } else null
+                            )
+
+                            // Overlay permission
+                            PermissionStatusItem(
+                                title = "Draw Over Apps",
+                                description = "Required to show floating bubble",
+                                isGranted = hasOverlayPermission,
+                                onClick = if (!hasOverlayPermission) {
+                                    { onContinueClick() }
+                                } else null
+                            )
+
+                            // Manage files permission (Android 11+)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                PermissionStatusItem(
+                                    title = "Manage All Files",
+                                    description = "Required to organize screenshots in folders",
+                                    isGranted = hasManageFilesPermission,
+                                    onClick = if (!hasManageFilesPermission) {
+                                        { onContinueClick() }
+                                    } else null
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    // Page indicators
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 32.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        val totalSteps = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) 4 else 3
+                        for (i in 0 until totalSteps) {
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .size(width = if (i == totalSteps - 1) 24.dp else 8.dp, height = 8.dp)
+                                    .background(
+                                        color = if (i == totalSteps - 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                            )
+                        }
+                    }
+
+                    // Continue button
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        TextButton(
+                            onClick = onContinueClick,
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(bottom = 16.dp),
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = if (allPermissionsGranted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                            ),
+                            enabled = allPermissionsGranted
+                        ) {
+                            Text(
+                                text = "Next",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
             }
         }
     }
+}
+
+@Composable
+fun OnboardingSummaryScreen(onStartClick: () -> Unit) {
+    val scrollState = rememberScrollState()
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        // App logo
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = "PixelFlow Logo",
+            modifier = Modifier.size(64.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        Text(
+            text = "Search your screenshots with on-device OCR",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            lineHeight = 36.sp
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Text(
+            text = "PixelFlow is the new home for all your screenshots. With on-device 100% offline OCR processing, you can search screenshots by text inside them and copy text too — no internet required.",
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+        )
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        // Feature Animation
+        FeaturesAnimation(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(260.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(40.dp))
+        
+        // "How it works" Section
+        FeatureSectionHeader(title = "How it works")
+        
+        FeatureBulletItem(
+            icon = Icons.Default.Star,
+            title = "Floating Bubble Innovation",
+            description = "Shows screenshots as a floating bubble for instant drag and drop into folders. No more notification clutter."
+        )
+        
+        FeatureBulletItem(
+            icon = Icons.Default.Search,
+            title = "Powerful Interactions",
+            description = "Double tap the floating bubble to search the image with Google Lens, copy OCR text, and other smart features."
+        )
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        // "Privacy" Section
+        FeatureSectionHeader(title = "Privacy & Data")
+        
+        FeatureBulletItem(
+            icon = Icons.Default.Lock,
+            title = "Privacy Perfection",
+            description = "Your data never leaves your device. No AI bullshit with your privacy – just 100% offline security. Enjoy."
+        )
+        
+        Spacer(modifier = Modifier.height(48.dp))
+        
+        // Footer links
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Privacy Policy",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable { /* Handle privacy click */ }
+            )
+            Text(
+                text = " • ",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+            )
+            Text(
+                text = "Terms of Service",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable { /* Handle terms click */ }
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        // Start Button
+        Button(
+            onClick = onStartClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(28.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Start Using App",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(Icons.Default.KeyboardArrowRight, contentDescription = null)
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(48.dp))
+    }
+}
+
+@Composable
+fun FeatureSectionHeader(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+        color = MaterialTheme.colorScheme.primary
+    )
 }
 
 @Composable
@@ -706,6 +854,52 @@ fun PermissionStatusItem(
             ) {
                 Text("Grant")
             }
+        }
+    }
+}
+
+@Composable
+fun FeatureBulletItem(icon: ImageVector, title: String, description: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                    shape = CircleShape
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+        
+        Column(
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .weight(1f)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                lineHeight = 20.sp
+            )
         }
     }
 }

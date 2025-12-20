@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun OrganizeScreenshotAnimation(modifier: Modifier = Modifier) {
@@ -603,4 +604,196 @@ private fun DrawScope.drawSuccessIndicator(time: Float, scale: Float) {
         center = Offset(200f * scale, 570f * scale),
         radius = 36f * scale
     )
+}
+@Composable
+fun FeaturesAnimation(modifier: Modifier = Modifier) {
+    val infiniteTransition = rememberInfiniteTransition(label = "FeaturesAnimationTransition")
+    
+    val time by infiniteTransition.animateFloat(
+        initialValue = 0f, targetValue = 4000f,
+        animationSpec = infiniteRepeatable(tween(4000, easing = LinearEasing)), label = "GlobalTimer"
+    )
+
+    Canvas(modifier = modifier.fillMaxWidth().height(280.dp)) {
+        val scale = size.width / 400f
+        val centerX = size.width / 2f
+        val centerY = size.height / 2f
+
+        // --- 1. Background Particles & Atmosphere ---
+        for (i in 0 until 15) {
+            val pPhase = (time + i * 267f) % 4000f / 4000f
+            val pX = (centerX - 180f * scale) + (i * 25f * scale) % (360f * scale)
+            val pY = (centerY - 100f * scale) + (Math.sin(pPhase * 2 * Math.PI).toFloat() * 60f * scale)
+            val pAlpha = (1f - Math.abs(pPhase - 0.5f) * 2f) * 0.1f
+            
+            drawCircle(
+                color = if (i % 2 == 0) Color(0xFF3B82F6) else Color(0xFF94A3B8),
+                radius = (2f + (i % 3)) * scale,
+                center = Offset(pX, pY),
+                alpha = pAlpha
+            )
+        }
+
+        // --- 2. Central Phone Mockup ---
+        val phoneW = 140f * scale
+        val phoneH = 260f * scale
+        val phoneX = centerX - phoneW / 2
+        val phoneY = centerY - phoneH / 2
+        
+        // Shadow
+        drawRoundRect(
+            color = Color.Black.copy(alpha = 0.05f),
+            topLeft = Offset(phoneX + 4f * scale, phoneY + 6f * scale),
+            size = Size(phoneW, phoneH),
+            cornerRadius = CornerRadius(24f * scale)
+        )
+        
+        // Body
+        drawRoundRect(
+            color = Color(0xFFF1F5F9),
+            topLeft = Offset(phoneX, phoneY),
+            size = Size(phoneW, phoneH),
+            cornerRadius = CornerRadius(24f * scale),
+            style = Fill
+        )
+        drawRoundRect(
+            color = Color(0xFFCBD5E1),
+            topLeft = Offset(phoneX, phoneY),
+            size = Size(phoneW, phoneH),
+            cornerRadius = CornerRadius(24f * scale),
+            style = Stroke(width = 2f * scale)
+        )
+        
+        // Screen area
+        val screenMargin = 8f * scale
+        drawRoundRect(
+            color = Color.White,
+            topLeft = Offset(phoneX + screenMargin, phoneY + screenMargin),
+            size = Size(phoneW - screenMargin * 2, phoneH - screenMargin * 2),
+            cornerRadius = CornerRadius(18f * scale)
+        )
+        
+        // Fake content (Screenshot mockup)
+        val contentX = phoneX + screenMargin + 10f * scale
+        val contentY = phoneY + screenMargin + 20f * scale
+        
+        // Header in mockup
+        drawRect(Color(0xFFE2E8F0), Offset(contentX, contentY), Size(40f * scale, 8f * scale), alpha = 0.8f)
+        
+        // Image placehold in mockup
+        drawRoundRect(
+            color = Color(0xFFF3F4F6),
+            topLeft = Offset(contentX, contentY + 20f * scale),
+            size = Size(phoneW - (screenMargin + 10f * scale) * 2, 80f * scale),
+            cornerRadius = CornerRadius(8f * scale)
+        )
+        
+        // Text lines in mockup
+        for (i in 0..3) {
+            val ty = contentY + 115f * scale + i * 15f * scale
+            val tw = if (i == 3) 50f else 80f
+            drawRect(Color(0xFFF1F5F9), Offset(contentX, ty), Size(tw * scale, 6f * scale))
+        }
+
+        // --- 3. OCR Scanning Beam ---
+        val scanPhase = (time % 2000f) / 2000f
+        val scanY = phoneY + screenMargin + (scanPhase * (phoneH - screenMargin * 2))
+        
+        if (scanPhase < 0.95f) {
+            val beamAlpha = if (scanPhase < 0.1f) scanPhase * 10f else if (scanPhase > 0.85f) (0.95f - scanPhase) * 10f else 1f
+            
+            // Beam line
+            drawLine(
+                brush = Brush.horizontalGradient(listOf(Color.Transparent, Color(0xFF3B82F6).copy(alpha = 0.6f * beamAlpha), Color.Transparent)),
+                start = Offset(phoneX + screenMargin, scanY),
+                end = Offset(phoneX + phoneW - screenMargin, scanY),
+                strokeWidth = 3f * scale
+            )
+            
+            // Beam glow
+            drawRect(
+                brush = Brush.verticalGradient(listOf(Color(0xFF3B82F6).copy(alpha = 0.15f * beamAlpha), Color.Transparent)),
+                topLeft = Offset(phoneX + screenMargin, scanY - 40f * scale),
+                size = Size(phoneW - screenMargin * 2, 40f * scale)
+            )
+        }
+
+        // --- 4. Floating Feature Icons ---
+        
+        // Icon 1: Search/OCR (Top Left)
+        val icon1X = centerX - 120f * scale
+        val icon1Y = centerY - 80f * scale + Math.sin(time * 0.003).toFloat() * 10f * scale
+        drawIconBackground(icon1X, icon1Y, scale, Color(0xFFDBEAFE), Color(0xFF3B82F6))
+        drawSearchIcon(icon1X, icon1Y, scale, Color(0xFF2563EB))
+        
+        // Icon 2: Folder/Organization (Bottom Right)
+        val icon2X = centerX + 120f * scale
+        val icon2Y = centerY + 60f * scale + Math.cos(time * 0.003).toFloat() * 10f * scale
+        drawIconBackground(icon2X, icon2Y, scale, Color(0xFFFEF3C7), Color(0xFFFBBF24))
+        drawFolderIcon(icon2X, icon2Y, scale, Color(0xFFD97706))
+        
+        // Icon 3: Shield/Privacy (Top Right)
+        val icon3X = centerX + 110f * scale
+        val icon3Y = centerY - 100f * scale + Math.sin(time * 0.0025 + 1f).toFloat() * 8f * scale
+        drawIconBackground(icon3X, icon3Y, scale, Color(0xFFDCFCE7), Color(0xFF22C55E))
+        drawShieldIcon(icon3X, icon3Y, scale, Color(0xFF16A34A))
+    }
+}
+
+private fun DrawScope.drawIconBackground(x: Float, y: Float, scale: Float, bgColor: Color, strokeColor: Color) {
+    val radius = 28f * scale
+    drawCircle(
+        color = bgColor,
+        center = Offset(x, y),
+        radius = radius
+    )
+    drawCircle(
+        color = strokeColor,
+        center = Offset(x, y),
+        radius = radius,
+        style = Stroke(width = 2f * scale),
+        alpha = 0.5f
+    )
+}
+
+private fun DrawScope.drawSearchIcon(x: Float, y: Float, scale: Float, color: Color) {
+    val r = 8f * scale
+    drawCircle(color, r, Offset(x - 2f * scale, y - 2f * scale), style = Stroke(2.5f * scale))
+    drawLine(color, Offset(x + 2f * scale, y + 2f * scale), Offset(x + 10f * scale, y + 10f * scale), strokeWidth = 3f * scale, cap = StrokeCap.Round)
+}
+
+private fun DrawScope.drawFolderIcon(x: Float, y: Float, scale: Float, color: Color) {
+    val w = 18f * scale
+    val h = 14f * scale
+    val fx = x - w/2
+    val fy = y - h/2 + 2f * scale
+    
+    val path = Path().apply {
+        moveTo(fx, fy)
+        lineTo(fx + 6f * scale, fy)
+        lineTo(fx + 8f * scale, fy - 3f * scale)
+        lineTo(fx + w, fy - 3f * scale)
+        lineTo(fx + w, fy + h)
+        lineTo(fx, fy + h)
+        close()
+    }
+    drawPath(path, color, style = Stroke(width = 2.5f * scale, join = StrokeJoin.Round))
+}
+
+private fun DrawScope.drawShieldIcon(x: Float, y: Float, scale: Float, color: Color) {
+    val w = 16f * scale
+    val h = 20f * scale
+    val sx = x
+    val sy = y - h/2
+    
+    val path = Path().apply {
+        moveTo(sx, sy)
+        lineTo(sx + w/2, sy + 4f * scale)
+        lineTo(sx + w/2, sy + h - 6f * scale)
+        quadraticBezierTo(sx + w/2, sy + h, sx, sy + h)
+        quadraticBezierTo(sx - w/2, sy + h, sx - w/2, sy + h - 6f * scale)
+        lineTo(sx - w/2, sy + 4f * scale)
+        close()
+    }
+    drawPath(path, color, style = Stroke(width = 2.5f * scale, join = StrokeJoin.Round))
 }
