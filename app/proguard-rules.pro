@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Ignore warnings from OkHttp/Coil missing optional dependencies
+-dontwarn org.openjsse.**
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+-dontwarn javax.annotation.**
+-dontwarn org.codehaus.mojo.animal_sniffer.**

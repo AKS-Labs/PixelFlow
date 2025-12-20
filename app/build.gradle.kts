@@ -19,7 +19,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -45,13 +46,11 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.palette.ktx)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.navigation.compose)
 
-    // Use a consistent version of Compose libraries
+    // Compose
     val composeBomVersion = "2023.10.01"
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
@@ -60,15 +59,20 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.3.1")
     implementation("androidx.compose.material:material")
     implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.animation:animation")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
-    // Material Design components - keeping for backward compatibility during migration
+    // Activity & Lifecycle
+    implementation(libs.androidx.activity.compose)
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.6.2")
+    implementation("androidx.savedstate:savedstate-ktx:1.2.1")
+
+    // Material Components
     implementation("com.google.android.material:material:1.11.0")
-
-    // DataStore Preferences
-    implementation(libs.androidx.datastore.preferences)
-
-    // Navigation
-    implementation(libs.androidx.navigation.compose)
 
     // Paging
     implementation(libs.androidx.paging.runtime)
@@ -78,26 +82,10 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.svg)
 
-    // Accompanist libraries for Compose
+    // Accompanist
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
     implementation("com.google.accompanist:accompanist-permissions:0.30.1")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.30.1")
-
-    // Compose ConstraintLayout
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-
-    // Compose Animation
-    implementation("androidx.compose.animation:animation")
-
-    // Lifecycle components
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.6.2")
-
-    // SavedState
-    implementation("androidx.savedstate:savedstate:1.2.1")
-    implementation("androidx.savedstate:savedstate-ktx:1.2.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
