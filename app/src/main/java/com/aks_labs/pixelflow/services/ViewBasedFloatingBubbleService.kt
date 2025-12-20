@@ -223,7 +223,7 @@ class ViewBasedFloatingBubbleService : Service() {
 
         // Build the notification
         return android.app.Notification.Builder(this, channelId)
-            .setContentTitle("PixelScreenshots")
+            .setContentTitle("Pixel Screenshots")
             .setContentText("Detecting screenshots...")
             .setSmallIcon(R.drawable.ic_folder)
             .setContentIntent(pendingIntent)
@@ -659,10 +659,10 @@ class ViewBasedFloatingBubbleService : Service() {
         try {
             // Create the main PixelScreenshots directory in Pictures
             val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-            val pixelFlowDir = java.io.File(picturesDir, "PixelScreenshots")
+            val pixelFlowDir = java.io.File(picturesDir, "Pixel Screenshots")
             if (!pixelFlowDir.exists()) {
                 val created = pixelFlowDir.mkdirs()
-                Log.d(TAG, "Created PixelScreenshots directory: $created")
+                Log.d(TAG, "Created Pixel Screenshots directory: $created")
             }
 
             // Create the folder directory if it doesn't exist

@@ -307,7 +307,7 @@ fun ImprovedHomeScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "PixelScreenshots",
+                                text = "Pixel Screenshots",
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )

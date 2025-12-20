@@ -73,7 +73,7 @@ fun OnboardingScreen(
             imageResId = R.drawable.ic_onboarding_organize
         ),
         OnboardingPage(
-            title = "How PixelScreenshots Works",
+            title = "How Pixel Screenshots Works",
             description = "Your screenshots never leave your device. All text extraction is done locally to ensure your privacy.",
             permissionType = null,
             imageResId = R.drawable.ic_onboarding_privacy

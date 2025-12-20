@@ -291,10 +291,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         // Log the thumbnails for debugging
         screenshots.forEachIndexed { index, screenshot ->
-            android.util.Log.d("PixelScreenshots", "Thumbnail $index for folder $folderId: ${screenshot.thumbnailPath}")
+            android.util.Log.d("Pixel Screenshots", "Thumbnail $index for folder $folderId: ${screenshot.thumbnailPath}")
             // Check if file exists
             val file = java.io.File(screenshot.thumbnailPath)
-            android.util.Log.d("PixelScreenshots", "File exists: ${file.exists()}, size: ${file.length()}")
+            android.util.Log.d("Pixel Screenshots", "File exists: ${file.exists()}, size: ${file.length()}")
         }
 
         return screenshots.map { it.thumbnailPath }

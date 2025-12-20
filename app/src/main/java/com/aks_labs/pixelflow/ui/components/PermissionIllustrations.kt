@@ -28,27 +28,19 @@ fun OrganizeScreenshotAnimation(modifier: Modifier = Modifier) {
         label = "AnimationTime"
     )
 
-    Canvas(modifier = modifier.fillMaxWidth().height(440.dp)) {
+    Canvas(modifier = modifier.fillMaxSize()) {
         val scale = size.width / 400f
-        val centerX = size.width / 2f
-        val centerY = size.height / 2f
-
-        // --- 1. Phone Frame (Restored to full glory) ---
-        val phoneW = 200f * scale
-        val phoneH = 400f * scale
-        val phoneX = centerX - phoneW / 2
-        val phoneY = centerY - phoneH / 2
-
-        val outerRect = Rect(phoneX, phoneY, phoneX + phoneW, phoneY + phoneH)
+        
+        // --- 1. Phone Frame with Correct Rounding ---
+        val outerRect = Rect(50f * scale, 100f * scale, 350f * scale, 700f * scale)
         val outerPath = Path().apply {
-            addRoundRect(RoundRect(outerRect, CornerRadius(28f * scale)))
+            addRoundRect(RoundRect(outerRect, CornerRadius(30f * scale)))
         }
         drawPath(path = outerPath, color = Color(0xFF1A1A1A))
         
-        val margin = 6f * scale
-        val innerRect = Rect(phoneX + margin, phoneY + margin, phoneX + phoneW - margin, phoneY + phoneH - margin)
+        val innerRect = Rect(58f * scale, 108f * scale, 342f * scale, 692f * scale)
         val innerPath = Path().apply {
-            addRoundRect(RoundRect(innerRect, CornerRadius(24f * scale)))
+            addRoundRect(RoundRect(innerRect, CornerRadius(26f * scale)))
         }
         drawPath(path = innerPath, color = Color.Black)
 
@@ -60,7 +52,7 @@ fun OrganizeScreenshotAnimation(modifier: Modifier = Modifier) {
         
         drawPath(path = innerPath, color = screenColor)
         
-        // Flash Overlay (Scaled)
+        // Flash Overlay
         if (time in 3000f..3200f) {
             val flashAlpha = if (time < 3100f) (time - 3000f) / 100f * 0.8f else (3200f - time) / 100f * 0.8f
             drawPath(path = innerPath, color = Color(0xFFE0F2FE), alpha = flashAlpha)
@@ -68,20 +60,20 @@ fun OrganizeScreenshotAnimation(modifier: Modifier = Modifier) {
 
         // --- 2. Content Inside Screen ---
         clipPath(innerPath) {
-            drawContentPlaceholders(scale, phoneX, phoneY, phoneW)
+            drawContentPlaceholders(scale)
 
-            if (time in 1500f..3500f) drawThreeFingerSwipe(time, scale, phoneX, phoneY, phoneW)
-            if (time >= 3300f && time < 6800f) drawFloatingBubble(time, scale, phoneX, phoneY, phoneW, phoneH)
-            if (time in 4800f..6800f) drawDraggingFinger(time, scale, phoneX, phoneY, phoneW, phoneH)
-            if (time in 5200f..7200f) drawFolderTargets(time, scale, phoneX, phoneY, phoneW, phoneH)
-            if (time in 6500f..7300f) drawSuccessIndicator(time, scale, phoneX, phoneY, phoneW, phoneH)
+            if (time in 1500f..3500f) drawThreeFingerSwipe(time, scale)
+            if (time >= 3300f && time < 6800f) drawFloatingBubble(time, scale)
+            if (time in 4800f..6800f) drawDraggingFinger(time, scale)
+            if (time in 5200f..7200f) drawFolderTargets(time, scale)
+            if (time in 6500f..7300f) drawSuccessIndicator(time, scale)
         }
         
         // Camera Notch
         drawOval(
             color = Color(0xFF1A1A1A),
-            topLeft = Offset(centerX - 20f * scale, phoneY + 10f * scale),
-            size = Size(40f * scale, 12f * scale)
+            topLeft = Offset(170f * scale, 110f * scale),
+            size = Size(60f * scale, 16f * scale)
         )
     }
 }
@@ -100,7 +92,7 @@ fun MediaAccessAnimation(modifier: Modifier = Modifier) {
         animationSpec = infiniteRepeatable(tween(20000, easing = LinearEasing)), label = "Rotation"
     )
 
-    Canvas(modifier = modifier.fillMaxWidth().height(280.dp)) {
+    Canvas(modifier = modifier.fillMaxSize()) {
         val scale = size.width / 400f
         val centerX = size.width / 2f
         val centerY = size.height / 2f
@@ -210,7 +202,7 @@ fun ManageFilesAnimation(modifier: Modifier = Modifier) {
         animationSpec = infiniteRepeatable(tween(4000, easing = LinearEasing)), label = "GlobalTimer"
     )
 
-    Canvas(modifier = modifier.fillMaxWidth().height(300.dp)) {
+    Canvas(modifier = modifier.fillMaxSize()) {
         val scale = size.width / 400f
         val centerX = size.width / 2f
         val centerY = size.height / 2f
@@ -219,8 +211,8 @@ fun ManageFilesAnimation(modifier: Modifier = Modifier) {
         drawAtmosphericBackground(time, scale, centerX, centerY)
 
         // --- 2. Central Phone Mockup ---
-        val phoneW = 160f * scale
-        val phoneH = 280f * scale
+        val phoneW = 150f * scale
+        val phoneH = 260f * scale
         val phoneX = centerX - phoneW / 2
         val phoneY = centerY - phoneH / 2
         
@@ -339,36 +331,34 @@ private fun DrawScope.drawMiniFile(x: Float, y: Float, scale: Float, alpha: Floa
     drawLine(color, Offset(x - w/4, y), Offset(x + w/6, y), strokeWidth = 1.5f * scale, alpha = alpha * 0.5f)
 }
 
-private fun DrawScope.drawContentPlaceholders(scale: Float, px: Float, py: Float, pw: Float) {
-    val margin = 20f * scale
-    val startX = px + margin
+private fun DrawScope.drawContentPlaceholders(scale: Float) {
     drawRoundRect(
         color = Color(0xFFE5E7EB),
-        topLeft = Offset(startX, py + 40f * scale),
-        size = Size(pw - margin * 2, 14f * scale),
+        topLeft = Offset(80f * scale, 140f * scale),
+        size = Size(240f * scale, 14f * scale),
         cornerRadius = CornerRadius(7f * scale)
     )
     drawRoundRect(
         color = Color(0xFFE5E7EB),
-        topLeft = Offset(startX, py + 68f * scale),
-        size = Size(pw * 0.7f, 14f * scale),
+        topLeft = Offset(80f * scale, 168f * scale),
+        size = Size(180f * scale, 14f * scale),
         cornerRadius = CornerRadius(7f * scale)
     )
     drawRoundRect(
         color = Color(0xFFE5E7EB),
-        topLeft = Offset(startX, py + 96f * scale),
-        size = Size(pw * 0.8f, 14f * scale),
+        topLeft = Offset(80f * scale, 196f * scale),
+        size = Size(200f * scale, 14f * scale),
         cornerRadius = CornerRadius(7f * scale)
     )
     drawRoundRect(
         color = Color(0xFFF3F4F6),
-        topLeft = Offset(startX, py + 130f * scale),
-        size = Size(pw - margin * 2, 80f * scale),
+        topLeft = Offset(80f * scale, 230f * scale),
+        size = Size(240f * scale, 80f * scale),
         cornerRadius = CornerRadius(12f * scale)
     )
 }
 
-private fun DrawScope.drawThreeFingerSwipe(time: Float, scale: Float, px: Float, py: Float, pw: Float) {
+private fun DrawScope.drawThreeFingerSwipe(time: Float, scale: Float) {
     val alpha = when {
         time < 1800f -> (time - 1500f) / 300f
         time > 3200f -> (3500f - time) / 300f
@@ -377,10 +367,10 @@ private fun DrawScope.drawThreeFingerSwipe(time: Float, scale: Float, px: Float,
     
     val fingerYOffset = if (time in 2000f..3000f) (time - 2000f) / 1000f * 120f else if (time >= 3000f) 120f else -100f
     
-    val fingerRelXs = listOf(0.3f, 0.5f, 0.7f)
-    fingerRelXs.forEach { relX ->
-        val drawX = px + pw * relX
-        val drawY = py + 150f * scale + fingerYOffset * scale
+    val fingerXs = listOf(150f, 200f, 250f)
+    fingerXs.forEach { x ->
+        val drawX = x * scale
+        val drawY = (250f + fingerYOffset) * scale
         
         drawCircle(
             color = Color(0xFF3B82F6),
@@ -411,42 +401,39 @@ private fun DrawScope.drawThreeFingerSwipe(time: Float, scale: Float, px: Float,
     }
 }
 
-private fun DrawScope.drawFloatingBubble(time: Float, scale: Float, px: Float, py: Float, pw: Float, ph: Float) {
+private fun DrawScope.drawFloatingBubble(time: Float, scale: Float) {
     val bubbleAlpha = if (time < 3600f) (time - 3300f) / 300f else 1f
     
-    var relX = 0.8f
-    var relY = 0.4f
+    var bubbleX = 310f
+    var bubbleY = 400f
     var bubbleR = 30f
     
     if (time in 5000f..6500f) {
         val progress = (time - 5000f) / 1500f
-        relX = 0.8f - progress * 0.3f
-        relY = 0.4f + progress * 0.4f
+        bubbleX = 310f - progress * 110f
+        bubbleY = 400f + progress * 170f
     } else if (time >= 6500f) {
-        relX = 0.5f
-        relY = 0.8f
+        bubbleX = 200f
+        bubbleY = 570f
         val shrinkProgress = (time - 6500f) / 300f
         bubbleR = 30f * (1f - shrinkProgress.coerceIn(0f, 1f))
     }
     
-    val bubbleX = px + pw * relX
-    val bubbleY = py + ph * relY
-
     if (bubbleR > 0) {
         drawCircle(
             color = Color.Black.copy(alpha = 0.1f * bubbleAlpha),
-            center = Offset(bubbleX + 2f * scale, bubbleY + 2f * scale),
+            center = Offset((bubbleX + 2f) * scale, (bubbleY + 2f) * scale),
             radius = bubbleR * scale
         )
         drawCircle(
             color = Color.White,
-            center = Offset(bubbleX, bubbleY),
+            center = Offset(bubbleX * scale, bubbleY * scale),
             radius = bubbleR * scale,
             alpha = bubbleAlpha
         )
         drawCircle(
             color = Color(0xFFCBD5E1),
-            center = Offset(bubbleX, bubbleY),
+            center = Offset(bubbleX * scale, bubbleY * scale),
             radius = bubbleR * scale,
             style = Stroke(width = 2f * scale),
             alpha = bubbleAlpha
@@ -454,7 +441,7 @@ private fun DrawScope.drawFloatingBubble(time: Float, scale: Float, px: Float, p
     }
 }
 
-private fun DrawScope.drawDraggingFinger(time: Float, scale: Float, px: Float, py: Float, pw: Float, ph: Float) {
+private fun DrawScope.drawDraggingFinger(time: Float, scale: Float) {
     val alpha = when {
         time < 5000f -> (time - 4800f) / 200f
         time > 6600f -> (6800f - time) / 200f
@@ -465,17 +452,14 @@ private fun DrawScope.drawDraggingFinger(time: Float, scale: Float, px: Float, p
     if (time in 5000f..6500f) progress = (time - 5000f) / 1500f
     else if (time >= 6500f) progress = 1f
     
-    val relX = 0.8f - progress * 0.3f
-    val relY = 0.4f + progress * 0.4f
+    val baseCX = 310f - 110f * progress
+    val baseCY = 400f + 170f * progress
     
-    val baseCX = px + pw * relX
-    val baseCY = py + ph * relY
-    
-    drawOval(Color(0xFFFFDBCC), Offset(baseCX - 12f * scale, baseCY - 16f * scale), Size(24f * scale, 32f * scale), alpha = alpha)
-    drawOval(Color(0xFFFFD4B8), Offset(baseCX - 11f * scale, baseCY - 24f * scale), Size(22f * scale, 24f * scale), alpha = alpha)
+    drawOval(Color(0xFFFFDBCC), Offset((baseCX - 12f) * scale, (baseCY - 16f) * scale), Size(24f * scale, 32f * scale), alpha = alpha)
+    drawOval(Color(0xFFFFD4B8), Offset((baseCX - 11f) * scale, (baseCY - 24f) * scale), Size(22f * scale, 24f * scale), alpha = alpha)
 }
 
-private fun DrawScope.drawFolderTargets(time: Float, scale: Float, px: Float, py: Float, pw: Float, ph: Float) {
+private fun DrawScope.drawFolderTargets(time: Float, scale: Float) {
     val alpha = when {
         time < 5500f -> (time - 5200f) / 300f
         time > 6900f -> (7200f - time) / 300f
@@ -484,14 +468,14 @@ private fun DrawScope.drawFolderTargets(time: Float, scale: Float, px: Float, py
     
     val yOffset = if (time in 5200f..5600f) (5600f - time) / 400f * 30f else 0f
     val folders = listOf(
-        Triple(0.25f, 0.85f, Color(0xFFFEF3C7) to Color(0xFFFBBF24)),
-        Triple(0.5f, 0.8f, Color(0xFFDBEAFE) to Color(0xFF3B82F6)),
-        Triple(0.75f, 0.85f, Color(0xFFFCE7F3) to Color(0xFFEC4899))
+        Triple(110f, 590f, Color(0xFFFEF3C7) to Color(0xFFFBBF24)),
+        Triple(200f, 570f, Color(0xFFDBEAFE) to Color(0xFF3B82F6)),
+        Triple(290f, 590f, Color(0xFFFCE7F3) to Color(0xFFEC4899))
     )
     
-    folders.forEach { (relX, relY, colors) ->
-        val drawX = px + pw * relX
-        val drawY = py + ph * relY + yOffset * scale
+    folders.forEach { (x, y, colors) ->
+        val drawX = x * scale
+        val drawY = (y + yOffset) * scale
         drawCircle(
             color = colors.first,
             center = Offset(drawX, drawY),
@@ -508,11 +492,11 @@ private fun DrawScope.drawFolderTargets(time: Float, scale: Float, px: Float, py
     }
 }
 
-private fun DrawScope.drawSuccessIndicator(time: Float, scale: Float, px: Float, py: Float, pw: Float, ph: Float) {
+private fun DrawScope.drawSuccessIndicator(time: Float, scale: Float) {
     val alpha = if (time < 6800f) (time - 6500f) / 300f else (7300f - time) / 500f
     drawCircle(
         color = Color(0xFF3B82F6).copy(alpha = 0.15f * alpha.coerceIn(0f, 1f)),
-        center = Offset(px + pw * 0.5f, py + ph * 0.8f),
+        center = Offset(200f * scale, 570f * scale),
         radius = 36f * scale
     )
 }
@@ -526,8 +510,7 @@ fun FeaturesAnimation(modifier: Modifier = Modifier) {
     )
 
     Canvas(modifier = modifier.fillMaxWidth().height(280.dp)) {
-        val baseSize = 400f
-        val scale = Math.min(size.width / baseSize, size.height / baseSize)
+        val scale = size.width / 400f
         val centerX = size.width / 2f
         val centerY = size.height / 2f
 

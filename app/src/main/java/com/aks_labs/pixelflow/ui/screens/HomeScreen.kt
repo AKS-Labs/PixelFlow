@@ -179,7 +179,7 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "PixelScreenshots",
+                        text = "Pixel Screenshots",
                         style = MaterialTheme.typography.headlineLarge,
                         textAlign = TextAlign.Center
                     )

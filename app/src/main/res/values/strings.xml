@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PixelScreenshots</string>
+    <string name="app_name">Pixel Screenshots</string>
 
     <!-- Permissions -->
     <string name="permission_rationale">PixelScreenshots needs access to your storage to detect and manage screenshots.</string>

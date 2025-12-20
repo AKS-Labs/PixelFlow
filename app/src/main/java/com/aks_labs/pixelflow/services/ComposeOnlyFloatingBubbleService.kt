@@ -221,10 +221,10 @@ class ComposeOnlyFloatingBubbleService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "PixelScreenshots Service",
+                "Pixel Screenshots Service",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Keeps PixelScreenshots running to detect screenshots"
+                description = "Keeps Pixel Screenshots running to detect screenshots"
                 setShowBadge(false)
             }
 

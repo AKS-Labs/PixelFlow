@@ -58,11 +58,11 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -414,22 +414,32 @@ fun PermissionScreen(
                     lineHeight = 24.sp
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                if (!isOverlayStep) {
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
 
-                // Illustration area (Restored to unrestricted size for full visual impact)
+                // Illustration area: Significantly taller for overlay to prevent overlap
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+                    modifier = Modifier.fillMaxWidth().height(if (isOverlayStep) 550.dp else 300.dp),
+                    contentAlignment = if (isOverlayStep) Alignment.TopCenter else Alignment.Center
                 ) {
                     when (nativeAnimationType) {
                         NativeAnimationType.ORGANIZE_SCREENSHOT -> {
-                            OrganizeScreenshotAnimation(modifier = Modifier.fillMaxWidth())
+                            // Scale calculations: width is 300dp, scale is 0.75. 
+                            // Internal drawing starts at 100f (75dp). 
+                            // We offset by -75dp to bring the phone top to the edge.
+                            OrganizeScreenshotAnimation(
+                                modifier = Modifier
+                                    .width(300.dp)
+                                    .height(550.dp)
+                                    .offset(y = (-25).dp)
+                            )
                         }
                         NativeAnimationType.MEDIA_ACCESS -> {
-                            MediaAccessAnimation(modifier = Modifier.fillMaxWidth())
+                            MediaAccessAnimation(modifier = Modifier.size(300.dp))
                         }
                         NativeAnimationType.MANAGE_FILES -> {
-                            ManageFilesAnimation(modifier = Modifier.fillMaxWidth())
+                            ManageFilesAnimation(modifier = Modifier.size(300.dp))
                         }
                         else -> {
                             if (illustrationRes != null) {
@@ -439,7 +449,7 @@ fun PermissionScreen(
                                         .decoderFactory(SvgDecoder.Factory())
                                         .build(),
                                     contentDescription = null,
-                                    modifier = Modifier.size(280.dp)
+                                    modifier = Modifier.fillMaxSize()
                                 )
                             } else {
                                 Image(
@@ -453,7 +463,12 @@ fun PermissionScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(48.dp)) // Ample space before text sections
+                // Add conditional spacer above "Why this is required"
+                if (isOverlayStep) {
+//                    Spacer(modifier = Modifier.height(4.dp))
+                } else {
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
 
                 // Transparency Section: Why we need this
                 TransparencySection(
@@ -585,15 +600,14 @@ fun RestrictedSettingsGuide() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Android may restrict this for security measures. Follow below steps to allow it:",
+            text = "Android may restrict this for security measures. Follow the steps below to allow it:",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
         )
         Spacer(modifier = Modifier.height(16.dp))
         
-        // Method 1: The fast way
         Text(
-            text = "Method: Long Press Shortcut",
+            text = "Allow restricted settings",
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -604,7 +618,8 @@ fun RestrictedSettingsGuide() {
                 "Long press PixelFlow app icon",
                 "Tap on 'App info' ↗",
                 "Tap 3-dot menu (top right)",
-                "Select 'Allow restricted settings'"
+                "Select 'Allow restricted settings'",
+                "And try enabling overlay again"
             )
             steps.forEachIndexed { index, step ->
                 Row(verticalAlignment = Alignment.Top) {
@@ -613,18 +628,13 @@ fun RestrictedSettingsGuide() {
                         text = step,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = if (step.contains("App info")) Modifier.clickable { redirectToAppInfo() } else Modifier,
-                        color = if (step.contains("App info")) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                        fontWeight = if (step.contains("App info")) FontWeight.Bold else FontWeight.Normal
+                        color = if (step.contains("App info")) Color(0xFF2563EB) else MaterialTheme.colorScheme.onSurface,
+                        fontWeight = if (step.contains("App info")) FontWeight.Bold else FontWeight.Normal,
+                        textDecoration = if (step.contains("App info")) androidx.compose.ui.text.style.TextDecoration.Underline else null
                     )
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-
-
     }
 }
 

@@ -56,7 +56,7 @@ fun SimpleHomeScreen(
 //        containerColor = MaterialTheme.colorScheme.surfaceVariant,
         topBar = {
             TopAppBar(
-                title = { Text("PixelScreenshots") },
+                title = { Text("Pixel Screenshots") },
                 actions = {
                     IconButton(onClick = { /* TODO: Implement notifications */ }) {
                         Icon(
@@ -118,7 +118,7 @@ fun UpdatesCard() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "To use PixelScreenshots, you'll need to update some of the apps on your device.",
+                    text = "To use Pixel Screenshots, you'll need to update some of the apps on your device.",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f)
                 )
