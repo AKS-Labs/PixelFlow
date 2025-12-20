@@ -242,6 +242,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * Delete a folder physically from storage along with all its contents
+     */
+    fun deleteFolderPhysically(folderId: Long) {
+        sharedPrefsManager.deleteFolderPhysically(folderId)
+    }
+
+    /**
      * Get screenshots for a specific folder
      */
     fun getScreenshotsForFolder(folderId: Long): List<SimpleScreenshot> {

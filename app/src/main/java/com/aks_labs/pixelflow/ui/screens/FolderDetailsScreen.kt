@@ -99,6 +99,9 @@ fun FolderDetailsScreen(
     
     // State for delete confirmation dialog
     var showDeleteDialog by remember { mutableStateOf(false) }
+    
+    // State for physical folder delete confirmation dialog
+    var showFolderDeleteDialog by remember { mutableStateOf(false) }
 
     // Handle Back Press for Viewers
     if (showCarousel || showImmersiveViewer) {
@@ -205,6 +208,13 @@ fun FolderDetailsScreen(
                             }) {
                                 Icon(Icons.Default.Delete, contentDescription = "Delete")
                             }
+                        } else {
+                            // Delete button for the entire folder
+                            IconButton(onClick = {
+                                showFolderDeleteDialog = true
+                            }) {
+                                Icon(Icons.Default.Delete, contentDescription = "Delete Folder")
+                            }
                         }
                     },
                     scrollBehavior = scrollBehavior,
@@ -300,7 +310,7 @@ fun FolderDetailsScreen(
         )
     }
     
-    // Delete confirmation dialog
+    // Delete screenshots confirmation dialog
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -328,6 +338,37 @@ fun FolderDetailsScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    // Physical folder delete confirmation dialog
+    if (showFolderDeleteDialog) {
+        val folder = folders.find { it.id == folderId }
+        AlertDialog(
+            onDismissRequest = { showFolderDeleteDialog = false },
+            title = { Text("Delete Folder Physically") },
+            text = { 
+                Text("Are you sure you want to physically delete the folder '${folder?.name}' and all its screenshots? This will permanently remove them from your device storage and cannot be undone.") 
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteFolderPhysically(folderId)
+                        showFolderDeleteDialog = false
+                        navController.navigateUp()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Delete Permanently")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showFolderDeleteDialog = false }) {
                     Text("Cancel")
                 }
             }

@@ -246,26 +246,74 @@ class SharedPrefsManager(private val context: Context) {
     }
 
     /**
-     * Delete a folder
+     * Delete a folder physically from storage along with all its contents
+     */
+    fun deleteFolderPhysically(folderId: Long) {
+        val currentFolders = _folders.value.toMutableList()
+        val folder = currentFolders.find { it.id == folderId }
+
+        if (folder != null) {
+            // 1. Get all screenshots in this folder
+            val folderScreenshots = getScreenshotsByFolder(folderId)
+            
+            // 2. Delete each screenshot physically and from MediaStore
+            folderScreenshots.forEach { screenshot ->
+                deleteScreenshot(screenshot.id)
+            }
+            
+            // For filesystem-scanned folders (like Unsorted or Custom folders)
+            // We should also scan and delete images that might not be in the metadata
+            val diskImages = getImagesFromFolder(folder.name)
+            diskImages.forEach { screenshot ->
+                deleteScreenshotByPath(screenshot.filePath)
+            }
+
+            // 3. Delete the physical directory
+            try {
+                val folderDir = File(appDirectory, folder.name)
+                if (folderDir.exists() && folderDir.isDirectory) {
+                    val deleted = folderDir.deleteRecursively()
+                    if (deleted) {
+                        Log.d("SharedPrefsManager", "Physically deleted folder directory: ${folder.name}")
+                    } else {
+                        Log.w("SharedPrefsManager", "Failed to physically delete folder directory: ${folder.name}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("SharedPrefsManager", "Error deleting physical folder: ${folder.name}", e)
+            }
+
+            // 4. Remove the folder from the list
+            currentFolders.remove(folder)
+            _folders.value = currentFolders
+            saveFolders()
+            
+            // 5. Notify MediaStore to scan app directory to reflect changes
+            android.media.MediaScannerConnection.scanFile(
+                context,
+                arrayOf(appDirectory.absolutePath),
+                null
+            ) { path, uri ->
+                Log.d("SharedPrefsManager", "Media scan completed for app directory after folder deletion: $path")
+            }
+        }
+    }
+
+    /**
+     * Delete a folder (soft delete - keep physical files)
      */
     fun deleteFolder(folderId: Long) {
         val currentFolders = _folders.value.toMutableList()
         val folder = currentFolders.find { it.id == folderId }
 
         if (folder != null && folder.isRemovable) {
-            // Ensure the folder directory exists (for reference)
-            getFolderDirectory(folder.name)
-
             // Remove the folder from the list
             currentFolders.remove(folder)
             _folders.value = currentFolders
             saveFolders()
 
-            // Also delete all screenshots in this folder
+            // Also delete all screenshots in this folder from metadata
             deleteScreenshotsByFolder(folderId)
-
-            // Note: We don't delete the physical folder to avoid data loss
-            // Users can still access their screenshots in the file system
         }
     }
 
