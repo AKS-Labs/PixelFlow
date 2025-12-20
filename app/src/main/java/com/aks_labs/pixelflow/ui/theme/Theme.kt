@@ -38,32 +38,42 @@ fun PixelFlowTheme(
     val useDarkTheme = when (themeMode) {
         ThemeMode.SYSTEM -> isSystemInDarkTheme()
         ThemeMode.DARK -> true
+        ThemeMode.AMOLED -> true
         ThemeMode.LIGHT -> false
     }
 
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (useDarkTheme) {
-                // For Dark Mode, we want to support AMOLED black
-                // We'll take the dynamic dark scheme but force the background to black
-                dynamicDarkColorScheme(context).copy(
+            val dynamicScheme = if (useDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            
+            if (themeMode == ThemeMode.AMOLED) {
+                dynamicScheme.copy(
                     background = Color.Black,
                     surface = Color.Black,
-                    // surfaceContainer not available in M3 1.1.2
                     onBackground = Color.White,
                     onSurface = Color.White
                 )
+            } else if (useDarkTheme && themeMode == ThemeMode.DARK) {
+                // Polished dark mode - use dynamic colors as they are, or slightly adjust background if desired.
+                // By default dynamicDarkColorScheme is not amoled black.
+                dynamicScheme
             } else {
-                dynamicLightColorScheme(context)
+                dynamicScheme
             }
         }
-        useDarkTheme -> darkColorScheme(
+        themeMode == ThemeMode.AMOLED -> darkColorScheme(
              background = Color.Black,
              surface = Color.Black,
              onBackground = Color.White,
              onSurface = Color.White
-        ) // Fallback if dynamic not available
+        )
+        useDarkTheme -> darkColorScheme(
+             background = PolishedDarkBackground,
+             surface = DarkSurface,
+             onBackground = Color.White,
+             onSurface = Color.White
+        )
         else -> lightColorScheme()
     }
 

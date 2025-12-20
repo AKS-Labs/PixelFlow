@@ -2,7 +2,8 @@ package com.aks_labs.pixelflow.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Dark theme colors (based on reference image)
+// Dark theme colors (polished dark mode)
+val PolishedDarkBackground = Color(0xFF1A1C1E) // Not pure black, more polished
 val DarkBackground = Color(0xFF121212)
 val DarkSurface = Color(0xFF1E1E1E)
 val DarkCardBackground = Color(0xFF252525)

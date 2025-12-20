@@ -601,7 +601,7 @@ class SharedPrefsManager(private val context: Context) {
      * Theme mode enum
      */
     enum class ThemeMode {
-        SYSTEM, LIGHT, DARK
+        SYSTEM, LIGHT, DARK, AMOLED
     }
 
     /**

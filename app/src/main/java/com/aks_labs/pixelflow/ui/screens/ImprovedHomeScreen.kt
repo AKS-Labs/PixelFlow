@@ -371,6 +371,18 @@ fun ImprovedHomeScreen(
                                         } else null
                                     )
 
+                                    // AMOLED theme option
+                                    DropdownMenuItem(
+                                        text = { Text("AMOLED theme") },
+                                        onClick = {
+                                            viewModel.setThemeMode(ThemeMode.AMOLED)
+                                            showThemeMenu = false
+                                        },
+                                        trailingIcon = if (currentThemeMode == ThemeMode.AMOLED) {
+                                            { Icon(Icons.Default.Done, contentDescription = "Selected") }
+                                        } else null
+                                    )
+
                                     // Settings option
                                     DropdownMenuItem(
                                         text = { Text("Settings") },

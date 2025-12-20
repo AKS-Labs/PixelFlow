@@ -46,17 +46,22 @@ fun SearchBar(
                 ambientColor = Color.Gray.copy(alpha = 0.2f)
             ),
         shape = RoundedCornerShape(20.dp), // Adjust corner radius for more rounded shape
-        color = Color(0xFFD8E3F8) // Bluish color (example: Light Blue 50)
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f)
     ) {
         TextField(
             value = query,
             onValueChange = onQueryChange,
-            placeholder = { Text("Search screenshots...") },
+            placeholder = { 
+                Text(
+                    text = "Search screenshots...",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                ) 
+            },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             trailingIcon = {
@@ -69,7 +74,7 @@ fun SearchBar(
                         Icon(
                             imageVector = Icons.Default.Clear,
                             contentDescription = "Clear search",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -80,7 +85,9 @@ fun SearchBar(
                 disabledIndicatorColor = Color.Transparent,
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent
+                disabledContainerColor = Color.Transparent,
+                focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
             ),
             singleLine = true
         )
