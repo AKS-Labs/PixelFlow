@@ -367,11 +367,10 @@ fun PermissionScreen(
                 Spacer(modifier = Modifier.height(48.dp))
 
                 // App logo
-                Icon(
-                    imageVector = Icons.Default.Settings,
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
                     contentDescription = "PixelFlow Logo",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(78.dp)
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -424,11 +423,10 @@ fun PermissionScreen(
                                     modifier = Modifier.fillMaxSize()
                                 )
                             } else {
-                                // Fallback icon
-                                Icon(
-                                    imageVector = Icons.Filled.Settings,
+                                // Fallback logo
+                                Image(
+                                    painter = painterResource(id = R.drawable.logo),
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(120.dp)
                                 )
                             }
@@ -515,12 +513,11 @@ fun PermissionSummaryScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             // App logo
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = "PixelFlow Logo",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(48.dp)
-            )
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = "PixelFlow Logo",
+                    modifier = Modifier.size(88.dp)
+                )
 
             Spacer(modifier = Modifier.height(32.dp))
 

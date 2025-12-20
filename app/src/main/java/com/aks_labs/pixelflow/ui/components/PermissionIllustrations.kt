@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.rotate
 
 @Composable
 fun OrganizeScreenshotAnimation(modifier: Modifier = Modifier) {
@@ -193,11 +194,11 @@ fun MediaAccessAnimation(modifier: Modifier = Modifier) {
 
 @Composable
 fun ManageFilesAnimation(modifier: Modifier = Modifier) {
-    val infiniteTransition = rememberInfiniteTransition(label = "ManageFilesPremium")
+    val infiniteTransition = rememberInfiniteTransition(label = "ManageFilesCreative")
     
     val time by infiniteTransition.animateFloat(
-        initialValue = 0f, targetValue = 3000f,
-        animationSpec = infiniteRepeatable(tween(3000, easing = LinearEasing)), label = "Timer"
+        initialValue = 0f, targetValue = 4500f,
+        animationSpec = infiniteRepeatable(tween(4500, easing = LinearEasing)), label = "GlobalTimer"
     )
 
     Canvas(modifier = modifier.fillMaxSize()) {
@@ -205,123 +206,231 @@ fun ManageFilesAnimation(modifier: Modifier = Modifier) {
         val centerX = size.width / 2f
         val centerY = size.height / 2f
 
-        // Folders with interaction
-        val folderConfig = listOf(
-            Triple(centerX - 120f * scale, Color(0xFFFBBF24), "Yellow"),
-            Triple(centerX, Color(0xFF3B82F6), "Blue"),
-            Triple(centerX + 120f * scale, Color(0xFFEC4899), "Pink")
-        )
-
-        val cycleTime = time % 1000
-        val activeFolderIndex = (time / 1000).toInt() % 3
+        // --- 1. Background Circuitry & Nodes (Atmosphere) ---
+        val circuitryAlpha = 0.05f
+        val circuitryColor = Color(0xFF94A3B8)
         
-        // --- Draw Folders ---
-        folderConfig.forEachIndexed { index, (fx, color, _) ->
-            // Reactive bounce when file drops in
-            val isActive = index == activeFolderIndex
-            val bounce = if (isActive && cycleTime > 800) {
-                val bProg = (cycleTime - 800) / 200f
-                Math.sin(bProg * Math.PI).toFloat() * 15f * scale
-            } else 0f
+        // Static motherboard lines (Filling the edges)
+        drawLine(circuitryColor, Offset(40f * scale, centerY - 160f * scale), Offset(360f * scale, centerY - 160f * scale), 1f * scale, alpha = circuitryAlpha)
+        drawLine(circuitryColor, Offset(40f * scale, centerY + 180f * scale), Offset(360f * scale, centerY + 180f * scale), 1f * scale, alpha = circuitryAlpha)
+        drawLine(circuitryColor, Offset(centerX, 40f * scale), Offset(centerX, size.height - 40f * scale), 1f * scale, alpha = circuitryAlpha)
+        
+        // Diagonal connecting lines for depth
+        drawLine(circuitryColor, Offset(40f * scale, centerY - 160f * scale), Offset(centerX, 40f * scale), 1.5f * scale, alpha = circuitryAlpha * 0.7f)
+        drawLine(circuitryColor, Offset(360f * scale, centerY - 160f * scale), Offset(centerX, 40f * scale), 1.5f * scale, alpha = circuitryAlpha * 0.7f)
 
-            val fy = centerY + 120f * scale
-            
-            // Glow
-            drawCircle(
-                color = color.copy(alpha = 0.1f),
-                center = Offset(fx, fy),
-                radius = (45f + (if(isActive) 5f else 0f)) * scale
-            )
-            
-            // Folder Path (Premium)
-            val fPath = Path().apply {
-                moveTo(fx - 35f * scale, fy - 10f * scale)
-                lineTo(fx - 15f * scale, fy - 25f * scale)
-                lineTo(fx + 10f * scale, fy - 20f * scale)
-                lineTo(fx + 35f * scale, fy - 10f * scale)
-                lineTo(fx + 35f * scale, fy + 30f * scale)
-                lineTo(fx - 35f * scale, fy + 30f * scale)
-                close()
-            }
-            // Add a small lid path for "open" effect if active
-            val lidPath = Path().apply {
-                val lidAngle = if (isActive && cycleTime in 700f..1000f) -20f else 0f
-                moveTo(fx - 35f * scale, fy - 10f * scale)
-                lineTo(fx + 35f * scale, fy - 10f * scale)
-                lineTo(fx + 38f * scale, fy - 15f * scale + lidAngle * scale)
-                lineTo(fx - 32f * scale, fy - 15f * scale + lidAngle * scale)
-                close()
-            }
-            
-            drawPath(fPath, brush = Brush.verticalGradient(listOf(color, color.copy(alpha = 0.8f))))
-            drawPath(lidPath, color.copy(alpha = 0.9f))
+        // Pulsing nodes at key intersections
+        val nodePulse = 1f + 0.2f * Math.sin(time.toDouble() * 0.006).toFloat()
+        val nodes = listOf(
+            Offset(centerX, centerY - 160f * scale),
+            Offset(40f * scale, centerY - 160f * scale),
+            Offset(360f * scale, centerY - 160f * scale),
+            Offset(centerX, 40f * scale),
+            Offset(centerX, size.height - 40f * scale)
+        )
+        nodes.forEach { pos ->
+            drawCircle(circuitryColor, 6f * scale * nodePulse, pos, alpha = circuitryAlpha * 4)
+            drawCircle(circuitryColor, 14f * scale * nodePulse, pos, alpha = circuitryAlpha * 1.5f, style = Stroke(1.2f * scale))
         }
 
-        // --- Draw Flying Files & Trails ---
-        val fileProgress = (cycleTime / 1000f)
-        val targetX = folderConfig[activeFolderIndex].first
-        val targetY = centerY + 120f * scale
-        val startX = centerX
-        val startY = centerY - 150f * scale
+        // --- 2. Floating Atmospheric Particles (Subtle Motion) ---
+        for (i in 0 until 24) {
+            val pPhase = (time + i * 187f) % 4500f / 4500f
+            val pX = (15f + (i * 17f)) * scale % size.width
+            val pY = (size.height - (pPhase * size.height))
+            val pAlpha = (1f - Math.abs(pPhase - 0.5f) * 2f) * 0.12f
+            
+            drawCircle(
+                color = if (i % 3 == 0) Color(0xFF3B82F6) else Color.White,
+                radius = (1.2f + (i % 2) * 1f) * scale,
+                center = Offset(pX, pY),
+                alpha = pAlpha
+            )
+        }
+
+        // --- 3. Enhanced Data Streams (Higher Variety) ---
+        val streamAlpha = 0.06f
+        for (i in 0 until 20) {
+            val sX = (centerX - 195f * scale) + (i * 20.5f * scale)
+            val sSpeed = 0.25f + (i % 5) * 0.18f
+            val sY = (time * sSpeed * scale) % size.height
+            val sLen = 80f * scale * (1f + (i % 4) * 0.25f)
+            
+            drawLine(
+                color = Color.Gray,
+                start = Offset(sX, sY),
+                end = Offset(sX, sY + sLen),
+                strokeWidth = (1f + (i % 2) * 1f) * scale,
+                alpha = streamAlpha
+            )
+        }
+
+        // --- 4. Digital Platform & Grid ---
+        val platformPath = Path().apply {
+            moveTo(centerX - 190f * scale, centerY + 190f * scale)
+            lineTo(centerX + 190f * scale, centerY + 190f * scale)
+            lineTo(centerX + 155f * scale, centerY + 155f * scale)
+            lineTo(centerX - 155f * scale, centerY + 155f * scale)
+            close()
+        }
+        drawPath(platformPath, brush = Brush.verticalGradient(listOf(Color(0xFFE2E8F0).copy(alpha = 0.7f), Color.Transparent)))
         
-        val currX = startX + (targetX - startX) * fileProgress
-        val currY = startY + (targetY - startY) * fileProgress
+        // Grid pattern on the platform for depth
+        for (i in -4..4) {
+            val gxOffset = i * 42f * scale
+            drawLine(Color.White, Offset(centerX + gxOffset, centerY + 190f * scale), Offset(centerX + i * 34f * scale, centerY + 155f * scale), 1f * scale, alpha = 0.12f)
+        }
+
+        // --- 5. Folders (Positioned on Platform) ---
+        val folderConfig = listOf(
+            Triple(centerX - 110f * scale, Color(0xFFFBBF24), "Docs"),
+            Triple(centerX, Color(0xFF3B82F6), "Images"),
+            Triple(centerX + 110f * scale, Color(0xFFEC4899), "Audio")
+        )
+
+        val cycleDuration = 1500f
+        val cycleTime = time % cycleDuration
+        val activeIndex = (time / cycleDuration).toInt() % 3
         
-        if (fileProgress < 0.9f) {
-            // Trail
-            for (j in 1..5) {
-                val tProg = (fileProgress - j * 0.05f).coerceAtLeast(0f)
-                val tx = startX + (targetX - startX) * tProg
-                val ty = startY + (targetY - startY) * tProg
+        folderConfig.forEachIndexed { index, (fx, color, _) ->
+            val isActive = index == activeIndex
+            val fy = centerY + 120f * scale
+            
+            val jiggle = if (isActive && cycleTime > 1100f) {
+                val jProg = (cycleTime - 1100f) / 400f
+                Math.sin(jProg * Math.PI * 4).toFloat() * 5f * scale
+            } else 0f
+
+            drawCircle(
+                color = Color.Black.copy(alpha = 0.06f),
+                center = Offset(fx, fy + 15f * scale),
+                radius = 50f * scale
+            )
+            
+            val fPath = Path().apply {
+                moveTo(fx - 42f * scale + jiggle, fy - 15f * scale)
+                lineTo(fx - 22f * scale + jiggle, fy - 28f * scale)
+                lineTo(fx + 22f * scale + jiggle, fy - 24f * scale)
+                lineTo(fx + 42f * scale + jiggle, fy - 15f * scale)
+                lineTo(fx + 42f * scale + jiggle, fy + 35f * scale)
+                lineTo(fx - 42f * scale + jiggle, fy + 35f * scale)
+                close()
+            }
+            drawPath(fPath, brush = Brush.verticalGradient(listOf(color.copy(alpha = 0.98f), color)))
+            
+            val lidAngle = if (isActive && cycleTime in 1000f..1400f) -40f else 0f
+            val lidPath = Path().apply {
+                moveTo(fx - 42f * scale + jiggle, fy - 15f * scale)
+                lineTo(fx + 42f * scale + jiggle, fy - 15f * scale)
+                lineTo(fx + 46f * scale + jiggle, fy - 24f * scale + lidAngle * scale)
+                lineTo(fx - 38f * scale + jiggle, fy - 24f * scale + lidAngle * scale)
+                close()
+            }
+            drawPath(lidPath, color.copy(alpha = 0.92f))
+        }
+
+        // --- 6. Central Spawner Hub & Immersive Glow ---
+        val hubY = centerY - 115f * scale
+        val hubBounce = Math.sin(time.toDouble() * 0.005).toFloat() * 8f * scale
+        
+        // Massive radial glow
+        drawCircle(
+            brush = Brush.radialGradient(listOf(Color(0xFF3B82F6).copy(alpha = 0.3f), Color.Transparent), center = Offset(centerX, hubY + hubBounce), radius = 100f * scale),
+            radius = 100f * scale,
+            center = Offset(centerX, hubY + hubBounce)
+        )
+        
+        val hubRadius = 52f * scale
+        drawCircle(
+            brush = Brush.radialGradient(listOf(Color(0xFF94A3B8), Color(0xFF475569)), center = Offset(centerX, hubY + hubBounce), radius = hubRadius),
+            radius = hubRadius,
+            center = Offset(centerX, hubY + hubBounce)
+        )
+        
+        rotate(degrees = time * 0.2f, pivot = Offset(centerX, hubY + hubBounce)) {
+            drawRect(Color.White, Offset(centerX - 16f * scale, hubY - 16f * scale + hubBounce), Size(32f * scale, 32f * scale), style = Stroke(3.5f * scale), alpha = 0.75f)
+            drawCircle(Color.White, radius = 5f * scale, center = Offset(centerX, hubY + hubBounce), alpha = 0.9f)
+        }
+
+        // --- 7. Flying Files & Particle Trails ---
+        val fProg = (cycleTime / cycleDuration)
+        if (fProg < 0.95f) {
+            val startX = centerX
+            val startY = hubY + hubBounce
+            val targetX = folderConfig[activeIndex].first
+            val targetY = centerY + 110f * scale
+
+            val controlX = centerX + (targetX - centerX) * 0.35f
+            val controlY = centerY - 220f * scale
+
+            val currX = (1 - fProg) * (1 - fProg) * startX + 2 * (1 - fProg) * fProg * controlX + fProg * fProg * targetX
+            val currY = (1 - fProg) * (1 - fProg) * startY + 2 * (1 - fProg) * fProg * controlY + fProg * fProg * targetY
+
+            val fileColor = folderConfig[activeIndex].second
+            val fAlpha = if (fProg < 0.12f) fProg * 8.3f else if (fProg > 0.88f) (1f - fProg) * 8.3f else 1f
+            
+            for (j in 1..15) {
+                val t = (fProg - j * 0.018f).coerceAtLeast(0f)
+                val tx = (1 - t) * (1 - t) * startX + 2 * (1 - t) * t * controlX + t * t * targetX
+                val ty = (1 - t) * (1 - t) * startY + 2 * (1 - t) * t * controlY + t * t * targetY
                 drawCircle(
-                    color = Color.White.copy(alpha = 0.3f / j),
+                    color = fileColor.copy(alpha = 0.35f / j),
                     center = Offset(tx, ty),
-                    radius = 10f * scale * (1f - j * 0.1f)
+                    radius = 12f * scale * (1f - j * 0.06f)
                 )
             }
 
-            // File Card
-            val fAlpha = when {
-                fileProgress < 0.2f -> fileProgress * 5f
-                fileProgress > 0.8f -> (1f - fileProgress) * 5f
-                else -> 1f
+            rotate(degrees = fProg * 630f, pivot = Offset(currX, currY)) {
+                drawRoundRect(
+                    color = Color.White,
+                    topLeft = Offset(currX - 26f * scale, currY - 34f * scale),
+                    size = Size(52f * scale, 68f * scale),
+                    cornerRadius = CornerRadius(9f * scale),
+                    alpha = fAlpha.coerceIn(0f, 1f)
+                )
+                drawRoundRect(
+                    color = fileColor.copy(alpha = 0.75f),
+                    topLeft = Offset(currX - 26f * scale, currY - 34f * scale),
+                    size = Size(52f * scale, 68f * scale),
+                    cornerRadius = CornerRadius(9f * scale),
+                    style = Stroke(width = 3.5f * scale),
+                    alpha = fAlpha.coerceIn(0f, 1f)
+                )
+                when (activeIndex) {
+                    0 -> {
+                        drawLine(fileColor, Offset(currX - 16f * scale, currY - 5f * scale), Offset(currX + 16f * scale, currY - 5f * scale), strokeWidth = 3f * scale, alpha = fAlpha)
+                        drawLine(fileColor, Offset(currX - 16f * scale, currY + 5f * scale), Offset(currX + 10f * scale, currY + 5f * scale), strokeWidth = 3f * scale, alpha = fAlpha)
+                    }
+                    1 -> drawCircle(color = fileColor, center = Offset(currX, currY), radius = 11f * scale, alpha = fAlpha)
+                    2 -> {
+                        drawLine(fileColor, Offset(currX - 14f * scale, currY - 10f * scale), Offset(currX + 14f * scale, currY + 10f * scale), strokeWidth = 4.5f * scale, alpha = fAlpha)
+                        drawLine(fileColor, Offset(currX - 14f * scale, currY + 10f * scale), Offset(currX + 14f * scale, currY - 10f * scale), strokeWidth = 1.2f * scale, alpha = fAlpha * 0.6f)
+                    }
+                }
             }
-            
-            drawRoundRect(
-                color = Color.White,
-                topLeft = Offset(currX - 25f * scale, currY - 30f * scale),
-                size = Size(50f * scale, 65f * scale),
-                cornerRadius = CornerRadius(8f * scale),
-                alpha = fAlpha
-            )
-            drawRoundRect(
-                color = folderConfig[activeFolderIndex].second.copy(alpha = 0.3f),
-                topLeft = Offset(currX - 25f * scale, currY - 30f * scale),
-                size = Size(50f * scale, 65f * scale),
-                cornerRadius = CornerRadius(8f * scale),
-                style = Stroke(width = 2f * scale),
-                alpha = fAlpha
-            )
-            // Accent
-            drawRoundRect(
-                folderConfig[activeFolderIndex].second,
-                Offset(currX - 15f * scale, currY - 20f * scale),
-                Size(30f * scale, 6f * scale),
-                CornerRadius(2f * scale),
-                alpha = fAlpha
-            )
         }
-        
-        // --- Success "Puff" ---
-        if (cycleTime > 900) {
-            val pX = targetX
-            val pY = targetY
-            val pProg = (cycleTime - 900) / 100f
+
+        // --- 8. Impact & Energetic Shockwave ---
+        if (cycleTime > 1300f) {
+            val iProg = (cycleTime - 1300f) / 200f
+            val ifx = folderConfig[activeIndex].first
+            val ify = centerY + 120f * scale
+            
             drawCircle(
-                color = Color.White.copy(alpha = 0.5f * (1f - pProg)),
-                center = Offset(pX, pY),
-                radius = 60f * scale * pProg
+                color = folderConfig[activeIndex].second.copy(alpha = 0.5f * (1f - iProg)),
+                center = Offset(ifx, ify),
+                radius = 90f * scale * iProg,
+                style = Stroke(width = 3.5f * scale)
             )
+            if (iProg > 0.25f) {
+                val sProg = (iProg - 0.25f) / 0.75f
+                drawCircle(
+                    color = Color.White.copy(alpha = 0.25f * (1f - sProg)),
+                    center = Offset(ifx, ify),
+                    radius = 50f * scale * sProg,
+                    style = Stroke(width = 1.5f * scale)
+                )
+            }
         }
     }
 }
