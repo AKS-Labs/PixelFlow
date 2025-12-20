@@ -59,6 +59,9 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -224,9 +227,9 @@ fun PermissionSetupScreen(
         when (currentStep) {
             PermissionSetupStep.STORAGE_PERMISSION -> {
                 PermissionScreen(
-                    title = "PixelScreenshots needs access to photos",
-                    description = "To detect and organize screenshots, we need permission to access your media.",
-                    buttonText = "Grant Permission",
+                    title = "Access your Photos",
+                    description = "PixelFlow needs to scan your gallery to automatically find and organize your screenshots for instant search.",
+                    buttonText = "Allow Access",
                     nativeAnimationType = NativeAnimationType.MEDIA_ACCESS,
                     onButtonClick = {
                         // Use MainActivity's method to request storage permissions
@@ -249,9 +252,9 @@ fun PermissionSetupScreen(
 
             PermissionSetupStep.OVERLAY_PERMISSION -> {
                 PermissionScreen(
-                    title = "PixelScreenshots needs to display over other apps",
-                    description = "To show floating bubbles for screenshots, we need permission to draw over other apps.",
-                    buttonText = "Grant Permission",
+                    title = "Display over other apps",
+                    description = "Required to show the smart floating bubble whenever you take a screenshot. This is key for instant organization.",
+                    buttonText = "Enable Overlay",
                     nativeAnimationType = NativeAnimationType.ORGANIZE_SCREENSHOT,
                     onButtonClick = {
                         // Use MainActivity's method to request overlay permission
@@ -273,9 +276,9 @@ fun PermissionSetupScreen(
 
             PermissionSetupStep.MANAGE_FILES_PERMISSION -> {
                 PermissionScreen(
-                    title = "PixelScreenshots needs to manage files",
-                    description = "To organize screenshots into folders, we need permission to manage all files.",
-                    buttonText = "Grant Permission",
+                    title = "Organize your Files",
+                    description = "Allows PixelFlow to create folders and manage your screenshot library directly on your device storage.",
+                    buttonText = "Grant Access",
                     nativeAnimationType = NativeAnimationType.MANAGE_FILES,
                     onButtonClick = {
                         // Use MainActivity's method to request manage files permission
@@ -334,7 +337,7 @@ fun PermissionSetupScreen(
 }
 
 enum class NativeAnimationType {
-    NONE, ORGANIZE_SCREENSHOT, MEDIA_ACCESS, MANAGE_FILES
+    NONE, ORGANIZE_SCREENSHOT, MEDIA_ACCESS, MANAGE_FILES, OVERLAY
 }
 
 @Composable
@@ -347,10 +350,10 @@ fun PermissionScreen(
     onButtonClick: () -> Unit
 ) {
     var visible by remember { mutableStateOf(false) }
-    val currentStep = when(title) {
-        "PixelScreenshots needs access to photos" -> 0
-        "PixelScreenshots needs to display over other apps" -> 1
-        "PixelScreenshots needs to manage files" -> 2
+    val currentStep = when {
+        title.contains("photos", ignoreCase = true) -> 0
+        title.contains("display over", ignoreCase = true) -> 1
+        title.contains("manage", ignoreCase = true) || title.contains("files", ignoreCase = true) -> 2
         else -> 0
     }
     val totalSteps = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) 3 else 2
@@ -362,6 +365,9 @@ fun PermissionScreen(
         visible = true
     }
 
+    val scrollState = rememberScrollState()
+    val isOverlayStep = nativeAnimationType == NativeAnimationType.OVERLAY || title.contains("display over", ignoreCase = true)
+
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn(animationSpec = tween(300)),
@@ -371,19 +377,20 @@ fun PermissionScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(24.dp),
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = 24.dp, vertical = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 // App logo
                 Image(
                     painter = painterResource(id = R.drawable.logo),
-                    contentDescription = "PixelScreenshots Logo",
-                    modifier = Modifier.size(78.dp)
+                    contentDescription = "PixelFlow Logo",
+                    modifier = Modifier.size(64.dp)
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 // Title
                 Text(
@@ -402,12 +409,13 @@ fun PermissionScreen(
                     text = description,
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                    lineHeight = 24.sp
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Illustration area (exactly below text)
+                // Illustration area
                 Box(
                     modifier = Modifier.size(240.dp),
                     contentAlignment = Alignment.Center
@@ -433,59 +441,204 @@ fun PermissionScreen(
                                     modifier = Modifier.fillMaxSize()
                                 )
                             } else {
-                                // Fallback logo
                                 Image(
                                     painter = painterResource(id = R.drawable.logo),
                                     contentDescription = null,
-                                    modifier = Modifier.size(120.dp)
+                                    modifier = Modifier.size(120.dp),
+                                    alpha = 0.1f
                                 )
                             }
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(32.dp))
 
-                // Page indicators
-                Row(
+                // Transparency Section: Why we need this
+                TransparencySection(
+                    title = "Why this is required",
+                    content = when {
+                        title.contains("photos", ignoreCase = true) -> "To automatically detect new screenshots and show them in your PixelFlow library for easy access."
+                        isOverlayStep -> "To display the interactive floating bubble whenever you take a screenshot, allowing for instant organization."
+                        title.contains("files", ignoreCase = true) -> "To create folders and move screenshots on your device storage without any data loss."
+                        else -> "To enable the core screenshot management features of the app."
+                    }
+                )
+
+                // Restricted Settings Guide (Only for Overlay)
+                if (isOverlayStep) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    RestrictedSettingsGuide()
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                // Privacy Banner
+                PrivacyCommitmentBanner()
+
+                Spacer(modifier = Modifier.height(100.dp)) // Leave space for the button
+            }
+
+            // Grant action button and indicators fixed at bottom (using surface to overlay)
+            Surface(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                color = MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
+            ) {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 32.dp),
-                    horizontalArrangement = Arrangement.Center
+                        .padding(bottom = 16.dp, top = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    for (i in 0 until totalSteps) {
-                        Box(
-                            modifier = Modifier
-                                .padding(horizontal = 4.dp)
-                                .size(width = if (i == currentStep) 24.dp else 8.dp, height = 8.dp)
-                                .background(
-                                    color = if (i == currentStep) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                        )
+                    // Page indicators
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        for (i in 0 until totalSteps) {
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .size(width = if (i == currentStep) 24.dp else 8.dp, height = 8.dp)
+                                    .background(
+                                        color = if (i == currentStep) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                            )
+                        }
+                    }
+
+                    // Large Grant Button
+                    Button(
+                        onClick = onButtonClick,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
+                            .height(56.dp),
+                        shape = RoundedCornerShape(28.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = buttonText,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(Icons.Default.ArrowForward, contentDescription = null, modifier = Modifier.size(20.dp))
+                        }
                     }
                 }
             }
+        }
+    }
+}
 
-            // Grant button in bottom right corner
-            TextButton(
-                onClick = onButtonClick,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp),
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
+@Composable
+fun TransparencySection(title: String, content: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+            .padding(16.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = content,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+            lineHeight = 20.sp
+        )
+    }
+}
+
+@Composable
+fun RestrictedSettingsGuide() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f))
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "⚠️ Stuck with 'Restricted Setting'?",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.error
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Some Android versions disable this for third-party apps as a security measure. Here's how to allow it:",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        
+        val steps = listOf(
+            "Go to phone Settings > Apps",
+            "Find and tap on 'PixelFlow'",
+            "Tap the 3-dot menu (top right)",
+            "Select 'Allow restricted settings'"
+        )
+        
+        steps.forEachIndexed { index, step ->
+            Row(modifier = Modifier.padding(vertical = 4.dp), verticalAlignment = Alignment.Top) {
                 Text(
-                    text = "Grant",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium
+                    text = "${index + 1}.",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = step,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
     }
 }
+
+@Composable
+fun PrivacyCommitmentBanner() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.Lock,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+            modifier = Modifier.size(16.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = "100% On-Device • No Data Uploaded",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+        )
+    }
+}
+//                    text = "Grant",
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    fontWeight = FontWeight.Medium
+//                )
+//            }
+//        }
+//    }
+//}
 
 @Composable
 fun PermissionSummaryScreen(
