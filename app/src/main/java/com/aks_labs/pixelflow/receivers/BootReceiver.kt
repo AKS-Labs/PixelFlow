@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.receivers
+package com.akslabs.pixelscreenshots.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,8 +7,8 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import com.aks_labs.pixelflow.data.SharedPrefsManager
-import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
+import com.akslabs.pixelscreenshots.data.SharedPrefsManager
+import com.akslabs.pixelscreenshots.services.ViewBasedFloatingBubbleService
 
 /**
  * Receiver to start the FloatingBubbleService when the device boots

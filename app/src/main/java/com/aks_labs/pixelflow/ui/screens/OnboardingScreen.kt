@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.screens
+package com.akslabs.pixelscreenshots.ui.screens
 
 import android.Manifest
 import android.os.Build
@@ -53,8 +53,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.aks_labs.pixelflow.R
-import com.aks_labs.pixelflow.data.SharedPrefsManager
+import com.akslabs.pixelscreenshots.R
+import com.akslabs.pixelscreenshots.data.SharedPrefsManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -73,7 +73,7 @@ fun OnboardingScreen(
             imageResId = R.drawable.ic_onboarding_organize
         ),
         OnboardingPage(
-            title = "How PixelFlow Works",
+            title = "How PixelScreenshots Works",
             description = "Your screenshots never leave your device. All text extraction is done locally to ensure your privacy.",
             permissionType = null,
             imageResId = R.drawable.ic_onboarding_privacy

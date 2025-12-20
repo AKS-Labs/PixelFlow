@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components
+package com.akslabs.pixelscreenshots.ui.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring

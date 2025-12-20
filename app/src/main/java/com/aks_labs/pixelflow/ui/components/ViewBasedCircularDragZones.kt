@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components
+package com.akslabs.pixelscreenshots.ui.components
 
 import android.content.Context
 import android.graphics.Canvas
@@ -15,8 +15,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
-import com.aks_labs.pixelflow.R
-import com.aks_labs.pixelflow.data.models.Folder
+import com.akslabs.pixelscreenshots.R
+import com.akslabs.pixelscreenshots.data.models.Folder
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.min

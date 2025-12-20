@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components
+package com.akslabs.pixelscreenshots.ui.components
 
 import android.app.Activity
 import android.os.Build
@@ -61,7 +61,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
 import kotlinx.coroutines.delay
 import java.io.File
 import kotlin.math.abs

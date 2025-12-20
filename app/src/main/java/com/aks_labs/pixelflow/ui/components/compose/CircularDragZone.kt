@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components.compose
+package com.akslabs.pixelscreenshots.ui.components.compose
 
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aks_labs.pixelflow.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
 import kotlin.math.cos
 import kotlin.math.sin
 

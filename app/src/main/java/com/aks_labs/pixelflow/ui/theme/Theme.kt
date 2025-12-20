@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.theme
+package com.akslabs.pixelscreenshots.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -19,11 +19,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.aks_labs.pixelflow.data.SharedPrefsManager.ThemeMode
-import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
+import com.akslabs.pixelscreenshots.data.SharedPrefsManager.ThemeMode
+import com.akslabs.pixelscreenshots.ui.viewmodels.MainViewModel
 
 @Composable
-fun PixelFlowTheme(
+fun PixelScreenshotsTheme(
     // These parameters are optional and will be overridden by the viewModel's theme mode if provided
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+

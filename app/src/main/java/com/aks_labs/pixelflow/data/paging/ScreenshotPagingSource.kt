@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.data.paging
+package com.akslabs.pixelscreenshots.data.paging
 
 import android.content.ContentResolver
 import android.database.Cursor
@@ -7,7 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
 import java.io.File
 
 class ScreenshotPagingSource(
@@ -42,7 +42,7 @@ class ScreenshotPagingSource(
             
             // Selection logic
             val selection = "${MediaStore.Images.Media.DATA} LIKE ? OR ${MediaStore.Images.Media.DATA} LIKE ?"
-            val selectionArgs = arrayOf("%/Screenshots/%", "%/PixelFlow/%")
+            val selectionArgs = arrayOf("%/Screenshots/%", "%/PixelScreenshots/%")
 
             // Query using LIMIT and OFFSET handling
             // Note: Direct LIMIT/OFFSET is supported in standard SQL, but Android ContentResolver 
@@ -110,10 +110,10 @@ class ScreenshotPagingSource(
                     }
                     
                     // Filter logic (check if it is actually a screenshot based on name or path)
-                    val isPixelFlow = filePath.contains("PixelFlow", ignoreCase = true)
+                    val isPixelScreenshots = filePath.contains("PixelScreenshots", ignoreCase = true)
                     val isScreenshotName = file.name.contains("screenshot", ignoreCase = true)
                     
-                    if (isPixelFlow || isScreenshotName) {
+                    if (isPixelScreenshots || isScreenshotName) {
                         val screenshot = SimpleScreenshot(
                             id = id,
                             filePath = filePath,

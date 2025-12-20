@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.screens
+package com.akslabs.pixelscreenshots.ui.screens
 
 import androidx.activity.compose.BackHandler
 
@@ -79,17 +79,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.aks_labs.pixelflow.data.models.SimpleFolder
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
-//import com.aks_labs.pixelflow.ui.components.ScreenshotFullscreenViewer
-import com.aks_labs.pixelflow.ui.components.ScreenshotGridItem
-import com.aks_labs.pixelflow.ui.components.ScreenshotCarousel
-import com.aks_labs.pixelflow.ui.components.ImmersiveImageViewer
-import com.aks_labs.pixelflow.ui.components.SelectionManager
-import com.aks_labs.pixelflow.ui.components.rememberSelectionManager
-import com.aks_labs.pixelflow.ui.components.compose.SearchBar
-import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
-import com.aks_labs.pixelflow.data.SharedPrefsManager.ThemeMode
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
+//import com.akslabs.pixelscreenshots.ui.components.ScreenshotFullscreenViewer
+import com.akslabs.pixelscreenshots.ui.components.ScreenshotGridItem
+import com.akslabs.pixelscreenshots.ui.components.ScreenshotCarousel
+import com.akslabs.pixelscreenshots.ui.components.ImmersiveImageViewer
+import com.akslabs.pixelscreenshots.ui.components.SelectionManager
+import com.akslabs.pixelscreenshots.ui.components.rememberSelectionManager
+import com.akslabs.pixelscreenshots.ui.components.compose.SearchBar
+import com.akslabs.pixelscreenshots.ui.viewmodels.MainViewModel
+import com.akslabs.pixelscreenshots.data.SharedPrefsManager.ThemeMode
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -123,7 +123,7 @@ fun ImprovedHomeScreen(
         if (folders.isNotEmpty()) {
              // We need to trigger thumbnail loading. 
              // Ideally this should be automatic in ViewModel, but per existing code:
-             viewModel.refreshAlbums(context, folders, com.aks_labs.pixelflow.data.models.MediaItemSortMode.DateTaken)
+             viewModel.refreshAlbums(context, folders, com.akslabs.pixelscreenshots.data.models.MediaItemSortMode.DateTaken)
         }
     }
 
@@ -155,7 +155,7 @@ fun ImprovedHomeScreen(
             screenshots.refresh() 
             // Also refresh albums
              if (folders.isNotEmpty()) {
-                 viewModel.refreshAlbums(context, folders, com.aks_labs.pixelflow.data.models.MediaItemSortMode.DateTaken)
+                 viewModel.refreshAlbums(context, folders, com.akslabs.pixelscreenshots.data.models.MediaItemSortMode.DateTaken)
              }
         }
     )
@@ -307,7 +307,7 @@ fun ImprovedHomeScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "PixelFlow",
+                                text = "PixelScreenshots",
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
@@ -457,7 +457,7 @@ fun ImprovedHomeScreen(
                                         )
                                         
                                         // Album Carousel
-                                        com.aks_labs.pixelflow.ui.components.AlbumCarousel(
+                                        com.akslabs.pixelscreenshots.ui.components.AlbumCarousel(
                                             folders = folders,
                                             onAlbumClick = { folder ->
                                                 navController.navigate("folder_details/${folder.id}")

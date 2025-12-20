@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.utils
+package com.akslabs.pixelscreenshots.utils
 
 import android.content.Context
 import android.os.Handler

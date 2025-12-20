@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.services
+package com.akslabs.pixelscreenshots.services
 
 import android.content.ContentResolver
 import android.content.Context

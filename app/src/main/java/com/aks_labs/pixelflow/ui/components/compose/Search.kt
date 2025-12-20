@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components.compose
+package com.akslabs.pixelscreenshots.ui.components.compose
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

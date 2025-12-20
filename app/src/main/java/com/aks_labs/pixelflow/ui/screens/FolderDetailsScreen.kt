@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.screens
+package com.akslabs.pixelscreenshots.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -48,12 +48,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
-import com.aks_labs.pixelflow.ui.components.ImmersiveImageViewer
-import com.aks_labs.pixelflow.ui.components.ScreenshotCarousel
-import com.aks_labs.pixelflow.ui.components.ScreenshotGridItem
-import com.aks_labs.pixelflow.ui.components.rememberSelectionManager
-import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
+import com.akslabs.pixelscreenshots.ui.components.ImmersiveImageViewer
+import com.akslabs.pixelscreenshots.ui.components.ScreenshotCarousel
+import com.akslabs.pixelscreenshots.ui.components.ScreenshotGridItem
+import com.akslabs.pixelscreenshots.ui.components.rememberSelectionManager
+import com.akslabs.pixelscreenshots.ui.viewmodels.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

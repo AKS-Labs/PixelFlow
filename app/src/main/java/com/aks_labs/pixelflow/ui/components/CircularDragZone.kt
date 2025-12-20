@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components
+package com.akslabs.pixelscreenshots.ui.components
 
 import android.content.Context
 import android.animation.ValueAnimator
@@ -11,8 +11,8 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.util.AttributeSet
 import android.view.View
-import com.aks_labs.pixelflow.R
-import com.aks_labs.pixelflow.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.R
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
 import kotlin.math.cos
 import kotlin.math.sin
 

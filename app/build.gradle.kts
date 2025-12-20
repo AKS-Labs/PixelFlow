@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.aks_labs.pixelflow"
+    namespace = "com.akslabs.pixelscreenshots"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.aks_labs.pixelflow"
+        applicationId = "com.akslabs.pixelscreenshots"
         minSdk = 26
         targetSdk = 33
         versionCode = 1

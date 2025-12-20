@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.services
+package com.akslabs.pixelscreenshots.services
 
 import android.app.Service
 import android.content.ContentResolver
@@ -29,14 +29,14 @@ import android.widget.ImageView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
-import com.aks_labs.pixelflow.R
-import com.aks_labs.pixelflow.data.models.Folder
-import com.aks_labs.pixelflow.receivers.ScreenshotBroadcastReceiver
-import com.aks_labs.pixelflow.ui.components.DirectActionExecutor
-import com.aks_labs.pixelflow.ui.components.ViewBasedCircularDragZones
-import com.aks_labs.pixelflow.ui.components.FloatingActionButtons
-import com.aks_labs.pixelflow.utils.BitmapUtils
-import com.aks_labs.pixelflow.utils.ScreenUtils
+import com.akslabs.pixelscreenshots.R
+import com.akslabs.pixelscreenshots.data.models.Folder
+import com.akslabs.pixelscreenshots.receivers.ScreenshotBroadcastReceiver
+import com.akslabs.pixelscreenshots.ui.components.DirectActionExecutor
+import com.akslabs.pixelscreenshots.ui.components.ViewBasedCircularDragZones
+import com.akslabs.pixelscreenshots.ui.components.FloatingActionButtons
+import com.akslabs.pixelscreenshots.utils.BitmapUtils
+import com.akslabs.pixelscreenshots.utils.ScreenUtils
 import java.io.File
 import kotlin.math.cos
 import kotlin.math.pow
@@ -55,7 +55,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import com.aks_labs.pixelflow.pixelFlowApp
+import com.akslabs.pixelscreenshots.pixelFlowApp
 import com.google.android.material.color.DynamicColors
 
 /**
@@ -194,13 +194,13 @@ class ViewBasedFloatingBubbleService : Service() {
      * Creates a notification for the foreground service.
      */
     private fun createNotification(): android.app.Notification {
-        val channelId = "PixelFlow_Channel"
+        val channelId = "PixelScreenshots_Channel"
 
         // Create notification channel for Android O and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = android.app.NotificationChannel(
                 channelId,
-                "PixelFlow Service",
+                "PixelScreenshots Service",
                 android.app.NotificationManager.IMPORTANCE_LOW
             )
             channel.description = "Used for the screenshot detection service"
@@ -213,7 +213,7 @@ class ViewBasedFloatingBubbleService : Service() {
         val pendingIntent = android.app.PendingIntent.getActivity(
             this,
             0,
-            Intent(this, Class.forName("com.aks_labs.pixelflow.MainActivity")),
+            Intent(this, Class.forName("com.akslabs.pixelscreenshots.MainActivity")),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT
             } else {
@@ -223,7 +223,7 @@ class ViewBasedFloatingBubbleService : Service() {
 
         // Build the notification
         return android.app.Notification.Builder(this, channelId)
-            .setContentTitle("PixelFlow")
+            .setContentTitle("PixelScreenshots")
             .setContentText("Detecting screenshots...")
             .setSmallIcon(R.drawable.ic_folder)
             .setContentIntent(pendingIntent)
@@ -286,7 +286,7 @@ class ViewBasedFloatingBubbleService : Service() {
 
         try {
             // Get the SharedPrefsManager instance
-            val sharedPrefsManager = com.aks_labs.pixelflow.data.SharedPrefsManager(this)
+            val sharedPrefsManager = com.akslabs.pixelscreenshots.data.SharedPrefsManager(this)
 
             // Initialize default folders if none exist
             sharedPrefsManager.initializeDefaultFolders()
@@ -495,7 +495,7 @@ class ViewBasedFloatingBubbleService : Service() {
                 android.view.ContextThemeWrapper(this, com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
             } else {
                 // Use default app theme
-                android.view.ContextThemeWrapper(this, R.style.Theme_PixelFlow)
+                android.view.ContextThemeWrapper(this, R.style.Theme_PixelScreenshots)
             }
 
             // Apply Dynamic Colors overlay if enabled
@@ -551,7 +551,7 @@ class ViewBasedFloatingBubbleService : Service() {
     private fun refreshFolders() {
         try {
             // Get the SharedPrefsManager instance
-            val sharedPrefsManager = com.aks_labs.pixelflow.data.SharedPrefsManager(this)
+            val sharedPrefsManager = com.akslabs.pixelscreenshots.data.SharedPrefsManager(this)
 
             // Get all folders from SharedPrefsManager
             val allFolders = sharedPrefsManager.foldersValue
@@ -657,12 +657,12 @@ class ViewBasedFloatingBubbleService : Service() {
      */
     private fun moveScreenshotToFolder(screenshotPath: String, folder: Folder) {
         try {
-            // Create the main PixelFlow directory in Pictures
+            // Create the main PixelScreenshots directory in Pictures
             val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-            val pixelFlowDir = java.io.File(picturesDir, "PixelFlow")
+            val pixelFlowDir = java.io.File(picturesDir, "PixelScreenshots")
             if (!pixelFlowDir.exists()) {
                 val created = pixelFlowDir.mkdirs()
-                Log.d(TAG, "Created PixelFlow directory: $created")
+                Log.d(TAG, "Created PixelScreenshots directory: $created")
             }
 
             // Create the folder directory if it doesn't exist
@@ -1275,7 +1275,7 @@ class ViewBasedFloatingBubbleService : Service() {
                  android.view.ContextThemeWrapper(this, com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
             } else {
                  // Use default app theme
-                 android.view.ContextThemeWrapper(this, R.style.Theme_PixelFlow)
+                 android.view.ContextThemeWrapper(this, R.style.Theme_PixelScreenshots)
             }
 
              // Apply Dynamic Colors overlay if enabled

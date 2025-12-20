@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow
+package com.akslabs.pixelscreenshots
 
 import org.junit.Test
 

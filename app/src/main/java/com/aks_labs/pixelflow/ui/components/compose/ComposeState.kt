@@ -1,8 +1,8 @@
-package com.aks_labs.pixelflow.ui.components.compose
+package com.akslabs.pixelscreenshots.ui.components.compose
 
 import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
-import com.aks_labs.pixelflow.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
 
 /**
  * State for the floating bubble.

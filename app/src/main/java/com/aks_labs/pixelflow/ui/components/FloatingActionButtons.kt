@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components
+package com.akslabs.pixelscreenshots.ui.components
 
 import android.content.Context
 import android.graphics.Canvas
@@ -14,7 +14,7 @@ import android.os.VibratorManager
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import com.aks_labs.pixelflow.R
+import com.akslabs.pixelscreenshots.R
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin

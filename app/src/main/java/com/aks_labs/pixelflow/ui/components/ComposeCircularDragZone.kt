@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components
+package com.akslabs.pixelscreenshots.ui.components
 
 import android.content.Context
 import android.util.AttributeSet
@@ -6,9 +6,9 @@ import android.view.LayoutInflater
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.aks_labs.pixelflow.R
-import com.aks_labs.pixelflow.data.models.SimpleFolder
-import com.aks_labs.pixelflow.ui.components.compose.CircularDragZone
+import com.akslabs.pixelscreenshots.R
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.ui.components.compose.CircularDragZone
 
 /**
  * A custom View that wraps the CircularDragZone Composable for use in traditional View hierarchies.
@@ -28,7 +28,7 @@ class ComposeCircularDragZone @JvmOverloads constructor(
 
     init {
         // Create a ServiceComposeView with proper lifecycle management
-        val composeView = com.aks_labs.pixelflow.ui.components.compose.ServiceComposeView.create(context) {
+        val composeView = com.akslabs.pixelscreenshots.ui.components.compose.ServiceComposeView.create(context) {
             CircularDragZone(
                 folders = folders.value,
                 highlightedIndex = highlightedIndex.value,

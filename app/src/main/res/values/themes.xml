@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base application theme using Material Components -->
-    <style name="Theme.PixelFlow" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.PixelScreenshots" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -16,7 +16,7 @@
     </style>
 
     <!-- Theme for services that need Material Components -->
-    <style name="Theme.PixelFlow.Service" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.PixelScreenshots.Service" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>

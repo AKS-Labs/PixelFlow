@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.screens
+package com.akslabs.pixelscreenshots.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -56,11 +56,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.aks_labs.pixelflow.data.models.SimpleFolder
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
-//import com.aks_labs.pixelflow.ui.components.ScreenshotFullscreenViewer
-import com.aks_labs.pixelflow.ui.components.ScreenshotGridItem
-import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
+//import com.akslabs.pixelscreenshots.ui.components.ScreenshotFullscreenViewer
+import com.akslabs.pixelscreenshots.ui.components.ScreenshotGridItem
+import com.akslabs.pixelscreenshots.ui.viewmodels.MainViewModel
 
 /**
  * This is a placeholder file to prevent crashes when the app tries to use MaterialYouHomeScreen.

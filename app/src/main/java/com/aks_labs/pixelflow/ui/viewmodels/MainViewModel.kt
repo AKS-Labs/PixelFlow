@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.viewmodels
+package com.akslabs.pixelscreenshots.ui.viewmodels
 
 import android.app.Application
 import android.content.Context
@@ -21,12 +21,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import com.aks_labs.pixelflow.data.models.SimpleFolder
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
-import com.aks_labs.pixelflow.data.paging.ScreenshotPagingSource
-import com.aks_labs.pixelflow.pixelFlowApp
-import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
-import com.aks_labs.pixelflow.data.SharedPrefsManager.ThemeMode
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
+import com.akslabs.pixelscreenshots.data.paging.ScreenshotPagingSource
+import com.akslabs.pixelscreenshots.pixelFlowApp
+import com.akslabs.pixelscreenshots.services.ViewBasedFloatingBubbleService
+import com.akslabs.pixelscreenshots.data.SharedPrefsManager.ThemeMode
 import java.io.File
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,7 +60,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             enablePlaceholders = false
         )
     ) {
-        com.aks_labs.pixelflow.data.paging.ScreenshotPagingSource(getApplication<Application>().contentResolver)
+        com.akslabs.pixelscreenshots.data.paging.ScreenshotPagingSource(getApplication<Application>().contentResolver)
     }.flow.cachedIn(viewModelScope)
 
     // Filtered screenshots for UI display - DEPRECATED in favor of screenshotPager
@@ -291,10 +291,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         // Log the thumbnails for debugging
         screenshots.forEachIndexed { index, screenshot ->
-            android.util.Log.d("PixelFlow", "Thumbnail $index for folder $folderId: ${screenshot.thumbnailPath}")
+            android.util.Log.d("PixelScreenshots", "Thumbnail $index for folder $folderId: ${screenshot.thumbnailPath}")
             // Check if file exists
             val file = java.io.File(screenshot.thumbnailPath)
-            android.util.Log.d("PixelFlow", "File exists: ${file.exists()}, size: ${file.length()}")
+            android.util.Log.d("PixelScreenshots", "File exists: ${file.exists()}, size: ${file.length()}")
         }
 
         return screenshots.map { it.thumbnailPath }
@@ -438,7 +438,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // --- Compatibility Region for FolderScreen ---
 
     // Sort Mode
-    private val _sortMode = MutableStateFlow(com.aks_labs.pixelflow.data.models.MediaItemSortMode.DateTaken)
+    private val _sortMode = MutableStateFlow(com.akslabs.pixelscreenshots.data.models.MediaItemSortMode.DateTaken)
     val sortMode = _sortMode.asStateFlow()
 
     // Album Column Size
@@ -464,7 +464,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         suspend fun setAlbumsList(list: List<SimpleFolder>) {
              // Logic to reorder would go here (e.g., update DB position)
         }
-        fun setAlbumSortMode(mode: com.aks_labs.pixelflow.data.models.AlbumSortMode) { _albumSortMode.value = mode }
+        fun setAlbumSortMode(mode: com.akslabs.pixelscreenshots.data.models.AlbumSortMode) { _albumSortMode.value = mode }
         fun setSortByDescending(desc: Boolean) { _sortByDescending.value = desc }
     }
 
@@ -473,11 +473,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // Internal state for sorting
-    private val _albumSortMode = MutableStateFlow(com.aks_labs.pixelflow.data.models.AlbumSortMode.Custom)
+    private val _albumSortMode = MutableStateFlow(com.akslabs.pixelscreenshots.data.models.AlbumSortMode.Custom)
     private val _sortByDescending = MutableStateFlow(true)
 
     // Refresh Logic
-    fun refreshAlbums(context: Context, albums: List<SimpleFolder>, sortMode: com.aks_labs.pixelflow.data.models.MediaItemSortMode) {
+    fun refreshAlbums(context: Context, albums: List<SimpleFolder>, sortMode: com.akslabs.pixelscreenshots.data.models.MediaItemSortMode) {
          viewModelScope.launch {
              refreshAlbumsAsync(albums)
          }

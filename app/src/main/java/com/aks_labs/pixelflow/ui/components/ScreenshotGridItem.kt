@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components
+package com.akslabs.pixelscreenshots.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date

@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components
+package com.akslabs.pixelscreenshots.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.aks_labs.pixelflow.R
-import com.aks_labs.pixelflow.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.R
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)

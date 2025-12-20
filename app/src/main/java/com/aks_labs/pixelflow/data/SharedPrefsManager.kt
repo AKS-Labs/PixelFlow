@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.data
+package com.akslabs.pixelscreenshots.data
 
 import android.content.ContentUris
 import android.content.Context
@@ -6,8 +6,8 @@ import android.content.SharedPreferences
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import com.aks_labs.pixelflow.data.models.SimpleFolder
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -69,7 +69,7 @@ class SharedPrefsManager(private val context: Context) {
      */
     private fun createAppDirectory(): File {
         val baseDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-        val appDir = File(baseDir, "PixelFlow")
+        val appDir = File(baseDir, "PixelScreenshots")
 
         if (!appDir.exists()) {
             appDir.mkdirs()
@@ -718,7 +718,7 @@ class SharedPrefsManager(private val context: Context) {
     }
 
     /**
-     * Get all folder names from the PixelFlow directory by scanning filesystem
+     * Get all folder names from the PixelScreenshots directory by scanning filesystem
      */
     fun getFolderNamesFromDisk(): List<String> {
         if (!appDirectory.exists()) return emptyList()

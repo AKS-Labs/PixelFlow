@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.screens
+package com.akslabs.pixelscreenshots.ui.screens
 
 import android.Manifest
 import android.app.Activity
@@ -63,12 +63,12 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
-import com.aks_labs.pixelflow.R
-import com.aks_labs.pixelflow.data.SharedPrefsManager
-import com.aks_labs.pixelflow.ui.components.ManageFilesAnimation
-import com.aks_labs.pixelflow.ui.components.MediaAccessAnimation
-import com.aks_labs.pixelflow.ui.components.OrganizeScreenshotAnimation
-import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
+import com.akslabs.pixelscreenshots.R
+import com.akslabs.pixelscreenshots.data.SharedPrefsManager
+import com.akslabs.pixelscreenshots.ui.components.ManageFilesAnimation
+import com.akslabs.pixelscreenshots.ui.components.MediaAccessAnimation
+import com.akslabs.pixelscreenshots.ui.components.OrganizeScreenshotAnimation
+import com.akslabs.pixelscreenshots.ui.viewmodels.MainViewModel
 
 /**
  * Extension function to find the Activity from a Context
@@ -214,7 +214,7 @@ fun PermissionSetupScreen(
         when (currentStep) {
             PermissionSetupStep.STORAGE_PERMISSION -> {
                 PermissionScreen(
-                    title = "PixelFlow needs access to photos",
+                    title = "PixelScreenshots needs access to photos",
                     description = "To detect and organize screenshots, we need permission to access your media.",
                     buttonText = "Grant Permission",
                     nativeAnimationType = NativeAnimationType.MEDIA_ACCESS,
@@ -222,7 +222,7 @@ fun PermissionSetupScreen(
                         // Use MainActivity's method to request storage permissions
                         // This ensures permissions are only requested when the user clicks the button
                         val activity = context.findActivity()
-                        if (activity is com.aks_labs.pixelflow.MainActivity) {
+                        if (activity is com.akslabs.pixelscreenshots.MainActivity) {
                             activity.requestStoragePermissions()
                             // Permission state will be checked in the lifecycle observer when activity resumes
                         } else {
@@ -239,14 +239,14 @@ fun PermissionSetupScreen(
 
             PermissionSetupStep.OVERLAY_PERMISSION -> {
                 PermissionScreen(
-                    title = "PixelFlow needs to display over other apps",
+                    title = "PixelScreenshots needs to display over other apps",
                     description = "To show floating bubbles for screenshots, we need permission to draw over other apps.",
                     buttonText = "Grant Permission",
                     nativeAnimationType = NativeAnimationType.ORGANIZE_SCREENSHOT,
                     onButtonClick = {
                         // Use MainActivity's method to request overlay permission
                         val activity = context.findActivity()
-                        if (activity is com.aks_labs.pixelflow.MainActivity) {
+                        if (activity is com.akslabs.pixelscreenshots.MainActivity) {
                             activity.requestOverlayPermission()
                             // Permission state will be checked in the lifecycle observer when activity resumes
                         } else {
@@ -263,14 +263,14 @@ fun PermissionSetupScreen(
 
             PermissionSetupStep.MANAGE_FILES_PERMISSION -> {
                 PermissionScreen(
-                    title = "PixelFlow needs to manage files",
+                    title = "PixelScreenshots needs to manage files",
                     description = "To organize screenshots into folders, we need permission to manage all files.",
                     buttonText = "Grant Permission",
                     nativeAnimationType = NativeAnimationType.MANAGE_FILES,
                     onButtonClick = {
                         // Use MainActivity's method to request manage files permission
                         val activity = context.findActivity()
-                        if (activity is com.aks_labs.pixelflow.MainActivity) {
+                        if (activity is com.akslabs.pixelscreenshots.MainActivity) {
                             activity.requestManageExternalStoragePermission()
                             // Permission state will be checked in the lifecycle observer when activity resumes
                         } else {
@@ -299,7 +299,7 @@ fun PermissionSetupScreen(
 
                             // Use MainActivity's method to check permissions and start service
                             val activity = context.findActivity()
-                            if (activity is com.aks_labs.pixelflow.MainActivity) {
+                            if (activity is com.akslabs.pixelscreenshots.MainActivity) {
                                 activity.checkPermissionsAndStartService()
                             }
 
@@ -338,9 +338,9 @@ fun PermissionScreen(
 ) {
     var visible by remember { mutableStateOf(false) }
     val currentStep = when(title) {
-        "PixelFlow needs access to photos" -> 0
-        "PixelFlow needs to display over other apps" -> 1
-        "PixelFlow needs to manage files" -> 2
+        "PixelScreenshots needs access to photos" -> 0
+        "PixelScreenshots needs to display over other apps" -> 1
+        "PixelScreenshots needs to manage files" -> 2
         else -> 0
     }
     val totalSteps = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) 3 else 2
@@ -369,7 +369,7 @@ fun PermissionScreen(
                 // App logo
                 Image(
                     painter = painterResource(id = R.drawable.logo),
-                    contentDescription = "PixelFlow Logo",
+                    contentDescription = "PixelScreenshots Logo",
                     modifier = Modifier.size(78.dp)
                 )
 
@@ -515,7 +515,7 @@ fun PermissionSummaryScreen(
             // App logo
                 Image(
                     painter = painterResource(id = R.drawable.logo),
-                    contentDescription = "PixelFlow Logo",
+                    contentDescription = "PixelScreenshots Logo",
                     modifier = Modifier.size(88.dp)
                 )
 
@@ -536,9 +536,9 @@ fun PermissionSummaryScreen(
             // Description
             Text(
                 text = if (allPermissionsGranted)
-                    "PixelFlow has all the permissions it needs to work properly."
+                    "PixelScreenshots has all the permissions it needs to work properly."
                 else
-                    "Please grant all required permissions to use PixelFlow",
+                    "Please grant all required permissions to use PixelScreenshots",
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)

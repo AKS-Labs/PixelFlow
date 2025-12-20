@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components
+package com.akslabs.pixelscreenshots.ui.components
 
 
 import android.view.ViewGroup
@@ -61,7 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
 import com.google.android.material.carousel.CarouselLayoutManager
 import com.google.android.material.carousel.CarouselSnapHelper
 import com.google.android.material.carousel.FullScreenCarouselStrategy

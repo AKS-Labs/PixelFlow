@@ -1,8 +1,8 @@
-package com.aks_labs.pixelflow.helpers
+package com.akslabs.pixelscreenshots.helpers
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import com.aks_labs.pixelflow.helpers.Screens
+import com.akslabs.pixelscreenshots.helpers.Screens
 
 // Mock classes to match user's FolderScreen requirements
 

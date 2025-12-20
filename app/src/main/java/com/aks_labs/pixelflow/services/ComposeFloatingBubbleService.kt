@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.services
+package com.akslabs.pixelscreenshots.services
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -32,19 +32,19 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
 import androidx.core.app.NotificationCompat
-import com.aks_labs.pixelflow.MainActivity
-import com.aks_labs.pixelflow.R
-import com.aks_labs.pixelflow.data.SharedPrefsManager
-import com.aks_labs.pixelflow.data.models.SimpleFolder
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
-import com.aks_labs.pixelflow.pixelFlowApp
-import com.aks_labs.pixelflow.ui.components.compose.BubbleState
-import com.aks_labs.pixelflow.ui.components.compose.CircularDragZone
-import com.aks_labs.pixelflow.ui.components.compose.ComposeViewFactory
-import com.aks_labs.pixelflow.ui.components.compose.DragZoneState
-import com.aks_labs.pixelflow.ui.components.compose.FloatingBubble
-import com.aks_labs.pixelflow.ui.components.compose.TouchHandler
-import com.aks_labs.pixelflow.ui.components.compose.isPointInFlowerShape
+import com.akslabs.pixelscreenshots.MainActivity
+import com.akslabs.pixelscreenshots.R
+import com.akslabs.pixelscreenshots.data.SharedPrefsManager
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
+import com.akslabs.pixelscreenshots.pixelFlowApp
+import com.akslabs.pixelscreenshots.ui.components.compose.BubbleState
+import com.akslabs.pixelscreenshots.ui.components.compose.CircularDragZone
+import com.akslabs.pixelscreenshots.ui.components.compose.ComposeViewFactory
+import com.akslabs.pixelscreenshots.ui.components.compose.DragZoneState
+import com.akslabs.pixelscreenshots.ui.components.compose.FloatingBubble
+import com.akslabs.pixelscreenshots.ui.components.compose.TouchHandler
+import com.akslabs.pixelscreenshots.ui.components.compose.isPointInFlowerShape
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -66,10 +66,10 @@ class ComposeFloatingBubbleService : Service() {
     companion object {
         private const val TAG = "ComposeFloatingBubbleService"
         private const val NOTIFICATION_ID = 1001
-        private const val CHANNEL_ID = "PixelFlowServiceChannel"
+        private const val CHANNEL_ID = "PixelScreenshotsServiceChannel"
 
         // Action to restart the service
-        const val ACTION_RESTART_SERVICE = "com.aks_labs.pixelflow.RESTART_SERVICE"
+        const val ACTION_RESTART_SERVICE = "com.akslabs.pixelscreenshots.RESTART_SERVICE"
         const val ACTION_START_FROM_APP = "START_FROM_APP"
 
         // Flag to track if the service is running
@@ -223,7 +223,7 @@ class ComposeFloatingBubbleService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "PixelFlow Service",
+                "PixelScreenshots Service",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
                 description = "Keeps the screenshot detection service running"
@@ -244,7 +244,7 @@ class ComposeFloatingBubbleService : Service() {
 
         // Build the notification
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("PixelFlow")
+            .setContentTitle("PixelScreenshots")
             .setContentText("Screenshot detection is active")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
@@ -410,8 +410,8 @@ class ComposeFloatingBubbleService : Service() {
             )
 
             // Create a ComposeView with the FloatingBubble using our factory
-            val composeView = com.aks_labs.pixelflow.ui.components.compose.ComposeViewFactory.createComposeView(this) {
-                com.aks_labs.pixelflow.ui.components.compose.FloatingBubble(
+            val composeView = com.akslabs.pixelscreenshots.ui.components.compose.ComposeViewFactory.createComposeView(this) {
+                com.akslabs.pixelscreenshots.ui.components.compose.FloatingBubble(
                     screenshotBitmap = bitmap,
                     size = androidx.compose.ui.unit.Dp(90f),
                     isDragging = bubbleState.value.isDragging,
@@ -580,8 +580,8 @@ class ComposeFloatingBubbleService : Service() {
             Log.d(TAG, "Screenshot preview requested")
 
             // Create a ComposeView with the ScreenshotPreview using our factory
-            val composeView = com.aks_labs.pixelflow.ui.components.compose.ComposeViewFactory.createComposeView(this) {
-                com.aks_labs.pixelflow.ui.components.compose.ScreenshotPreview(
+            val composeView = com.akslabs.pixelscreenshots.ui.components.compose.ComposeViewFactory.createComposeView(this) {
+                com.akslabs.pixelscreenshots.ui.components.compose.ScreenshotPreview(
                     isVisible = true,
                     screenshotBitmap = bubbleState.value.bitmap,
                     onClose = { hideScreenshotPreview() },
@@ -798,8 +798,8 @@ class ComposeFloatingBubbleService : Service() {
             )
 
             // Create a ComposeView with the CircularDragZone using our factory
-            val composeView = com.aks_labs.pixelflow.ui.components.compose.ComposeViewFactory.createComposeView(this) {
-                com.aks_labs.pixelflow.ui.components.compose.CircularDragZone(
+            val composeView = com.akslabs.pixelscreenshots.ui.components.compose.ComposeViewFactory.createComposeView(this) {
+                com.akslabs.pixelscreenshots.ui.components.compose.CircularDragZone(
                     folders = folders,
                     highlightedIndex = dragZoneState.value.highlightedIndex,
                     onFolderSelected = { folderId -> handleScreenshotDrop(folderId) }

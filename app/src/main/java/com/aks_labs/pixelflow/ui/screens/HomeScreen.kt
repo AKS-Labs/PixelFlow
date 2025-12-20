@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.screens
+package com.akslabs.pixelscreenshots.ui.screens
 
 import android.Manifest
 import android.content.ContentResolver
@@ -11,7 +11,7 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
+import com.akslabs.pixelscreenshots.services.ViewBasedFloatingBubbleService
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -74,9 +74,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import com.aks_labs.pixelflow.R
-import com.aks_labs.pixelflow.data.SharedPrefsManager.ThemeMode
-import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
+import com.akslabs.pixelscreenshots.R
+import com.akslabs.pixelscreenshots.data.SharedPrefsManager.ThemeMode
+import com.akslabs.pixelscreenshots.ui.viewmodels.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -163,7 +163,7 @@ fun HomeScreen(
         val context = LocalContext.current
         val testActivityClass = remember {
             try {
-                Class.forName("com.aks_labs.pixelflow.ui.test.ComposeServiceTestActivity")
+                Class.forName("com.akslabs.pixelscreenshots.ui.test.ComposeServiceTestActivity")
             } catch (e: Exception) {
                 null
             }
@@ -179,7 +179,7 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "PixelFlow",
+                        text = "PixelScreenshots",
                         style = MaterialTheme.typography.headlineLarge,
                         textAlign = TextAlign.Center
                     )

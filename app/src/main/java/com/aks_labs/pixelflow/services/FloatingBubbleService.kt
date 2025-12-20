@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.services
+package com.akslabs.pixelscreenshots.services
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -42,14 +42,14 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import com.aks_labs.pixelflow.MainActivity
-import com.aks_labs.pixelflow.R
-import com.aks_labs.pixelflow.data.SharedPrefsManager
-import com.aks_labs.pixelflow.data.models.SimpleFolder
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
-import com.aks_labs.pixelflow.pixelFlowApp
-import com.aks_labs.pixelflow.ui.components.CircularDragZone
-import com.aks_labs.pixelflow.ui.components.ComposeCircularDragZone
+import com.akslabs.pixelscreenshots.MainActivity
+import com.akslabs.pixelscreenshots.R
+import com.akslabs.pixelscreenshots.data.SharedPrefsManager
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
+import com.akslabs.pixelscreenshots.pixelFlowApp
+import com.akslabs.pixelscreenshots.ui.components.CircularDragZone
+import com.akslabs.pixelscreenshots.ui.components.ComposeCircularDragZone
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -77,10 +77,10 @@ class FloatingBubbleService : Service() {
     companion object {
         private const val TAG = "FloatingBubbleService"
         private const val NOTIFICATION_ID = 1001
-        private const val CHANNEL_ID = "PixelFlowServiceChannel"
+        private const val CHANNEL_ID = "PixelScreenshotsServiceChannel"
 
         // Action to restart the service
-        const val ACTION_RESTART_SERVICE = "com.aks_labs.pixelflow.RESTART_SERVICE"
+        const val ACTION_RESTART_SERVICE = "com.akslabs.pixelscreenshots.RESTART_SERVICE"
 
         // Flag to track if the service is running
         @Volatile
@@ -1205,7 +1205,7 @@ class FloatingBubbleService : Service() {
         )
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("PixelFlow is running")
+            .setContentTitle("PixelScreenshots is running")
             .setContentText("Monitoring for screenshots and ready to organize them")
             .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)

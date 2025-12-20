@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components
+package com.akslabs.pixelscreenshots.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,9 +35,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.aks_labs.pixelflow.R
-import com.aks_labs.pixelflow.data.models.SimpleFolder
-import com.aks_labs.pixelflow.ui.screens.getIconResId
+import com.akslabs.pixelscreenshots.R
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.ui.screens.getIconResId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

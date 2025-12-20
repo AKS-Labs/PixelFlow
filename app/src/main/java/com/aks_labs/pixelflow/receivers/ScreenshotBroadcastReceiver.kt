@@ -1,12 +1,12 @@
-package com.aks_labs.pixelflow.receivers
+package com.akslabs.pixelscreenshots.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
-import com.aks_labs.pixelflow.pixelFlowApp
-import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
+import com.akslabs.pixelscreenshots.pixelFlowApp
+import com.akslabs.pixelscreenshots.services.ViewBasedFloatingBubbleService
 
 /**
  * BroadcastReceiver to listen for screenshot events
@@ -15,8 +15,8 @@ class ScreenshotBroadcastReceiver : BroadcastReceiver() {
 
     companion object {
         private const val TAG = "ScreenshotReceiver"
-        const val ACTION_SCREENSHOT_DETECTED = "com.aks_labs.pixelflow.SCREENSHOT_DETECTED"
-        const val ACTION_SCREENSHOT_MOVED = "com.aks_labs.pixelflow.SCREENSHOT_MOVED"
+        const val ACTION_SCREENSHOT_DETECTED = "com.akslabs.pixelscreenshots.SCREENSHOT_DETECTED"
+        const val ACTION_SCREENSHOT_MOVED = "com.akslabs.pixelscreenshots.SCREENSHOT_MOVED"
         const val EXTRA_SCREENSHOT_PATH = "screenshot_path"
         const val EXTRA_FOLDER_ID = "folder_id"
 

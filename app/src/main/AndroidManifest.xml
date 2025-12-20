@@ -20,7 +20,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
-        android:name=".PixelFlowApplication"
+        android:name=".PixelScreenshotsApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -28,14 +28,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PixelFlow"
+        android:theme="@style/Theme.PixelScreenshots"
         android:largeHeap="true"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.PixelFlow">
+            android:theme="@style/Theme.PixelScreenshots">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,7 +47,7 @@
         <activity
             android:name=".ui.test.ComposeServiceTestActivity"
             android:exported="false"
-            android:theme="@style/Theme.PixelFlow" />
+            android:theme="@style/Theme.PixelScreenshots" />
         -->
 
         <!-- Service for screenshot detection and floating bubble (View-based) -->
@@ -57,7 +57,7 @@
             android:exported="false"
             android:foregroundServiceType="dataSync"
             android:stopWithTask="false"
-            android:theme="@style/Theme.PixelFlow.Service" />
+            android:theme="@style/Theme.PixelScreenshots.Service" />
 
 
 

@@ -1,18 +1,18 @@
-package com.aks_labs.pixelflow
+package com.akslabs.pixelscreenshots
 
 import android.app.Application
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.aks_labs.pixelflow.data.SharedPrefsManager
-import com.aks_labs.pixelflow.receivers.ScreenshotBroadcastReceiver
-import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
+import com.akslabs.pixelscreenshots.data.SharedPrefsManager
+import com.akslabs.pixelscreenshots.receivers.ScreenshotBroadcastReceiver
+import com.akslabs.pixelscreenshots.ui.viewmodels.MainViewModel
 
 /**
- * Application class for PixelFlow app
+ * Application class for PixelScreenshots app
  */
-class PixelFlowApplication : Application() {
+class PixelScreenshotsApplication : Application() {
 
     // SharedPreferences manager
     val sharedPrefsManager: SharedPrefsManager by lazy {
@@ -31,9 +31,9 @@ class PixelFlowApplication : Application() {
     private lateinit var screenshotReceiver: ScreenshotBroadcastReceiver
 
     companion object {
-        private lateinit var instance: PixelFlowApplication
+        private lateinit var instance: PixelScreenshotsApplication
 
-        fun getInstance(): PixelFlowApplication = instance
+        fun getInstance(): PixelScreenshotsApplication = instance
     }
 
     override fun onCreate() {
@@ -63,5 +63,5 @@ class PixelFlowApplication : Application() {
 }
 
 // Extension function to get the application instance from any context
-val Context.pixelFlowApp: PixelFlowApplication
-    get() = applicationContext as PixelFlowApplication
+val Context.pixelFlowApp: PixelScreenshotsApplication
+    get() = applicationContext as PixelScreenshotsApplication

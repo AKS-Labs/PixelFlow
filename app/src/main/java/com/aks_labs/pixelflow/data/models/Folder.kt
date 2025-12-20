@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.data.models
+package com.akslabs.pixelscreenshots.data.models
 
 /**
  * Data class representing a folder for organizing screenshots.

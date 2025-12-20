@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.utils
+package com.akslabs.pixelscreenshots.utils
 
 import android.content.ContentResolver
 import android.content.ContentUris
@@ -8,7 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File

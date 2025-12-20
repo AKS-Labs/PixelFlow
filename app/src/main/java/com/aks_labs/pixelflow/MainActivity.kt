@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow
+package com.akslabs.pixelscreenshots
 
 import android.Manifest
 import android.content.Intent
@@ -36,14 +36,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
-import com.aks_labs.pixelflow.ui.screens.FolderScreen
-import com.aks_labs.pixelflow.ui.screens.FolderDetailsScreen
-import com.aks_labs.pixelflow.ui.screens.ImprovedHomeScreen
-import com.aks_labs.pixelflow.ui.screens.PermissionSetupScreen
-import com.aks_labs.pixelflow.ui.screens.SettingsScreen
-import com.aks_labs.pixelflow.ui.theme.PixelFlowTheme
-import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
+import com.akslabs.pixelscreenshots.services.ViewBasedFloatingBubbleService
+import com.akslabs.pixelscreenshots.ui.screens.FolderScreen
+import com.akslabs.pixelscreenshots.ui.screens.FolderDetailsScreen
+import com.akslabs.pixelscreenshots.ui.screens.ImprovedHomeScreen
+import com.akslabs.pixelscreenshots.ui.screens.PermissionSetupScreen
+import com.akslabs.pixelscreenshots.ui.screens.SettingsScreen
+import com.akslabs.pixelscreenshots.ui.theme.PixelScreenshotsTheme
+import com.akslabs.pixelscreenshots.ui.viewmodels.MainViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -83,9 +83,9 @@ class MainActivity : ComponentActivity() {
             application.pixelFlowApp.mainViewModel = viewModel
 
             // Use Material 3's dynamic color system with secondary color for background
-            PixelFlowTheme(dynamicColor = true) {
+            PixelScreenshotsTheme(dynamicColor = true) {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    PixelFlowApp(navController, viewModel)
+                    PixelScreenshotsApp(navController, viewModel)
                 }
             }
         }
@@ -184,10 +184,10 @@ class MainActivity : ComponentActivity() {
     fun startFloatingBubbleService() {
         try {
             Log.d(TAG, "Starting ViewBasedFloatingBubbleService")
-            val intent = Intent(this, com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService::class.java)
+            val intent = Intent(this, com.akslabs.pixelscreenshots.services.ViewBasedFloatingBubbleService::class.java)
 
             // Add a specific action to indicate this is a normal start
-            intent.action = com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService.ACTION_START_FROM_APP
+            intent.action = com.akslabs.pixelscreenshots.services.ViewBasedFloatingBubbleService.ACTION_START_FROM_APP
             
             // For Android 8.0 (Oreo) and above, we need to start as a foreground service
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -203,7 +203,7 @@ class MainActivity : ComponentActivity() {
 
             // Schedule a check to verify the service is running
             Handler(Looper.getMainLooper()).postDelayed({
-                if (!com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService.isRunning()) {
+                if (!com.akslabs.pixelscreenshots.services.ViewBasedFloatingBubbleService.isRunning()) {
                     Log.w(TAG, "Service not running after start request, trying again")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         startForegroundService(intent)
@@ -227,7 +227,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PixelFlowApp(
+fun PixelScreenshotsApp(
     navController: NavHostController,
     viewModel: MainViewModel
 ) {
@@ -238,7 +238,7 @@ fun PixelFlowApp(
     // Check if onboarding has been completed
     val context = LocalContext.current
     val activity = context as MainActivity
-    val sharedPrefsManager = remember { (context.applicationContext as PixelFlowApplication).sharedPrefsManager }
+    val sharedPrefsManager = remember { (context.applicationContext as PixelScreenshotsApplication).sharedPrefsManager }
     val onboardingCompleted = remember { sharedPrefsManager.isOnboardingCompleted() }
 
     // Handle back navigation properly
@@ -289,7 +289,7 @@ fun PixelFlowApp(
                 FolderDetailsScreen(navController, viewModel, folderId)
             }
             composable("manage_folders") {
-                com.aks_labs.pixelflow.ui.screens.FolderManagementScreen(navController, viewModel)
+                com.akslabs.pixelscreenshots.ui.screens.FolderManagementScreen(navController, viewModel)
             }
         }
     }

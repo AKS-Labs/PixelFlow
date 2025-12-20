@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">PixelFlow</string>
+    <string name="app_name">PixelScreenshots</string>
 
     <!-- Permissions -->
-    <string name="permission_rationale">PixelFlow needs access to your storage to detect and manage screenshots.</string>
-    <string name="overlay_permission_rationale">PixelFlow needs permission to draw over other apps to show the floating bubble.</string>
+    <string name="permission_rationale">PixelScreenshots needs access to your storage to detect and manage screenshots.</string>
+    <string name="overlay_permission_rationale">PixelScreenshots needs permission to draw over other apps to show the floating bubble.</string>
 
     <!-- Floating Bubble -->
     <string name="screenshot_bubble">Screenshot Bubble</string>

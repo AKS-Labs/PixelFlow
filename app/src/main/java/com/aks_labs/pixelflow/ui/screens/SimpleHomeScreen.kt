@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.screens
+package com.akslabs.pixelscreenshots.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,9 +38,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
-import com.aks_labs.pixelflow.ui.components.ScreenshotGridItem
-import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
+import com.akslabs.pixelscreenshots.ui.components.ScreenshotGridItem
+import com.akslabs.pixelscreenshots.ui.viewmodels.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +56,7 @@ fun SimpleHomeScreen(
 //        containerColor = MaterialTheme.colorScheme.surfaceVariant,
         topBar = {
             TopAppBar(
-                title = { Text("Pixel Screenshots") },
+                title = { Text("PixelScreenshots") },
                 actions = {
                     IconButton(onClick = { /* TODO: Implement notifications */ }) {
                         Icon(
@@ -118,7 +118,7 @@ fun UpdatesCard() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "To use Pixel Screenshots, you'll need to update some of the apps on your device.",
+                    text = "To use PixelScreenshots, you'll need to update some of the apps on your device.",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f)
                 )

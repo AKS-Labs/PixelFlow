@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.aks_labs.pixelflow",
+  "applicationId": "com.akslabs.pixelscreenshots",
   "variantName": "release",
   "elements": [
     {

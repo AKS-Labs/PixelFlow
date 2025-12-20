@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.theme
+package com.akslabs.pixelscreenshots.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

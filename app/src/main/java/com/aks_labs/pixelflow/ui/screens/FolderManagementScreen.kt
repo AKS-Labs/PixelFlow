@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.screens
+package com.akslabs.pixelscreenshots.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -63,12 +63,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.aks_labs.pixelflow.R
-import com.aks_labs.pixelflow.data.models.SimpleFolder
-import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
+import com.akslabs.pixelscreenshots.R
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.ui.viewmodels.MainViewModel
 import java.io.File
-import com.aks_labs.pixelflow.ui.components.AddFolderDialog
-import com.aks_labs.pixelflow.ui.components.EditFolderDialog
+import com.akslabs.pixelscreenshots.ui.components.AddFolderDialog
+import com.akslabs.pixelscreenshots.ui.components.EditFolderDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

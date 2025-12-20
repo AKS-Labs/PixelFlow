@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.components
+package com.akslabs.pixelscreenshots.ui.components
 
 import android.content.Context
 import android.os.Build
@@ -9,7 +9,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
-import com.aks_labs.pixelflow.services.ViewBasedFloatingBubbleService
+import com.akslabs.pixelscreenshots.services.ViewBasedFloatingBubbleService
 import java.io.File
 
 /**

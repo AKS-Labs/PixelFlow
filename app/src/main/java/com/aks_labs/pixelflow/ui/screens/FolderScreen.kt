@@ -1,4 +1,4 @@
-package com.aks_labs.pixelflow.ui.screens
+package com.akslabs.pixelscreenshots.ui.screens
 
 //import androidx.compose.material3.pulltorefresh.pullToRefresh
 //import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -81,20 +81,20 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
-import com.aks_labs.pixelflow.data.models.AlbumSortMode
-//import com.aks_labs.pixelflow.data.models.SimpleFolder
-import com.aks_labs.pixelflow.helpers.AnimationConstants
-import com.aks_labs.pixelflow.helpers.BottomBarTab
-import com.aks_labs.pixelflow.helpers.DefaultTabs
-import com.aks_labs.pixelflow.helpers.MultiScreenViewType
-import com.aks_labs.pixelflow.helpers.PhotoGridConstants
-import com.aks_labs.pixelflow.helpers.Screens
-import com.aks_labs.pixelflow.ui.components.AddFolderDialog
+import com.akslabs.pixelscreenshots.data.models.AlbumSortMode
+//import com.akslabs.pixelscreenshots.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.helpers.AnimationConstants
+import com.akslabs.pixelscreenshots.helpers.BottomBarTab
+import com.akslabs.pixelscreenshots.helpers.DefaultTabs
+import com.akslabs.pixelscreenshots.helpers.MultiScreenViewType
+import com.akslabs.pixelscreenshots.helpers.PhotoGridConstants
+import com.akslabs.pixelscreenshots.helpers.Screens
+import com.akslabs.pixelscreenshots.ui.components.AddFolderDialog
 import java.io.File
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.ui.res.stringResource
-import com.aks_labs.pixelflow.R
+import com.akslabs.pixelscreenshots.R
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -110,12 +110,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import com.aks_labs.pixelflow.data.models.SimpleFolder
-import com.aks_labs.pixelflow.data.models.SimpleScreenshot
-import com.aks_labs.pixelflow.helpers.navigate
-import com.aks_labs.pixelflow.ui.components.GlideImage
-import com.aks_labs.pixelflow.ui.components.shimmerEffect
-import com.aks_labs.pixelflow.ui.viewmodels.MainViewModel
+import com.akslabs.pixelscreenshots.data.models.SimpleFolder
+import com.akslabs.pixelscreenshots.data.models.SimpleScreenshot
+import com.akslabs.pixelscreenshots.helpers.navigate
+import com.akslabs.pixelscreenshots.ui.components.GlideImage
+import com.akslabs.pixelscreenshots.ui.components.shimmerEffect
+import com.akslabs.pixelscreenshots.ui.viewmodels.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -175,7 +175,7 @@ fun FolderScreen(
             val copy = listOfDirs.toList() // Safe copy
             
             // ... (Sorting Logic - keeping as is but adjusting properties if needed)
-            // PixelFlow `SimpleFolder` doesn't have date properties for sorting? 
+            // PixelScreenshots `SimpleFolder` doesn't have date properties for sorting? 
             // We map `albumToThumbnailMapping` (which is Map<Long, SimpleScreenshot>)
             
             when (sortMode) {
