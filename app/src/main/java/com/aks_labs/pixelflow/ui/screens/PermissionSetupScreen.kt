@@ -58,6 +58,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.MoreVert
@@ -415,20 +416,20 @@ fun PermissionScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Illustration area
+                // Illustration area (Restored to unrestricted size for full visual impact)
                 Box(
-                    modifier = Modifier.size(240.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
                     when (nativeAnimationType) {
                         NativeAnimationType.ORGANIZE_SCREENSHOT -> {
-                            OrganizeScreenshotAnimation(modifier = Modifier.size(240.dp))
+                            OrganizeScreenshotAnimation(modifier = Modifier.fillMaxWidth())
                         }
                         NativeAnimationType.MEDIA_ACCESS -> {
-                            MediaAccessAnimation(modifier = Modifier.size(240.dp))
+                            MediaAccessAnimation(modifier = Modifier.fillMaxWidth())
                         }
                         NativeAnimationType.MANAGE_FILES -> {
-                            ManageFilesAnimation(modifier = Modifier.size(240.dp))
+                            ManageFilesAnimation(modifier = Modifier.fillMaxWidth())
                         }
                         else -> {
                             if (illustrationRes != null) {
@@ -438,13 +439,13 @@ fun PermissionScreen(
                                         .decoderFactory(SvgDecoder.Factory())
                                         .build(),
                                     contentDescription = null,
-                                    modifier = Modifier.fillMaxSize()
+                                    modifier = Modifier.size(280.dp)
                                 )
                             } else {
                                 Image(
                                     painter = painterResource(id = R.drawable.logo),
                                     contentDescription = null,
-                                    modifier = Modifier.size(120.dp),
+                                    modifier = Modifier.size(150.dp),
                                     alpha = 0.1f
                                 )
                             }
@@ -452,7 +453,7 @@ fun PermissionScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(48.dp)) // Ample space before text sections
 
                 // Transparency Section: Why we need this
                 TransparencySection(
@@ -561,6 +562,14 @@ fun TransparencySection(title: String, content: String) {
 
 @Composable
 fun RestrictedSettingsGuide() {
+    val context = LocalContext.current
+    val redirectToAppInfo = {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts("package", context.packageName, null)
+        }
+        context.startActivity(intent)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -576,35 +585,46 @@ fun RestrictedSettingsGuide() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Some Android versions disable this for third-party apps as a security measure. Here's how to allow it:",
+            text = "Android may restrict this for security measures. Follow below steps to allow it:",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         
-        val steps = listOf(
-            "Go to phone Settings > Apps",
-            "Find and tap on 'PixelFlow'",
-            "Tap the 3-dot menu (top right)",
-            "Select 'Allow restricted settings'"
+        // Method 1: The fast way
+        Text(
+            text = "Method: Long Press Shortcut",
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
         )
-        
-        steps.forEachIndexed { index, step ->
-            Row(modifier = Modifier.padding(vertical = 4.dp), verticalAlignment = Alignment.Top) {
-                Text(
-                    text = "${index + 1}.",
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = step,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+        Spacer(modifier = Modifier.height(8.dp))
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            val steps = listOf(
+                "Long press PixelFlow app icon",
+                "Tap on 'App info' ↗",
+                "Tap 3-dot menu (top right)",
+                "Select 'Allow restricted settings'"
+            )
+            steps.forEachIndexed { index, step ->
+                Row(verticalAlignment = Alignment.Top) {
+                    Text("${index + 1}. ", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = step,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = if (step.contains("App info")) Modifier.clickable { redirectToAppInfo() } else Modifier,
+                        color = if (step.contains("App info")) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        fontWeight = if (step.contains("App info")) FontWeight.Bold else FontWeight.Normal
+                    )
+                }
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+
+
+
     }
 }
 
