@@ -60,6 +60,13 @@ Find your screenshots quickly with powerful search features:
 2. Install the APK on your Android device
 3. Follow the onboarding process to grant necessary permissions
 
+### Translation
+Please help to translate using [Weblate](https://toolate.othing.xyz/projects/pixelscreenshots/).
+
+<a href="https://toolate.othing.xyz/projects/pixelscreenshots/">
+<img src="https://toolate.othing.xyz/widget/pixelscreenshots/svg-badge.svg" alt="Translation status" />
+</a>
+
 ### Building from Source
 1. Clone the repository: `git clone https://github.com/AKS-Labs/PixelScreenshots.git`
 2. Open the project in Android Studio
