@@ -1,3 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Pixel Screenshots</string>
+    <string name="permission_rationale">Для PixelScreenshots требуется доступ к вашему хранилищу для обнаружения и управления скриншотами.</string>
+    <string name="overlay_permission_rationale">Для PixelScreenshots требуется разрешение на отображение поверх других приложений для отображения плавающего всплывающего окна.</string>
+    <string name="screenshot_bubble">Всплывающее окно скриншота</string>
+    <string name="screenshot_moved">Снимок экрана перемещён в %1$s</string>
+    <string name="screenshot_thumbnail">Миниатюра скриншота</string>
+    <string name="action_button">Кнопка действия</string>
+    <string name="folder_quotes">Цитаты</string>
+    <string name="folder_tricks">Советы</string>
+    <string name="folder_images">Изображения</string>
+    <string name="folder_posts">Записи</string>
+    <string name="folder_trash">Корзина</string>
+    <string name="add_folder">Добавить папку</string>
+    <string name="edit_folder">Редактировать папку</string>
+    <string name="delete_folder">Удалить папку</string>
+    <string name="settings">Настройки</string>
+    <string name="enable_floating_bubble">Включить плавающее всплывающее окно</string>
+    <string name="manage_folders">Управление папками</string>
+    <string name="screenshot_history">История снимков экрана</string>
 </resources>
